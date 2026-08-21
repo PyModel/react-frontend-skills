@@ -9,6 +9,23 @@ tags: perf, limitUrlUpdates, throttle, rate-limiting, slider
 
 nuqs already applies a browser-adapted default throttle to URL writes. Increase it only when high-frequency state changes should update the URL or a `shallow: false` server route less often. Since nuqs 2.5, use `limitUrlUpdates: throttle(ms)`; `throttleMs` is deprecated.
 
+**Incorrect (deprecated option):**
+
+```tsx
+useQueryState(
+  'volume',
+  parseAsInteger.withDefault(50).withOptions({ throttleMs: 100 })
+)
+```
+
+When the default browser-adapted limit is sufficient, no custom option is needed:
+
+```tsx
+const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
+```
+
+**Correct (current rate-limit API):**
+
 ```tsx
 'use client'
 
