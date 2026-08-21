@@ -1,14 +1,14 @@
 <h1 align="center">React Frontend Skills</h1>
 
 <p align="center">
-  <strong>An agent-ready skills collection for the modern React ecosystem, by Pythoughts</strong>
+  <strong>Production-grade AI agent skills for the modern React ecosystem, by PyModel</strong>
 </p>
 
 <p align="center">
   <a href="https://github.com/PyModel/react-frontend-skills/stargazers"><img src="https://img.shields.io/github/stars/PyModel/react-frontend-skills?style=flat&logo=github&logoColor=white&color=f5c518&labelColor=1c1c1c" alt="Stars" /></a>
   <a href="https://github.com/PyModel/react-frontend-skills/network/members"><img src="https://img.shields.io/github/forks/PyModel/react-frontend-skills?style=flat&logo=github&logoColor=white&color=4f8cc9&labelColor=1c1c1c" alt="Forks" /></a>
   <a href="https://github.com/PyModel/react-frontend-skills/issues"><img src="https://img.shields.io/github/issues/PyModel/react-frontend-skills?style=flat&logo=github&logoColor=white&color=e07b39&labelColor=1c1c1c" alt="Issues" /></a>
-  <a href="https://www.npmjs.com/package/@pythoughts/react-frontend-skills"><img src="https://img.shields.io/npm/v/@pythoughts/react-frontend-skills?style=flat&logo=npm&logoColor=white&color=cb3837&labelColor=1c1c1c" alt="npm" /></a>
+  <a href="https://www.npmjs.com/package/@pymodel/react-frontend-skills"><img src="https://img.shields.io/npm/v/@pymodel/react-frontend-skills?style=flat&logo=npm&logoColor=white&color=cb3837&labelColor=1c1c1c" alt="npm" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/PyModel/react-frontend-skills?style=flat&color=3fb950&labelColor=1c1c1c" alt="License" /></a>
 </p>
 
@@ -56,10 +56,10 @@ This uses the open-source `skills` CLI. No account, no config. Skills get symlin
 
 ### Or install from npm
 
-Published as [`@pythoughts/react-frontend-skills`](https://www.npmjs.com/package/@pythoughts/react-frontend-skills). Add it as a project dependency, then sync into your agent:
+Published as [`@pymodel/react-frontend-skills`](https://www.npmjs.com/package/@pymodel/react-frontend-skills). Add it as a project dependency, then sync into your agent:
 
 ```bash
-npm install @pythoughts/react-frontend-skills
+npm install @pymodel/react-frontend-skills
 npx skills experimental_sync
 ```
 
@@ -255,5 +255,5 @@ MIT, 2026 [Mohamed Elkholy](https://github.com/PyModel). See [LICENSE](LICENSE).
 </p>
 
 <p align="center">
-  Built and maintained by <strong>Pythoughts</strong> · <a href="https://github.com/PyModel">@PyModel</a>
+  Built and maintained by <strong>PyModel</strong> · <a href="https://github.com/PyModel">@PyModel</a>
 </p>
