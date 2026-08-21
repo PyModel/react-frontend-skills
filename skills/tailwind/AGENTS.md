@@ -2,7 +2,7 @@
 
 **Version 0.1.0**  
 Tailwind Labs  
-January 2026
+August 2026
 
 > **Note:**  
 > This document is mainly for agents and LLMs to follow when maintaining,  
@@ -24,34 +24,34 @@ Comprehensive performance optimization and best practices guide for Tailwind CSS
    - 1.2 [Remove Redundant PostCSS Plugins](references/build-postcss-simplify.md) — HIGH (reduces plugin overhead, simplifies configuration)
    - 1.3 [Use Correct CLI Package](references/build-cli-package.md) — HIGH (prevents build failures, ensures v4 compatibility)
    - 1.4 [Use CSS Import Over @tailwind Directives](references/build-css-import.md) — CRITICAL (eliminates deprecated patterns, enables v4 features)
-   - 1.5 [Use Node.js 20+ for Optimal Performance](references/build-node-version.md) — CRITICAL (required for upgrade tool, enables modern optimizations)
-   - 1.6 [Use Vite Plugin Over PostCSS](references/build-vite-plugin.md) — CRITICAL (3-10× faster incremental builds)
+   - 1.5 [Use Node.js 20+ for the Upgrade Tool](references/build-node-version.md) — CRITICAL (required for upgrade tool, enables modern optimizations)
+   - 1.6 [Use Vite Plugin Over PostCSS](references/build-vite-plugin.md) — CRITICAL (faster incremental builds)
 2. CSS Generation — **CRITICAL**
-   - 2.1 [Avoid Excessive Theme Variables](references/gen-avoid-theme-bloat.md) — CRITICAL (reduces CSS variable overhead by 50-80%)
+   - 2.1 [Avoid Excessive Theme Variables](references/gen-avoid-theme-bloat.md) — CRITICAL (reduces CSS variable overhead)
    - 2.2 [Use @utility for Custom Utilities](references/gen-utility-directive.md) — HIGH (enables variant support, proper sorting)
    - 2.3 [Use CSS-First Configuration Over JavaScript](references/gen-css-first-config.md) — CRITICAL (single source of truth, eliminates config file overhead)
    - 2.4 [Use Dynamic Utility Values](references/gen-dynamic-utilities.md) — HIGH (eliminates arbitrary value syntax, cleaner markup)
-   - 2.5 [Use OKLCH Color Space for Vivid Colors](references/gen-oklch-colors.md) — HIGH (20-30% wider color gamut, perceptually uniform)
-   - 2.6 [Use Parentheses for CSS Variable References](references/gen-css-variable-syntax.md) — MEDIUM-HIGH (required v4 syntax, prevents build errors)
+   - 2.5 [Use OKLCH Color Space for Vivid Colors](references/gen-oklch-colors.md) — HIGH (wider gamut on P3 displays, perceptually uniform interpolation)
+   - 2.6 [Use Parentheses for CSS Variable References](references/gen-css-variable-syntax.md) — MEDIUM-HIGH
 3. Bundle Optimization — **HIGH**
-   - 3.1 [Avoid Play CDN in Production](references/bundle-avoid-cdn-production.md) — HIGH (10-100× larger payload, runtime compilation overhead)
+   - 3.1 [Avoid Play CDN in Production](references/bundle-avoid-cdn-production.md) — HIGH (larger payload, runtime compilation overhead)
    - 3.2 [Avoid Sass/Less Preprocessors](references/bundle-avoid-preprocessors.md) — HIGH (prevents compatibility issues, enables native features)
-   - 3.3 [Enable CSS Minification in Production](references/bundle-css-minification.md) — HIGH (40-60% smaller CSS bundles)
-   - 3.4 [Extract Critical CSS for Initial Render](references/bundle-split-critical-css.md) — MEDIUM-HIGH (100-300ms faster FCP on slow connections)
+   - 3.3 [Enable CSS Minification in Production](references/bundle-css-minification.md) — HIGH (smaller CSS bundles)
+   - 3.4 [Extract Critical CSS for Initial Render](references/bundle-split-critical-css.md) — MEDIUM-HIGH
    - 3.5 [Remove Built-in Plugins](references/bundle-remove-unused-plugins.md) — HIGH (eliminates duplicate code, reduces dependencies)
 4. Utility Patterns — **HIGH**
    - 4.1 [Use Explicit Border and Ring Colors](references/util-explicit-colors.md) — HIGH (prevents invisible borders, ensures consistent appearance)
    - 4.2 [Use Left-to-Right Variant Stacking](references/util-variant-stacking.md) — HIGH (prevents broken responsive/state styles)
    - 4.3 [Use Renamed Utility Classes](references/util-renamed-utilities.md) — HIGH (prevents broken styles, ensures v4 compatibility)
-   - 4.4 [Use Slash Opacity Modifier](references/util-opacity-modifier.md) — HIGH (50% fewer opacity-related classes)
+   - 4.4 [Use Slash Opacity Modifier](references/util-opacity-modifier.md) — HIGH (fewer opacity-related classes)
    - 4.5 [Use Trailing Important Modifier](references/util-important-modifier.md) — HIGH (prevents v4 syntax errors)
-   - 4.6 [Use via-none to Reset Gradient Stops](references/util-gradient-via-none.md) — MEDIUM-HIGH (prevents unexpected gradient behavior with variants)
+   - 4.6 [Use via-none to Reset Gradient Stops](references/util-gradient-via-none.md) — MEDIUM-HIGH
 5. Component Architecture — **MEDIUM-HIGH**
-   - 5.1 [Avoid Overusing @apply](references/comp-avoid-apply-overuse.md) — MEDIUM-HIGH (prevents CSS bloat, maintains utility-first benefits)
+   - 5.1 [Avoid Overusing @apply](references/comp-avoid-apply-overuse.md) — MEDIUM-HIGH
    - 5.2 [Customize Container with @utility](references/comp-container-customize.md) — MEDIUM (prevents v4 migration breakage)
    - 5.3 [Leverage Smart Utility Sorting](references/comp-smart-sorting.md) — MEDIUM (automatic cascade ordering, fewer specificity issues)
-   - 5.4 [Understand Utility File Scope](references/comp-utility-file-scope.md) — MEDIUM-HIGH (prevents build errors and missing class bugs)
-   - 5.5 [Use @reference for CSS Module Integration](references/comp-reference-directive.md) — MEDIUM-HIGH (eliminates duplicate CSS output in modules)
+   - 5.4 [Understand Utility File Scope](references/comp-utility-file-scope.md) — MEDIUM-HIGH
+   - 5.5 [Use @reference for CSS Module Integration](references/comp-reference-directive.md) — MEDIUM-HIGH
 6. Theming & Design Tokens — **MEDIUM**
    - 6.1 [Leverage Runtime CSS Variables](references/theme-runtime-variables.md) — MEDIUM (enables dynamic theming without JavaScript)
    - 6.2 [Set color-scheme for Native Dark Mode](references/theme-color-scheme.md) — MEDIUM (eliminates visual theme inconsistencies)
@@ -63,12 +63,12 @@ Comprehensive performance optimization and best practices guide for Tailwind CSS
    - 7.2 [Understand Hover Behavior on Touch Devices](references/resp-hover-capability.md) — MEDIUM (prevents sticky hover states on mobile)
    - 7.3 [Use Container Queries for Component-Level Responsiveness](references/resp-container-queries.md) — MEDIUM (eliminates viewport-dependent component bugs)
    - 7.4 [Use Logical Properties for RTL Support](references/resp-logical-properties.md) — MEDIUM (automatic RTL support without duplicate styles)
-   - 7.5 [Use Mobile-First Responsive Design](references/resp-mobile-first.md) — MEDIUM (10-30% smaller CSS output)
+   - 7.5 [Use Mobile-First Responsive Design](references/resp-mobile-first.md) — MEDIUM (smaller CSS output)
 8. Animation & Transitions — **LOW-MEDIUM**
-   - 8.1 [Use @starting-style for Entry Animations](references/anim-starting-style.md) — LOW-MEDIUM (enables CSS-only entry animations, no JavaScript)
-   - 8.2 [Use Built-in 3D Transform Utilities](references/anim-3d-transforms.md) — LOW-MEDIUM (enables 3D effects without custom CSS)
-   - 8.3 [Use GPU-Accelerated Transform Properties](references/anim-gpu-accelerated.md) — LOW-MEDIUM (60fps animations, avoids layout thrashing)
-   - 8.4 [Use OKLCH Gradient Interpolation](references/anim-gradient-interpolation.md) — LOW-MEDIUM (20-40% more vivid gradient midpoints)
+   - 8.1 [Use @starting-style for Entry Animations](references/anim-starting-style.md) — LOW-MEDIUM
+   - 8.2 [Use Built-in 3D Transform Utilities](references/anim-3d-transforms.md) — LOW-MEDIUM
+   - 8.3 [Use GPU-Accelerated Transform Properties](references/anim-gpu-accelerated.md) — LOW-MEDIUM
+   - 8.4 [Use OKLCH Gradient Interpolation](references/anim-gradient-interpolation.md) — LOW-MEDIUM
 
 ---
 
