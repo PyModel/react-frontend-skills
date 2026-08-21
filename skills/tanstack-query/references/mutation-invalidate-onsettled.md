@@ -1,70 +1,51 @@
 ---
-title: Invalidate in onSettled, Not onSuccess
+title: Choose Mutation Invalidation Callbacks by Contract
 impact: HIGH
-impactDescription: ensures cache sync after errors too
-tags: mutation, invalidation, onSettled, onSuccess, consistency
+impactDescription: keeps cached data consistent without unconditional refetches
+tags: mutation, invalidation, onSettled, onSuccess, optimistic-updates
 ---
 
-## Invalidate in onSettled, Not onSuccess
+## Choose Mutation Invalidation Callbacks by Contract
 
-Invalidating only in `onSuccess` leaves the cache inconsistent after failed mutations. Use `onSettled` to ensure cache invalidation regardless of success or failure.
+There is no universal rule to invalidate in `onSettled` instead of `onSuccess`. Choose from what the server can change and whether the mutation used an optimistic cache update.
 
-**Incorrect (invalidate in onSuccess only):**
+**Ordinary mutation: invalidate after confirmed success:**
 
 ```typescript
 const mutation = useMutation({
   mutationFn: createTodo,
-  onSuccess: () => {
-    // Only runs on success
-    queryClient.invalidateQueries({ queryKey: ['todos'] })
+  onSuccess: async () => {
+    await queryClient.invalidateQueries({ queryKey: ['todos'] })
   },
 })
-
-// If mutation fails after optimistic update:
-// 1. onError restores old state
-// 2. But server might have partial state
-// 3. onSuccess never runs, no refetch
-// 4. Client and server are out of sync!
 ```
 
-**Correct (invalidate in onSettled):**
+A rejected mutation that made no server-side change does not normally make successful cached data stale, so unconditional error-path invalidation wastes a request.
+
+**Optimistic mutation: roll back errors and reconcile after settlement:**
 
 ```typescript
 const mutation = useMutation({
-  mutationFn: createTodo,
-  onMutate: async (newTodo) => {
+  mutationFn: updateTodo,
+  onMutate: async (nextTodo) => {
     await queryClient.cancelQueries({ queryKey: ['todos'] })
-    const previous = queryClient.getQueryData(['todos'])
-    queryClient.setQueryData(['todos'], (old: Todo[]) => [...old, newTodo])
+    const previous = queryClient.getQueryData<Todo[]>(['todos'])
+
+    queryClient.setQueryData<Todo[]>(['todos'], (current = []) =>
+      current.map((todo) => (todo.id === nextTodo.id ? nextTodo : todo))
+    )
+
     return { previous }
   },
-  onError: (err, newTodo, context) => {
+  onError: (_error, _variables, context) => {
     queryClient.setQueryData(['todos'], context?.previous)
   },
-  onSettled: () => {
-    // Runs after BOTH success AND error
-    // Ensures cache matches server state
-    queryClient.invalidateQueries({ queryKey: ['todos'] })
+  onSettled: async () => {
+    await queryClient.invalidateQueries({ queryKey: ['todos'] })
   },
 })
 ```
 
-**When to use onSuccess specifically:**
+Return/await the invalidation Promise when the mutation should remain pending until fresh data arrives. If a failed request can partially commit on the server, make that protocol explicit (idempotency key, operation status, or reconciliation endpoint) rather than assuming every failure did or did not mutate state.
 
-```typescript
-const mutation = useMutation({
-  mutationFn: createTodo,
-  onSuccess: (data) => {
-    // Use response data for something specific
-    toast.success(`Created: ${data.title}`)
-    router.push(`/todos/${data.id}`)
-  },
-  onError: (error) => {
-    toast.error(error.message)
-  },
-  onSettled: () => {
-    // Always invalidate here
-    queryClient.invalidateQueries({ queryKey: ['todos'] })
-  },
-})
-```
+Reference: [TanStack Query invalidations from mutations](https://tanstack.com/query/latest/docs/framework/react/guides/invalidations-from-mutations)
