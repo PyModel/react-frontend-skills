@@ -1,13 +1,13 @@
 ---
 title: Avoid XPath Selectors
 impact: HIGH
-impactDescription: XPath is 3-5× slower and more brittle
+impactDescription: DOM-structure selectors are brittle and do not express user-facing contracts
 tags: loc, xpath, performance, selectors, anti-pattern
 ---
 
 ## Avoid XPath Selectors
 
-XPath selectors require full DOM traversal and are significantly slower than CSS or role-based selectors. They also break easily when DOM structure changes.
+XPath selectors often encode DOM structure rather than user-visible behavior, so they break easily when markup changes. Prefer Playwright's role, label, text, test-id, and filtering locators. Treat maintainability and actionability as the reason; selector timing depends on the page and browser.
 
 **Incorrect (XPath selectors):**
 
@@ -60,14 +60,5 @@ await page
   .getByRole('button', { name: 'Edit' })
   .click();
 ```
-
-**Performance comparison:**
-
-| Selector Type | Relative Speed |
-|--------------|----------------|
-| getByRole | 1× (fastest) |
-| getByTestId | 1.1× |
-| CSS | 1.2× |
-| XPath | 3-5× (slowest) |
 
 Reference: [Playwright Locator Best Practices](https://playwright.dev/docs/best-practices#use-locators)
