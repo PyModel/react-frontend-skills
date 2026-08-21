@@ -1,15 +1,13 @@
 ---
-title: Use notifyOnChangeProps to Limit Re-renders
+title: Rely on Tracked Properties Before notifyOnChangeProps
 impact: LOW-MEDIUM
-impactDescription: prevents re-renders for unused state changes
-tags: render, notifyOnChangeProps, optimization, re-renders
+impactDescription: preserves safe automatic subscriptions and reserves manual lists for measured cases
+tags: render, notifyOnChangeProps, tracked-properties, optimization
 ---
 
-## Use notifyOnChangeProps to Limit Re-renders
+## Rely on Tracked Properties Before notifyOnChangeProps
 
-Components re-render when any query state changes (data, error, isLoading, isFetching, etc.). Use `notifyOnChangeProps` to subscribe only to specific properties.
-
-**Default behavior (re-renders on any change):**
+TanStack Query tracks which result properties a component reads and re-renders it when one of those properties changes. This is the default. Do not set `notifyOnChangeProps` merely because the result object contains many fields.
 
 ```typescript
 function DataDisplay() {
@@ -18,74 +16,28 @@ function DataDisplay() {
     queryFn: fetchData,
   })
 
-  // Re-renders when:
-  // - data changes ✓ (we use this)
-  // - error changes ✗ (we don't use this)
-  // - isFetching changes ✗ (we don't use this)
-  // - isStale changes ✗ (we don't use this)
-
+  // The component is tracked for `data` because that is what it reads.
   return <div>{data?.value}</div>
 }
 ```
 
-**Optimized (only re-render for data changes):**
+Avoid object-rest destructuring because it reads every remaining property and defeats tracking:
 
 ```typescript
-function DataDisplay() {
-  const { data } = useQuery({
-    queryKey: ['data'],
-    queryFn: fetchData,
-    notifyOnChangeProps: ['data'], // Only re-render when data changes
-  })
-
-  return <div>{data?.value}</div>
-}
+// Avoid
+const { data, ...queryMeta } = useQuery(options)
 ```
 
-**Common patterns:**
+Use `notifyOnChangeProps` only after profiling demonstrates a need and list every property that affects rendering:
 
 ```typescript
-// Only care about data and error
-notifyOnChangeProps: ['data', 'error'],
-
-// Show loading state
-notifyOnChangeProps: ['data', 'isPending'],
-
-// Track background fetching
-notifyOnChangeProps: ['data', 'isFetching'],
-```
-
-**Prefetch without re-renders:**
-
-```typescript
-function Article({ id }: { id: string }) {
-  // Main query - normal behavior
-  const { data } = useQuery({
-    queryKey: ['article', id],
-    queryFn: () => fetchArticle(id),
-  })
-
-  // Prefetch comments - don't re-render this component at all
-  useQuery({
-    queryKey: ['comments', id],
-    queryFn: () => fetchComments(id),
-    notifyOnChangeProps: [], // Never causes re-render
-  })
-
-  return <ArticleContent article={data} />
-}
-```
-
-**Auto-detection with tracked queries:**
-
-```typescript
-// TanStack Query can auto-track which props you access
-// Enable via QueryClient config:
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      notifyOnChangeProps: 'all', // Or specific props
-    },
-  },
+const { data, error } = useQuery({
+  queryKey: ['data'],
+  queryFn: fetchData,
+  notifyOnChangeProps: ['data', 'error'],
 })
 ```
+
+An incomplete list can produce stale UI. `notifyOnChangeProps: 'all'` opts out of tracked-property optimization; it does not enable it. To warm another query without subscribing this component, call `queryClient.prefetchQuery()` from an event, loader, or deliberate effect instead of mounting a hidden `useQuery` with an empty notification list.
+
+Reference: [TanStack Query render optimizations](https://tanstack.com/query/latest/docs/framework/react/guides/render-optimizations#tracked-properties)
