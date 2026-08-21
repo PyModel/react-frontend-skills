@@ -1,79 +1,50 @@
 ---
-title: Extend Tailwind Theme for Custom Design Tokens
+title: Define Tailwind v4 Theme Tokens in CSS
 impact: HIGH
-impactDescription: maintains design system consistency
-tags: style, tailwind, theme, design-tokens, configuration
+impactDescription: keeps shadcn and Tailwind tokens reusable and consistent with the CSS-first configuration model
+tags: style, tailwind-v4, theme, design-tokens, configuration
 ---
 
-## Extend Tailwind Theme for Custom Design Tokens
+## Define Tailwind v4 Theme Tokens in CSS
 
-Add brand colors and custom design tokens by extending the Tailwind theme rather than using arbitrary values. This creates reusable tokens and enables autocomplete.
+For Tailwind CSS v4 projects, define reusable design tokens with `@theme` or map existing shadcn CSS variables with `@theme inline`. Do not present `theme.extend` in `tailwind.config.js` as the default current setup; JavaScript config is compatibility-only in v4 and is not auto-detected.
 
-**Incorrect (arbitrary values scattered):**
+```css
+/* app.css */
+@import "tailwindcss";
 
-```tsx
-function BrandedCard() {
-  return (
-    <Card className="bg-[#1a365d] border-[#2a4a7f]">
-      <CardHeader>
-        <CardTitle className="text-[#e2e8f0]">
-          {/* Arbitrary values: no autocomplete, hard to maintain */}
-          Dashboard
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-[#a0aec0]">Welcome to your dashboard</p>
-      </CardContent>
-    </Card>
-  )
+:root {
+  --brand-surface: oklch(0.35 0.08 255);
+  --brand-foreground: oklch(0.95 0.02 255);
 }
-```
 
-**Correct (extended Tailwind theme):**
+.dark {
+  --brand-surface: oklch(0.24 0.06 255);
+  --brand-foreground: oklch(0.97 0.01 255);
+}
 
-```js
-// tailwind.config.js
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        brand: {
-          50: "#e6f0ff",
-          100: "#b3d1ff",
-          500: "#1a365d",
-          600: "#153050",
-          700: "#102540",
-          foreground: "#e2e8f0",
-          muted: "#a0aec0",
-        },
-      },
-    },
-  },
+@theme inline {
+  --color-brand: var(--brand-surface);
+  --color-brand-foreground: var(--brand-foreground);
 }
 ```
 
 ```tsx
 function BrandedCard() {
   return (
-    <Card className="bg-brand-500 border-brand-600">
+    <Card className="bg-brand text-brand-foreground">
       <CardHeader>
-        <CardTitle className="text-brand-foreground">
-          {/* Autocomplete works, single source of truth */}
-          Dashboard
-        </CardTitle>
+        <CardTitle>Dashboard</CardTitle>
       </CardHeader>
-      <CardContent>
-        <p className="text-brand-muted">Welcome to your dashboard</p>
-      </CardContent>
     </Card>
   )
 }
 ```
 
-**Benefits of theme extension:**
-- IDE autocomplete for all custom values
-- Single source of truth for brand colors
-- Easy global updates when brand changes
-- Works with opacity modifiers (bg-brand-500/50)
+Use semantic names when a token represents a role (`background`, `destructive`, `brand`) and scale names when consumers genuinely choose tonal steps. Arbitrary values remain appropriate for one-off values that are not design-system tokens.
 
-Reference: [Tailwind Theme Extension](https://tailwindcss.com/docs/theme#extending-the-default-theme)
+If a migrated project must retain a JavaScript config, load it explicitly with `@config`; do not mix two sources of truth without a migration reason.
+
+References:
+- [Tailwind CSS theme variables](https://tailwindcss.com/docs/theme)
+- [Tailwind CSS v4 upgrade guide](https://tailwindcss.com/docs/upgrade-guide#using-a-javascript-config-file)
