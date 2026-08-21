@@ -7,7 +7,7 @@ tags: form, react-hook-form, validation, performance, integration
 
 ## Use React Hook Form with shadcn/ui Forms
 
-shadcn/ui's Form components are designed for React Hook Form integration. Using controlled state with useState causes re-renders on every keystroke.
+shadcn/ui provides a React Hook Form integration, but current shadcn projects may also choose other form libraries. When a project uses React Hook Form, wire shadcn fields through its documented `FormField`/`Controller` contract instead of duplicating form state in local `useState`.
 
 **Incorrect (controlled state causes re-renders):**
 
@@ -51,7 +51,7 @@ import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 
 const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z.email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
 })
 
@@ -64,7 +64,7 @@ function LoginForm() {
   })
 
   const onSubmit = (data: LoginFormValues) => {
-    // Validated data, no re-renders during typing
+    // Validated, typed data. Subscription scope determines re-render behavior.
   }
 
   return (
