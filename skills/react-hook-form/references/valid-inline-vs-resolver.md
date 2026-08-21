@@ -35,7 +35,7 @@ function CheckoutForm() {
 
 ```typescript
 const checkoutSchema = z.object({
-  email: z.string().email('Invalid email'),
+  email: z.email('Invalid email'),
   billingAddressSame: z.boolean(),
   billingStreet: z.string().optional(),
 }).refine(
