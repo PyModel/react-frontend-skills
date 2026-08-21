@@ -7,9 +7,9 @@ tags: object, extend, composition, inheritance
 
 ## Use extend() for Adding Fields
 
-When building on existing schemas, use `.extend()` to add new fields rather than manually spreading. Extend preserves type information, allows overriding existing fields, and keeps the schema relationship explicit.
+When building on an existing object schema, use `.extend()` for a concise extension or object spread for the best TypeScript performance and explicit strictness. Both preserve inference. If the base schema contains refinements, use `.safeExtend()` so incompatible overrides are rejected.
 
-**Incorrect (manual object spreading):**
+**Incorrect (duplicating the base fields):**
 
 ```typescript
 import { z } from 'zod'
@@ -19,17 +19,13 @@ const baseUserSchema = z.object({
   name: z.string(),
 })
 
-// Manual spreading loses Zod's schema relationship
+// Duplicated fields drift when the base schema changes.
 const adminUserSchema = z.object({
-  ...baseUserSchema.shape,  // Accessing internal .shape
+  id: z.string(),
+  name: z.string(),
   role: z.literal('admin'),
   permissions: z.array(z.string()),
 })
-
-// Problems:
-// 1. If baseUserSchema changes, TypeScript might not catch issues
-// 2. Can't override fields easily
-// 3. Loses schema methods and metadata
 ```
 
 **Correct (using extend):**
@@ -40,7 +36,7 @@ import { z } from 'zod'
 const baseUserSchema = z.object({
   id: z.string(),
   name: z.string(),
-  email: z.string().email(),
+  email: z.email(),
 })
 
 // Extend to add fields
@@ -60,7 +56,7 @@ type AdminUser = z.infer<typeof adminUserSchema>
 
 // Override existing fields
 const strictEmailSchema = baseUserSchema.extend({
-  email: z.string().email().endsWith('@company.com'),  // Stricter validation
+  email: z.email().endsWith('@company.com'),  // Stricter validation
 })
 ```
 
@@ -69,14 +65,14 @@ const strictEmailSchema = baseUserSchema.extend({
 ```typescript
 // Base entity with common fields
 const entitySchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   createdAt: z.date(),
   updatedAt: z.date(),
 })
 
 // User extends entity
 const userSchema = entitySchema.extend({
-  email: z.string().email(),
+  email: z.email(),
   name: z.string(),
 })
 
@@ -89,9 +85,9 @@ const productSchema = entitySchema.extend({
 
 // Order extends entity with references
 const orderSchema = entitySchema.extend({
-  userId: z.string().uuid(),
+  userId: z.uuid(),
   items: z.array(z.object({
-    productId: z.string().uuid(),
+    productId: z.uuid(),
     quantity: z.number().int().positive(),
   })),
   total: z.number().positive(),
@@ -122,7 +118,7 @@ const updateSchema = baseSchema
   })
 ```
 
-**Merge for combining independent schemas:**
+**Combine independent object shapes:**
 
 ```typescript
 const addressSchema = z.object({
@@ -131,17 +127,19 @@ const addressSchema = z.object({
 })
 
 const contactSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   phone: z.string(),
 })
 
-// Merge combines two schemas (both required)
-const customerSchema = addressSchema.merge(contactSchema)
-// { street: string; city: string; email: string; phone: string }
+// Object spread is the Zod 4 replacement for deprecated .merge().
+const customerSchema = z.object({
+  ...addressSchema.shape,
+  ...contactSchema.shape,
+})
 ```
 
 **When NOT to use this pattern:**
-- When schemas are genuinely independent (use merge or intersection)
-- When you need to remove fields (use omit)
+- When both schemas must validate independently and overlapping fields must satisfy both; use an intersection
+- When you need to remove fields; use `.omit()`
 
 Reference: [Zod API - extend](https://zod.dev/api#extend)
