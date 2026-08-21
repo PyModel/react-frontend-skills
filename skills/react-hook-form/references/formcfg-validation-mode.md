@@ -1,15 +1,15 @@
 ---
-title: Use onSubmit Mode for Optimal Performance
+title: Choose Validation Mode from UX and Validation Cost
 impact: CRITICAL
 impactDescription: prevents re-renders on every keystroke
 tags: formcfg, validation-mode, re-renders, useForm
 ---
 
-## Use onSubmit Mode for Optimal Performance
+## Choose Validation Mode from UX and Validation Cost
 
-The `mode` option in useForm determines when validation runs. Using `onChange` mode triggers validation on every keystroke, causing significant re-renders. Default to `onSubmit` unless real-time feedback is essential.
+The `mode` option controls when React Hook Form validates before the first submit. `onSubmit` is the default and minimizes validation work, but `onBlur`, `onTouched`, or `onChange` may better match the product's feedback requirements. Do not label a supported mode incorrect without measuring an expensive form.
 
-**Incorrect (validates on every keystroke):**
+**Live validation (use when the UX requires it):**
 
 ```typescript
 const { register, handleSubmit, formState: { errors } } = useForm({
@@ -26,7 +26,7 @@ function RegistrationForm() {
 }
 ```
 
-**Correct (validates only on submit):**
+**Submit-time validation (default):**
 
 ```typescript
 const { register, handleSubmit, formState: { errors } } = useForm({
@@ -46,6 +46,6 @@ function RegistrationForm() {
 **When to use other modes:**
 - `onBlur`: Validate when user leaves a field (good balance of UX and performance)
 - `onTouched`: Like `onBlur` but only after first interaction
-- `onChange`: Only when real-time validation feedback is critical (use sparingly)
+- `onChange`: Use for immediate feedback when resolver cost and error UX are acceptable
 
 Reference: [useForm - mode](https://react-hook-form.com/docs/useform)
