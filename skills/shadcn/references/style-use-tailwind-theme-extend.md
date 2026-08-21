@@ -9,6 +9,19 @@ tags: style, tailwind-v4, theme, design-tokens, configuration
 
 For Tailwind CSS v4 projects, define reusable design tokens with `@theme` or map existing shadcn CSS variables with `@theme inline`. Do not present `theme.extend` in `tailwind.config.js` as the default current setup; JavaScript config is compatibility-only in v4 and is not auto-detected.
 
+**Incorrect (assuming v4 auto-detects a JavaScript config):**
+
+```javascript
+// tailwind.config.js
+export default {
+  theme: {
+    extend: { colors: { brand: '#2563eb' } },
+  },
+}
+```
+
+**Correct (CSS-first theme tokens):**
+
 ```css
 /* app.css */
 @import "tailwindcss";
