@@ -1,0 +1,58 @@
+{
+  "name": "@pymodel/react-frontend-skills-mcp",
+  "version": "1.0.0",
+  "description": "Read-only MCP server for 18 production-grade React frontend agent skills.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Mohamed Elkholy (elkaix)",
+  "homepage": "https://github.com/PyModel/react-frontend-skills/tree/main/mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PyModel/react-frontend-skills.git",
+    "directory": "mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/PyModel/react-frontend-skills/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "agent-skills",
+    "react",
+    "nextjs",
+    "typescript",
+    "frontend",
+    "ai-agents"
+  ],
+  "bin": {
+    "react-frontend-skills-mcp": "bin/react-frontend-skills-mcp.js"
+  },
+  "files": [
+    "bin",
+    "data",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "start": "node bin/react-frontend-skills-mcp.js",
+    "test": "node --test",
+    "test:package": "node scripts/package-smoke.mjs",
+    "check": "node --check bin/react-frontend-skills-mcp.js && node --check src/catalog.js && node --check src/server.js && node --check scripts/package-skills.mjs && node --check scripts/package-smoke.mjs && npm test && npm run test:package",
+    "prepare:skills": "node scripts/package-skills.mjs prepare",
+    "cleanup:skills": "node scripts/package-skills.mjs clean",
+    "prepack": "npm run prepare:skills",
+    "postpack": "npm run cleanup:skills"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "yaml": "^2.9.0",
+    "zod": "^4.4.3"
+  }
+}
