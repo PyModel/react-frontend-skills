@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-08-20
+
 ### Changed
 
 - Audited all 18 skills against current official documentation and the August 2026 package baseline.
@@ -104,4 +106,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Priority-based skill organization (CRITICAL, HIGH, MEDIUM, LOW)
 - Category-based rule grouping for easy navigation
 
+[Unreleased]: https://github.com/PyModel/react-frontend-skills/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/PyModel/react-frontend-skills/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/PyModel/react-frontend-skills/releases/tag/v2.0.0
