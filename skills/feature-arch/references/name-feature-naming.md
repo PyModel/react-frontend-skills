@@ -57,4 +57,4 @@ src/features/
 - Does this map to a business capability?
 - Would this name make sense in a requirements document?
 
-Reference: [Domain-Driven Design - Eric Evans](https://www.domainlanguage.com/ddd/)
+Reference: [Bounded Context - Martin Fowler](https://martinfowler.com/bliki/BoundedContext.html)
