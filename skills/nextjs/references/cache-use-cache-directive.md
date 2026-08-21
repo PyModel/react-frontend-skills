@@ -1,55 +1,41 @@
 ---
-title: Use the 'use cache' Directive for Explicit Caching
+title: Use 'use cache' with Cache Components
 impact: CRITICAL
-impactDescription: eliminates implicit caching confusion, explicit control
-tags: cache, use-cache, directive, data-fetching
+impactDescription: opts stable work into the Next.js 16 Cache Components model
+tags: cache, use-cache, directive, data-fetching, cache-components
 ---
 
-## Use the 'use cache' Directive for Explicit Caching
+## Use 'use cache' with Cache Components
 
-Next.js 16 introduces Cache Components with the `'use cache'` directive. Unlike implicit caching in previous versions, caching is now opt-in and explicit.
-
-**Incorrect (relying on implicit caching):**
+The `'use cache'` directive is part of Next.js 16 Cache Components. Enable the model with top-level `cacheComponents: true`, then place the directive at file, component, or function scope for work whose inputs and outputs are serializable and safe to reuse.
 
 ```typescript
-// app/products/page.tsx
-export default async function ProductsPage() {
-  // In Next.js 15, this was cached by default
-  // In Next.js 16, this fetches fresh data every request
-  const products = await fetch('https://api.store.com/products')
+// next.config.ts
+import type { NextConfig } from 'next'
 
-  return <ProductList products={products} />
-}
+const nextConfig: NextConfig = { cacheComponents: true }
+export default nextConfig
 ```
-
-**Correct (explicit caching with 'use cache'):**
-
-```typescript
-// app/products/page.tsx
-'use cache'
-
-export default async function ProductsPage() {
-  const products = await fetch('https://api.store.com/products')
-
-  return <ProductList products={products} />
-}
-// Entire page is cached until manually invalidated
-```
-
-**Alternative (cache specific functions):**
 
 ```typescript
 // lib/data.ts
-import { unstable_cache } from 'next/cache'
+import { cacheLife, cacheTag } from 'next/cache'
 
-export const getProducts = unstable_cache(
-  async () => {
-    const res = await fetch('https://api.store.com/products')
-    return res.json()
-  },
-  ['products'],
-  { revalidate: 3600 }  // Cache for 1 hour
-)
+export async function getProducts() {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('products')
+
+  const response = await fetch('https://api.store.com/products')
+  if (!response.ok) throw new Error('Failed to load products')
+  return response.json()
+}
 ```
 
-Reference: [Next.js 16 Cache Components](https://nextjs.org/blog/next-16)
+Without `'use cache'`, runtime fetches remain fresh by default. With it, the cached function follows its cache-life profile and can be invalidated through its tags; it is not necessarily cached forever.
+
+Do not read request-time values such as `cookies()`, `headers()`, or `searchParams` inside a cached scope. Read them outside and pass only the minimal serializable value as an argument. Do not cache personalized data under shared arguments.
+
+If `cacheComponents` is not enabled, follow the previous caching model (`fetch` cache options and, where needed, `unstable_cache`) rather than copying `'use cache'` into the app. Enabling Cache Components is a model change, not a rename-only migration.
+
+Reference: [Next.js Cache Components](https://nextjs.org/docs/app/getting-started/cache-components)
