@@ -16,8 +16,8 @@ When defining schemas in shared modules, export both the schema and its inferred
 import { z } from 'zod'
 
 export const userSchema = z.object({
-  id: z.string().uuid(),
-  email: z.string().email(),
+  id: z.uuid(),
+  email: z.email(),
   name: z.string(),
   role: z.enum(['admin', 'user']),
 })
@@ -43,8 +43,8 @@ type User = z.infer<typeof userSchema>  // Same boilerplate again
 import { z } from 'zod'
 
 export const userSchema = z.object({
-  id: z.string().uuid(),
-  email: z.string().email(),
+  id: z.uuid(),
+  email: z.email(),
   name: z.string(),
   role: z.enum(['admin', 'user']),
 })
