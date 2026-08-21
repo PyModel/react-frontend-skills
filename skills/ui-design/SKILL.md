@@ -56,7 +56,7 @@ Reference these guidelines when:
 - `layout-whitespace` - Use whitespace to improve readability
 - `layout-f-pattern` - Design for F-pattern reading behavior
 - `layout-grid-system` - Use a consistent grid system
-- `layout-single-cta` - Limit to one primary CTA per screen
+- `layout-single-cta` - Establish a clear primary action per task context
 - `layout-proximity-grouping` - Group related elements with proximity
 
 ### 4. Responsive & Mobile-First Design (HIGH)
