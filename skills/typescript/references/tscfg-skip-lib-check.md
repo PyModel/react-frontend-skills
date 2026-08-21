@@ -1,64 +1,37 @@
 ---
-title: Enable skipLibCheck for Faster Builds
+title: Choose skipLibCheck Deliberately
 impact: CRITICAL
-impactDescription: 20-40% faster compilation
+impactDescription: trades declaration-file checking for faster builds and must be measured
 tags: tscfg, skipLibCheck, tsconfig, declaration-files, performance
 ---
 
-## Enable skipLibCheck for Faster Builds
+## Choose skipLibCheck Deliberately
 
-The `skipLibCheck` option skips type-checking of declaration files (`.d.ts`). Since these files are pre-verified by library authors, checking them is redundant and wastes compilation time.
+`skipLibCheck` skips type checking of all declaration files. It can reduce compile time, but it also hides inconsistencies between dependencies or between a library declaration and the current compiler. It does not mean declarations were "pre-verified" for your exact dependency graph.
 
-**Incorrect (checks all declaration files):**
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "strict": true
-  }
-}
-```
+Measure before enabling it:
 
 ```bash
-# Checks thousands of .d.ts files in node_modules
-# Compilation time: 25 seconds
+tsc --noEmit --extendedDiagnostics
 ```
 
-**Correct (skips declaration file checks):**
+If declaration checking is a demonstrated bottleneck and the project accepts the reduced coverage:
 
 ```json
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
     "strict": true,
     "skipLibCheck": true
   }
 }
 ```
 
-```bash
-# Only checks your source files
-# Compilation time: 15 seconds (40% faster)
-```
+Prefer fixing duplicate or conflicting dependency versions when possible. Keep full declaration checking when publishing a library, validating generated declarations, investigating dependency type conflicts, or when the time saving is negligible.
 
-**Alternative (more conservative):**
+`skipDefaultLibCheck` is narrower: it skips TypeScript's default library declaration files but still checks third-party declarations.
 
-```json
-{
-  "compilerOptions": {
-    "skipDefaultLibCheck": true
-  }
-}
-```
+Document the choice in shared compiler configuration so editors, local checks, and CI do not silently use different policies.
 
-This only skips checking the default library files (lib.d.ts), not third-party declarations.
-
-**When to disable skipLibCheck:**
-- Debugging type conflicts between declaration files
-- Publishing a library where you want to verify `.d.ts` output
-- Encountering mysterious type errors that might originate in declarations
-
-Reference: [TypeScript Performance Wiki](https://github.com/microsoft/TypeScript/wiki/Performance#skipping-d-ts-checking)
+References:
+- [TypeScript skipLibCheck option](https://www.typescriptlang.org/tsconfig/skipLibCheck.html)
+- [TypeScript performance wiki](https://github.com/microsoft/TypeScript/wiki/Performance#skipping-d-ts-checking)
