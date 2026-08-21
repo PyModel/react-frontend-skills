@@ -16,7 +16,7 @@ import { z } from 'zod'
 import { NextRequest, NextResponse } from 'next/server'
 
 const createUserSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   name: z.string().min(1),
 })
 
@@ -40,7 +40,7 @@ import { z } from 'zod'
 import { NextRequest, NextResponse } from 'next/server'
 
 const createUserSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   name: z.string().min(1),
 })
 
