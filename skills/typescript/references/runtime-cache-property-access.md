@@ -1,13 +1,13 @@
 ---
-title: Cache Property Access in Loops
+title: Hoist Loop-Invariant Work in Measured Hot Paths
 impact: LOW-MEDIUM
-impactDescription: reduces property lookups by N×
+impactDescription: avoids repeated invariant work when profiling identifies a hot loop
 tags: runtime, loops, caching, property-access, optimization
 ---
 
-## Cache Property Access in Loops
+## Hoist Loop-Invariant Work in Measured Hot Paths
 
-Repeated property access inside loops adds overhead. Cache frequently accessed properties before the loop, especially for nested properties and array lengths.
+Modern engines optimize ordinary property access and array lengths aggressively. Do not rewrite clear loops speculatively. When profiling identifies a hot loop, hoist values that are demonstrably invariant or expensive to compute, especially getters, proxy access, or repeated nested lookups.
 
 **Incorrect (repeated property access):**
 
@@ -72,10 +72,10 @@ orders.forEach(order => {
 })
 ```
 
-**When this matters:**
-- Large arrays (1000+ items)
-- Hot paths executed frequently
-- Deeply nested property access
+**When this may matter:**
+- Profiling identifies this loop as material
+- The access invokes getters, proxies, or other non-trivial work
+- Hoisting also clarifies that a value must stay invariant
 
 **When to skip optimization:**
 - Small arrays or infrequent execution
