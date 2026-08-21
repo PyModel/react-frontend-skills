@@ -90,7 +90,7 @@ Reference these guidelines when:
 
 ### 7. Test Performance & Reliability (MEDIUM)
 
-- `perf-fast-unit-tests` - Keep Unit Tests Under 100ms
+- `perf-fast-unit-tests` - Keep unit tests fast enough for continuous feedback
 - `perf-avoid-network-calls` - Eliminate Network Calls in Unit Tests
 - `perf-fix-flaky-tests` - Fix Flaky Tests Immediately
 - `perf-parallelize-tests` - Parallelize Independent Tests
