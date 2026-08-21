@@ -1,22 +1,23 @@
 ---
 title: Paginate Large Datasets Server-Side
 impact: MEDIUM-HIGH
-impactDescription: reduces initial payload by 90%+ for large datasets
+impactDescription: reduces initial payload for large datasets
 tags: data, pagination, server-side, api, performance
 ---
 
 ## Paginate Large Datasets Server-Side
 
-For datasets over 100 items, implement server-side pagination. Client-side pagination requires loading all data upfront, bloating the initial payload.
+Use server-side pagination when loading and rendering the full dataset would exceed the product's payload, latency, memory, or freshness budget. Small bounded datasets can remain client-side; do not use an arbitrary item-count threshold.
 
 **Incorrect (client-side pagination):**
 
 ```tsx
 function ProductTable() {
-  const { data: products } = useQuery(["products"], () =>
-    fetch("/api/products").then((r) => r.json())
-  )
-  // Fetches ALL 10,000 products on mount
+  const { data: products } = useQuery({
+    queryKey: ['products'],
+    queryFn: () => fetch('/api/products').then((response) => response.json()),
+  })
+  // Fetches the full collection on mount.
 
   const [page, setPage] = useState(0)
   const pageSize = 10
@@ -34,18 +35,22 @@ function ProductTable() {
 **Correct (server-side pagination):**
 
 ```tsx
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+
 function ProductTable() {
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
 
-  const { data, isLoading } = useQuery(
-    ["products", pagination],
-    () =>
-      fetch(
+  const { data } = useQuery({
+    queryKey: ['products', pagination],
+    queryFn: async () => {
+      const response = await fetch(
         `/api/products?page=${pagination.pageIndex}&limit=${pagination.pageSize}`
-      ).then((r) => r.json()),
-    { keepPreviousData: true } // Smooth transitions between pages
-  )
-  // Fetches only 10 products per page
+      )
+      if (!response.ok) throw new Error('Failed to load products')
+      return response.json()
+    },
+    placeholderData: keepPreviousData,
+  })
 
   const table = useReactTable({
     data: data?.products ?? [],
@@ -100,4 +105,4 @@ function ProductTable() {
 }
 ```
 
-Reference: [TanStack Table Pagination](https://tanstack.com/table/latest/docs/guide/pagination)
+Reference: [TanStack Table pagination](https://tanstack.com/table/v8/docs/guide/pagination)
