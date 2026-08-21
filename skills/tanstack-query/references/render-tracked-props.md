@@ -1,13 +1,13 @@
 ---
-title: Avoid Destructuring All Properties
+title: Preserve Tracked-Property Optimization
 impact: LOW
 impactDescription: prevents subscribing to unused state changes
 tags: render, destructuring, optimization, tracked
 ---
 
-## Avoid Destructuring All Properties
+## Preserve Tracked-Property Optimization
 
-Destructuring query result properties you don't use still subscribes you to their changes. Only destructure what you need, or use `notifyOnChangeProps`.
+TanStack Query tracks property access by default. Destructuring only the properties you use is fine. Object-rest destructuring (`const { data, ...rest } = query`) reads all remaining properties and disables the benefit for that component.
 
 **Incorrect (subscribed to unused properties):**
 
@@ -67,18 +67,14 @@ function DataWithLoading() {
 }
 ```
 
-**Combine with notifyOnChangeProps for explicitness:**
+**Avoid object rest:**
 
 ```typescript
-function DataOnly() {
-  const { data } = useQuery({
-    queryKey: ['data'],
-    queryFn: fetchData,
-    notifyOnChangeProps: ['data'], // Explicit subscription
-  })
-
-  return <div>{data?.value}</div>
-}
+// Reads all remaining fields and defeats tracked-property optimization.
+const { data, ...queryMeta } = useQuery({
+  queryKey: ['data'],
+  queryFn: fetchData,
+})
 ```
 
-**Note:** React Query's tracked queries feature (when enabled) automatically detects which properties you access and optimizes subscriptions. However, explicit `notifyOnChangeProps` is clearer and doesn't rely on runtime detection.
+Keep the default tracking behavior unless profiling justifies a manual `notifyOnChangeProps` list. Manual lists can create stale UI when a newly used property is omitted.
