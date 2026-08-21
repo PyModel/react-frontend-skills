@@ -44,9 +44,9 @@ function UserProfile({ userPromise }: { userPromise: Promise<User> }) {
   return <Profile user={user} />
 }
 
-function UserPage({ userId }: { userId: string }) {
-  const userPromise = fetchUser(userId)  // Start fetch
-
+// In an RSC-capable framework, create the Promise in a Server Component
+// or another framework-supported cached data source.
+function UserPage({ userPromise }: { userPromise: Promise<User> }) {
   return (
     <Suspense fallback={<Skeleton />}>
       <UserProfile userPromise={userPromise} />
@@ -70,4 +70,7 @@ function Button({ showTheme }: { showTheme: boolean }) {
 }
 ```
 
-**Note:** `use()` can be called conditionally, unlike other hooks. It works in loops and conditionals.
+**Notes:**
+- `use()` can read a Promise or Context conditionally, unlike conventional Hooks.
+- Do not create a fresh uncached Promise during each Client Component render; React warns for unsupported uncached promises and retries can restart the work.
+- Promise creation/serialization for Client Components is framework-dependent. Prefer a Server Component or a Suspense-compatible data library documented by the framework.
