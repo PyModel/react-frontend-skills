@@ -77,7 +77,7 @@ const emailArraySchema = z
   // Stage 1: Split CSV
   .transform((s) => s.split(',').map((e) => e.trim()))
   // Stage 2: Validate as email array
-  .pipe(z.array(z.string().email()))
+  .pipe(z.array(z.email()))
   // Stage 3: Transform to objects
   .pipe(
     z.array(z.string()).transform((emails) =>
