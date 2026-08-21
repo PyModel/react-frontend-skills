@@ -65,6 +65,6 @@ function UserProjects({ email }: { email: string }) {
 }
 ```
 
-Server-to-server latency is typically 1-10ms vs 50-200ms for client-to-server.
+A backend aggregation endpoint can remove client round trips, but it also adds coupling and server work. Measure end-to-end latency and preserve independent caching where it matters.
 
 Reference: [Request Waterfalls](https://tanstack.com/query/v5/docs/react/guides/request-waterfalls)
