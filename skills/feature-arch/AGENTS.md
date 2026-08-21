@@ -2,7 +2,7 @@
 
 **Version 0.1.0**  
 Community  
-January 2026
+August 2026
 
 > **Note:**  
 > This document is mainly for agents and LLMs to follow when maintaining,  
@@ -23,7 +23,7 @@ Comprehensive architecture guide for organizing React applications by features, 
    - 1.1 [Include Only Necessary Segments](references/struct-optional-segments.md) — HIGH (Prevents empty folder clutter; keeps features minimal and focused)
    - 1.2 [Keep Directory Hierarchy Flat](references/struct-flat-hierarchy.md) — CRITICAL (Reduces cognitive load; prevents 5+ level deep import paths)
    - 1.3 [Make Features Self-Contained](references/struct-feature-self-contained.md) — CRITICAL (Enables independent deployment and parallel team development)
-   - 1.4 [Organize by Feature, Not Technical Type](references/struct-feature-folders.md) — CRITICAL (Eliminates cross-file navigation; reduces onboarding time by 50%+)
+   - 1.4 [Organize by Feature, Not Technical Type](references/struct-feature-folders.md) — CRITICAL (Eliminates cross-file navigation; reduces onboarding time)
    - 1.5 [Separate App Layer from Features](references/struct-app-layer.md) — HIGH (Isolates global concerns; enables feature modules to remain pure)
    - 1.6 [Use Shared Layer for Truly Generic Code Only](references/struct-shared-layer.md) — CRITICAL (Prevents shared/ from becoming a dumping ground; maintains feature boundaries)
 2. [Import & Dependencies](references/_sections.md#2-import-&-dependencies) — **CRITICAL**
@@ -39,21 +39,21 @@ Comprehensive architecture guide for organizing React applications by features, 
    - 3.3 [Keep Features Appropriately Sized](references/bound-feature-size.md) — MEDIUM (Right-sized features balance cohesion and manageability)
    - 3.4 [Minimize Shared State Between Features](references/bound-minimize-shared-state.md) — HIGH (Reduces coupling surface area; prevents state synchronization bugs)
    - 3.5 [Scope Routing to Feature Concerns](references/bound-feature-scoped-routing.md) — HIGH (Enables feature-level code splitting; prevents routing configuration sprawl)
-   - 3.6 [Use Events for Cross-Feature Communication](references/bound-event-based-communication.md) — MEDIUM-HIGH (Decouples features at runtime; enables loose coupling without direct imports)
+   - 3.6 [Use Events for Cross-Feature Communication](references/bound-event-based-communication.md) — MEDIUM-HIGH
 4. [Data Fetching](references/_sections.md#4-data-fetching) — **HIGH**
    - 4.1 [Avoid N+1 Query Patterns](references/fquery-avoid-n-plus-one.md) — HIGH (Prevents request count from scaling with data size; eliminates O(N) network calls)
    - 4.2 [Colocate Data Fetching with Features](references/fquery-colocate-with-feature.md) — HIGH (Makes features self-contained; enables independent API evolution)
-   - 4.3 [Fetch at Server Component Level](references/fquery-server-component-fetching.md) — MEDIUM-HIGH (Eliminates client-server waterfalls; reduces bundle size by keeping fetch logic on server)
-   - 4.4 [Fetch Independent Data in Parallel](references/fquery-parallel-fetching.md) — HIGH (Reduces total load time by ~50% for pages with multiple data sources)
+   - 4.3 [Fetch at Server Component Level](references/fquery-server-component-fetching.md) — MEDIUM-HIGH
+   - 4.4 [Fetch Independent Data in Parallel](references/fquery-parallel-fetching.md) — HIGH (Reduces total load time for pages with multiple data sources)
    - 4.5 [Keep Query Functions Single-Purpose](references/fquery-single-responsibility.md) — HIGH (Prevents query permutation explosion as features grow)
-   - 4.6 [Use Feature-Scoped Query Keys](references/fquery-feature-scoped-keys.md) — MEDIUM-HIGH (Enables targeted cache invalidation; prevents accidental cache collisions)
+   - 4.6 [Use Feature-Scoped Query Keys](references/fquery-feature-scoped-keys.md) — MEDIUM-HIGH
 5. [Component Organization](references/_sections.md#5-component-organization) — **MEDIUM-HIGH**
-   - 5.1 [Apply Single Responsibility to Components](references/fcomp-single-responsibility.md) — MEDIUM-HIGH (Enables parallel development and isolated testing; reduces component complexity)
+   - 5.1 [Apply Single Responsibility to Components](references/fcomp-single-responsibility.md) — MEDIUM-HIGH
    - 5.2 [Colocate Styles with Components](references/fcomp-colocate-styles.md) — MEDIUM (Enables complete component portability; prevents orphaned styles)
-   - 5.3 [Prefer Composition Over Prop Drilling](references/fcomp-composition-over-props.md) — MEDIUM-HIGH (Eliminates prop drilling; enables flexible slot-based component design)
+   - 5.3 [Prefer Composition Over Prop Drilling](references/fcomp-composition-over-props.md) — MEDIUM-HIGH
    - 5.4 [Separate Container and Presentational Concerns](references/fcomp-container-presentational.md) — MEDIUM (Enables design system reuse; keeps business logic testable)
    - 5.5 [Use Feature-Level Error Boundaries](references/fcomp-error-boundaries.md) — MEDIUM (Isolates failures to single features; prevents full-page crashes)
-   - 5.6 [Use Props as Feature Boundaries](references/fcomp-props-as-data-boundary.md) — MEDIUM-HIGH (Creates clear interfaces between features; enables feature composition)
+   - 5.6 [Use Props as Feature Boundaries](references/fcomp-props-as-data-boundary.md) — MEDIUM-HIGH
 6. [State Management](references/_sections.md#6-state-management) — **MEDIUM**
    - 6.1 [Lift State Only as High as Necessary](references/fstate-lift-minimally.md) — MEDIUM (Reduces re-renders; keeps state close to where it's used)
    - 6.2 [Reset Feature State on Unmount](references/fstate-reset-on-unmount.md) — MEDIUM (Prevents stale state bugs; ensures clean feature initialization)
