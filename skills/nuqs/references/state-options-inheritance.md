@@ -13,20 +13,20 @@ Instead of passing options to every `useQueryState` call, configure options on t
 
 ```tsx
 'use client'
-import { useQueryState, parseAsString } from 'nuqs'
+import { throttle, useQueryState, parseAsString } from 'nuqs'
 
 export default function SearchPage() {
   const [query, setQuery] = useQueryState('q', {
     ...parseAsString,
     shallow: false,
-    throttleMs: 500,
+    limitUrlUpdates: throttle(500),
     history: 'push'
   })
 
   const [filter, setFilter] = useQueryState('filter', {
     ...parseAsString,
     shallow: false,
-    throttleMs: 500,
+    limitUrlUpdates: throttle(500),
     history: 'push'
   })
 
@@ -38,11 +38,11 @@ export default function SearchPage() {
 
 ```tsx
 // lib/searchParams.ts
-import { parseAsString, parseAsInteger } from 'nuqs'
+import { parseAsString, parseAsInteger, throttle } from 'nuqs'
 
 const serverSyncOptions = {
   shallow: false,
-  throttleMs: 500,
+  limitUrlUpdates: throttle(500),
   history: 'push' as const
 }
 
@@ -72,7 +72,7 @@ export default function SearchPage() {
 parseAsInteger
   .withDefault(1)
   .withOptions({ shallow: false })
-  .withOptions({ throttleMs: 300 }) // Merges with previous options
+  .withOptions({ limitUrlUpdates: throttle(300) }) // Merges with previous options
 ```
 
 Reference: [nuqs Options](https://nuqs.dev/docs/options)
