@@ -111,7 +111,7 @@ export type Order = z.infer<typeof orderSchema>
 
 **Organizing schema modules:**
 
-```
+```text
 schemas/
 ├── common.ts       # Shared primitives and base schemas
 ├── user.ts         # User-related schemas
