@@ -7,7 +7,7 @@ tags: route, proxy, middleware, network
 
 ## Use proxy.ts for Network Boundary Logic
 
-Next.js 16 replaces `middleware.ts` with `proxy.ts` for explicit network boundary logic. The proxy runs on Node.js runtime (not Edge), providing access to full Node.js APIs.
+Next.js 16 deprecates the `middleware.ts` convention in favor of `proxy.ts` for network-boundary logic. `proxy.ts` uses the Node.js runtime and its runtime cannot be configured. If an existing boundary requires the Edge runtime, keep `middleware.ts` until the installed Next.js version provides a documented migration path.
 
 **Incorrect (old middleware.ts pattern):**
 
@@ -57,6 +57,6 @@ export const config = {
 **Migration:**
 1. Rename `middleware.ts` → `proxy.ts`
 2. Rename exported function `middleware` → `proxy`
-3. Update any Edge-specific code to use Node.js APIs
+3. Remove Edge-only assumptions and verify Node.js runtime behavior; otherwise retain `middleware.ts` for the Edge requirement
 
-Reference: [Next.js 16 proxy.ts](https://nextjs.org/docs/app/building-your-application/routing/middleware)
+Reference: [Next.js proxy file convention](https://nextjs.org/docs/app/api-reference/file-conventions/proxy)
