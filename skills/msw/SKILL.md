@@ -1,6 +1,6 @@
 ---
 name: msw
-description: MSW (Mock Service Worker) best practices for API mocking in tests (formerly test-msw). This skill should be used when setting up MSW, writing request handlers, or mocking HTTP APIs. This skill does NOT cover general testing patterns (use test-vitest or test-tdd skills) or test methodology.
+description: Current MSW v2 guidance for request handlers, Node/browser setup, HTTP and GraphQL mocking, test isolation, timing, and debugging. General test framework patterns are covered by vitest and methodology by tdd.
 ---
 
 # MSW Best Practices
@@ -65,7 +65,7 @@ Reference these guidelines when:
 ### 4. Response Patterns (HIGH)
 
 - `response-http-response-helpers` - Use HttpResponse static methods
-- `response-delay-realistic` - Add realistic response delays
+- `response-delay-realistic` - Add delays only for timing behavior under test
 - `response-error-simulation` - Simulate error responses correctly
 - `response-one-time-handlers` - Use one-time handlers for sequential scenarios
 - `response-custom-headers` - Set response headers correctly
@@ -110,9 +110,8 @@ Read individual reference files for detailed explanations and code examples:
 
 ## Related Skills
 
-- For generating MSW mocks from OpenAPI, see `orval` skill
 - For consuming mocked APIs, see `tanstack-query` skill
-- For test methodology, see `test-vitest` or `test-tdd` skills
+- For test framework patterns, see `vitest`; for methodology, see `tdd`
 
 ## Full Compiled Document
 
