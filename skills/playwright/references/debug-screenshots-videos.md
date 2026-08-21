@@ -1,7 +1,7 @@
 ---
 title: Capture Screenshots and Videos on Failure
 impact: LOW-MEDIUM
-impactDescription: 50% faster failure investigation
+impactDescription: faster failure investigation
 tags: debug, screenshots, video, failure, artifacts
 ---
 
@@ -80,10 +80,6 @@ export default defineConfig({
 
 **Storage considerations:**
 
-| Artifact | Typical Size | Recommendation |
-|----------|--------------|----------------|
-| Screenshot | 100-500KB | Always capture on failure |
-| Video (30s) | 2-5MB | Retain on failure only |
-| Trace | 5-20MB | On first retry |
+Artifact sizes vary substantially by viewport, duration, assets, and trace settings. Capture screenshots on failure, retain video selectively, and use `trace: 'on-first-retry'` or another deliberate policy. Measure CI artifact volume and apply retention limits rather than relying on fixed size estimates.
 
 Reference: [Playwright Screenshots](https://playwright.dev/docs/screenshots)
