@@ -78,4 +78,13 @@ function Feed() {
 
 The graph requests still begin only after `getFeed()` resolves; the optimization is the head start before child mounting, not parallel execution with the prerequisite. Avoid prefetching a large fan-out speculatively. Prefer a flattened backend response or route-level prefetch when the data contract can provide all required keys earlier.
 
+When a route already knows the key, prefetch before rendering instead of coupling the side effect to another query function:
+
+```typescript
+await queryClient.prefetchQuery({
+  queryKey: ['graph', graphId],
+  queryFn: () => getGraphData(graphId),
+})
+```
+
 Reference: [TanStack Query prefetching](https://tanstack.com/query/latest/docs/framework/react/guides/prefetching)
