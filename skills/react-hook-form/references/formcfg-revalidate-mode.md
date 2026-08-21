@@ -1,15 +1,15 @@
 ---
-title: Set reValidateMode to onBlur for Post-Submit Performance
+title: Choose Post-Submit Revalidation Deliberately
 impact: CRITICAL
-impactDescription: reduces re-renders after initial submission by 80%+
+impactDescription: balances correction feedback against validation cost after a failed submit
 tags: formcfg, revalidate-mode, re-renders, useForm
 ---
 
-## Set reValidateMode to onBlur for Post-Submit Performance
+## Choose Post-Submit Revalidation Deliberately
 
-After form submission, `reValidateMode` controls when fields re-validate. The default `onChange` causes validation on every keystroke after first submit. Use `onBlur` or `onSubmit` for better post-submission performance.
+After a failed submit, `reValidateMode` controls when fields with errors revalidate. The default `onChange` gives immediate confirmation as users correct errors. Choose `onBlur` when validation is expensive or errors should settle after field completion; this is a UX trade-off, not a universal performance rule.
 
-**Incorrect (re-validates on every keystroke after submit):**
+**Immediate correction feedback (default):**
 
 ```typescript
 const { register, handleSubmit } = useForm({
@@ -27,7 +27,7 @@ function PaymentForm() {
 }
 ```
 
-**Correct (re-validates only when leaving field):**
+**Deferred correction feedback:**
 
 ```typescript
 const { register, handleSubmit } = useForm({
