@@ -1,6 +1,6 @@
 {
   "name": "@pythoughts/react-frontend-skills",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "18 production-grade AI agent skills for the React ecosystem — install into Claude Code, Codex, Cursor, OpenCode, Pi, Kiro and more.",
   "license": "MIT",
   "author": "Mohamed Elkholy (Pythoughts)",
