@@ -5,9 +5,9 @@ impactDescription: prevents runtime errors, improves inference
 tags: async, return-types, promises, type-safety, inference
 ---
 
-## Annotate Async Function Return Types
+## Annotate Public Async Function Contracts
 
-Explicit return types on async functions catch mismatches at the function boundary rather than at call sites. They also improve IDE performance by avoiding full function body inference.
+Use explicit `Promise<...>` return types for exported APIs, callbacks implementing an interface, and declaration-emitting package boundaries. They catch implementation mismatches at the boundary. Prefer inference for small local async functions; do not add annotations solely as an unmeasured IDE optimization.
 
 **Incorrect (inferred Promise type):**
 
@@ -39,7 +39,8 @@ async function fetchUserOrders(userId: string): Promise<Order[] | null> {
   if (!response.ok) {
     return null
   }
-  return response.json() as Promise<Order[]>
+  const data: unknown = await response.json()
+  return parseOrders(data) // Runtime validation returns Order[]
 }
 
 // Caller knows the exact type
@@ -68,9 +69,11 @@ async function fetchUserOrders(userId: string): Promise<Result<Order[]>> {
 }
 ```
 
-**Benefits:**
-- Errors caught at function definition, not call sites
-- Better IDE autocomplete for consumers
-- Self-documenting API contracts
+**Benefits at a public boundary:**
+- Return-shape drift is reported in the implementation
+- Consumers receive a stable contract
+- Declaration emit can name the result instead of expanding a large inferred type
+
+A return annotation does not validate JSON at runtime. Parse untrusted responses before returning a typed value.
 
 Reference: [TypeScript Handbook - Async Functions](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-1-7.html)
