@@ -9,6 +9,10 @@ tags: ctrl, useController, component-design, separation
 
 React Hook Form permits multiple `useController` calls in one component, and their returned objects do not collide when named clearly. Split fields into dedicated components when it improves ownership, reuse, or re-render isolation; do not enforce one hook per component mechanically.
 
+**Incorrect:** Require exactly one `useController` call per component regardless of field coupling or component ownership.
+
+**Correct:** Split controlled fields when isolation, reuse, or clearer ownership justifies the extra component boundary.
+
 **Valid but coupled (both fields re-render together):**
 
 ```typescript
