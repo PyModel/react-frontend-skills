@@ -16,8 +16,8 @@ import { z } from 'zod'
 
 // Full user schema
 const userSchema = z.object({
-  id: z.string().uuid(),
-  email: z.string().email(),
+  id: z.uuid(),
+  email: z.email(),
   passwordHash: z.string(),
   name: z.string(),
   createdAt: z.date(),
@@ -26,7 +26,7 @@ const userSchema = z.object({
 
 // Public view - manually duplicated
 const publicUserSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string(),
   // Forgot email - now users can't see it
   // Added avatar field - doesn't exist in base schema
@@ -35,7 +35,7 @@ const publicUserSchema = z.object({
 
 // Create input - manually duplicated
 const createUserSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(8),  // Different from passwordHash
   name: z.string(),
   // Missing isAdmin - can't set on create? Intentional?
@@ -49,8 +49,8 @@ import { z } from 'zod'
 
 // Full user schema - single source of truth
 const userSchema = z.object({
-  id: z.string().uuid(),
-  email: z.string().email(),
+  id: z.uuid(),
+  email: z.email(),
   passwordHash: z.string(),
   name: z.string(),
   createdAt: z.date(),
@@ -92,7 +92,7 @@ type CreateUserInput = z.infer<typeof createUserInputSchema>
 // Database row → API response (hide internal fields)
 const dbRowSchema = z.object({
   id: z.number(),
-  public_id: z.string().uuid(),
+  public_id: z.uuid(),
   email: z.string(),
   password_hash: z.string(),
   internal_notes: z.string(),
@@ -112,8 +112,8 @@ const formSchema = z.object({
 })
 
 const dbInsertSchema = formSchema.extend({
-  id: z.string().uuid(),
-  authorId: z.string().uuid(),
+  id: z.uuid(),
+  authorId: z.uuid(),
   createdAt: z.date(),
   updatedAt: z.date(),
 })
