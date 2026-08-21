@@ -22,7 +22,7 @@ Incremental compilation caches project graph information between builds in a `.t
 ```
 
 ```bash
-tsc  # 15 seconds every build
+tsc  # Full type-check and emit on every run.
 ```
 
 **Correct (incremental builds):**
