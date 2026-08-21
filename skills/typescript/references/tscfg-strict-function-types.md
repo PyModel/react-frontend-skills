@@ -9,7 +9,7 @@ tags: tscfg, strict, strictFunctionTypes, variance, performance
 
 `strictFunctionTypes` checks function-typed properties contravariantly instead of permitting unsafe bivariance. Enable it through `strict` for correctness. Variance information can also help compiler performance for well-structured types, but do not present the flag as a standalone speed switch.
 
-**Incorrect (slow structural checking):**
+**Incorrect (unsafe bivariant assignment):**
 
 ```json
 {
@@ -27,7 +27,7 @@ type Handler<T> = (event: T) => void
 const handler: Handler<Event> = (e: MouseEvent) => { } // Allowed without strict checking
 ```
 
-**Correct (fast variance checking):**
+**Correct (sound contravariant checking):**
 
 ```json
 {
@@ -43,6 +43,8 @@ type Handler<T> = (event: T) => void
 // Rejected: the assigned callback cannot handle every Event.
 const handler: Handler<Event> = (e: MouseEvent) => { } // Error
 ```
+
+TypeScript can use cached variance information for generic types instead of repeating some structural comparisons, which may improve checking performance. The exact effect depends on the type graph; correctness remains the reason to enable the flag.
 
 **Note:** The `strict` flag enables `strictFunctionTypes` along with other strict options. Enable `strict` for all new projects.
 
