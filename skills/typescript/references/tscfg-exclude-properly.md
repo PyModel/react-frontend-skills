@@ -7,7 +7,7 @@ tags: tscfg, include, exclude, tsconfig, file-discovery
 
 ## Configure Include and Exclude Properly
 
-TypeScript walks through all included directories to discover files. Overly broad `include` patterns or missing `exclude` patterns force the compiler to scan irrelevant directories, significantly slowing startup.
+TypeScript walks included directories to discover root files. Prefer a narrow `include` over a broad glob plus a long `exclude` list. `exclude` only affects files discovered through `include`; an excluded file is still part of the program when imported, referenced by `types`, or otherwise reached as a dependency.
 
 **Incorrect (scans entire project tree):**
 
@@ -76,8 +76,7 @@ tsc --listFiles
 tsc --explainFiles
 ```
 
-**Common files to exclude:**
-- `node_modules` (always)
+**Common root files to exclude when a broad include is unavoidable:**
 - Build output directories (`dist`, `build`, `out`)
 - Test files for production builds
 - Generated files (`.generated.ts`)
