@@ -33,7 +33,7 @@ export function LikeButton({ postId, initialLikes }: { postId: string; initialLi
     </button>
   )
 }
-// 200-500ms delay before UI updates
+// UI updates only after the server round trip.
 ```
 
 **Correct (optimistic update):**
