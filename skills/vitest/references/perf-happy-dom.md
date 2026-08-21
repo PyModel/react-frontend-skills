@@ -67,13 +67,29 @@ describe('Complex DOM interactions', () => {
 // vitest.config.ts
 export default defineConfig({
   test: {
-    // Default to happy-dom for speed
-    environment: 'happy-dom',
-
-    // Override for specific files
-    environmentMatchGlobs: [
-      ['**/jsdom-required/**', 'jsdom'],
-      ['**/node-only/**', 'node'],
+    // environmentMatchGlobs was removed in Vitest 4.0. Use projects instead.
+    projects: [
+      {
+        test: {
+          name: 'dom',
+          include: ['src/**/*.test.{ts,tsx}'],
+          environment: 'happy-dom',
+        },
+      },
+      {
+        test: {
+          name: 'jsdom',
+          include: ['**/jsdom-required/**/*.test.{ts,tsx}'],
+          environment: 'jsdom',
+        },
+      },
+      {
+        test: {
+          name: 'node',
+          include: ['**/node-only/**/*.test.{ts,tsx}'],
+          environment: 'node',
+        },
+      },
     ],
   },
 })
