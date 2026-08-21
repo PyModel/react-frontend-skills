@@ -1,13 +1,13 @@
 ---
 title: Configure TypeScript for MSW v2
 impact: CRITICAL
-impactDescription: TypeScript 4.7+ required; incorrect config causes type errors
+impactDescription: TypeScript 4.8+ required; incorrect config causes type errors
 tags: setup, typescript, configuration, types, compiler
 ---
 
 ## Configure TypeScript for MSW v2
 
-MSW v2 requires TypeScript 4.7+ for proper type inference. Incorrect TypeScript configuration causes confusing type errors and prevents proper handler typing.
+MSW v2 requires TypeScript 4.8+ for proper type inference. Incorrect TypeScript configuration causes confusing type errors and prevents proper handler typing.
 
 **Incorrect (outdated TypeScript or missing config):**
 
