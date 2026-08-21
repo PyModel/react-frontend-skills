@@ -9,6 +9,10 @@ tags: formcfg, revalidate-mode, re-renders, useForm
 
 After a failed submit, `reValidateMode` controls when fields with errors revalidate. The default `onChange` gives immediate confirmation as users correct errors. Choose `onBlur` when validation is expensive or errors should settle after field completion; this is a UX trade-off, not a universal performance rule.
 
+**Incorrect:** Treat `onBlur` as universally faster and better after every failed submit.
+
+**Correct:** Choose `onChange` or `onBlur` from correction UX and measured validation cost.
+
 **Immediate correction feedback (default):**
 
 ```typescript
