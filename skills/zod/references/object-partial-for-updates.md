@@ -17,7 +17,7 @@ import { z } from 'zod'
 // Base schema
 const userSchema = z.object({
   name: z.string().min(1),
-  email: z.string().email(),
+  email: z.email(),
   age: z.number().int().positive(),
   role: z.enum(['admin', 'user']),
 })
@@ -25,7 +25,7 @@ const userSchema = z.object({
 // Manually duplicated for updates - will drift!
 const updateUserSchema = z.object({
   name: z.string().min(1).optional(),
-  email: z.string().email().optional(),
+  email: z.email().optional(),
   age: z.number().int().positive().optional(),
   // Forgot to add role - schemas out of sync!
 })
@@ -42,7 +42,7 @@ import { z } from 'zod'
 // Base schema - single source of truth
 const userSchema = z.object({
   name: z.string().min(1),
-  email: z.string().email(),
+  email: z.email(),
   age: z.number().int().positive(),
   role: z.enum(['admin', 'user']),
 })
@@ -94,8 +94,10 @@ const shallowPartial = userSchema.partial()
 // { name?: string; address?: { street: string; city: string; country: string } }
 // If address is provided, all its fields are still required!
 
-// Use deepPartial for nested optionality
-const deepPartialSchema = userSchema.deepPartial()
+// Zod 4 removed deepPartial(); make nested policy explicit.
+const deepPartialSchema = userSchema
+  .extend({ address: addressSchema.partial() })
+  .partial()
 // { name?: string; address?: { street?: string; city?: string; country?: string } }
 ```
 
@@ -103,9 +105,9 @@ const deepPartialSchema = userSchema.deepPartial()
 
 ```typescript
 const baseSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   createdAt: z.date(),
 })
 
