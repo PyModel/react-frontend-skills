@@ -98,7 +98,7 @@ interface MenuItem {
 
 const menuItemSchema: z.ZodType<MenuItem> = z.object({
   label: z.string(),
-  href: z.string().url().optional(),
+  href: z.url().optional(),
   children: z.lazy(() => z.array(menuItemSchema)).optional(),
 })
 ```
@@ -121,20 +121,14 @@ const jsonValueSchema: z.ZodType<JSONValue> = z.lazy(() =>
     z.boolean(),
     z.null(),
     z.array(jsonValueSchema),
-    z.record(jsonValueSchema),
+    z.record(z.string(), jsonValueSchema),
   ])
 )
 ```
 
 **Performance consideration:**
 
-```typescript
-// z.lazy() has minimal overhead - the function is called once
-// and the schema is cached. Safe to use in hot paths.
-
-// If validating many recursive structures, the schema itself
-// is only built once. Validation performance depends on data depth.
-```
+Recursive validation cost depends on input depth and breadth. Benchmark unusually large structures and enforce application-level depth/size limits for untrusted input when denial-of-service resistance matters.
 
 **When NOT to use this pattern:**
 - Non-recursive schemas (lazy adds unnecessary indirection)
