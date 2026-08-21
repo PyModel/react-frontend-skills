@@ -2,7 +2,7 @@
 
 **Version 1.0.0**  
 community  
-January 2026
+August 2026
 
 > **Note:**  
 > This document is mainly for agents and LLMs to follow when maintaining,  
@@ -24,7 +24,7 @@ Comprehensive testing best practices guide for Vitest, designed for AI agents an
    - 1.2 [Await User Events to Avoid Act Warnings](references/async-act-wrapper.md) — CRITICAL (Prevents "not wrapped in act(...)" warnings and ensures UI updates complete)
    - 1.3 [Return Promises from Test Functions](references/async-return-promises.md) — CRITICAL (Prevents tests from completing before async operations finish)
    - 1.4 [Test Async Error Handling Properly](references/async-error-handling.md) — CRITICAL (Prevents tests from passing when async operations fail silently)
-   - 1.5 [Use Fake Timers for Time-Dependent Code](references/async-fake-timers.md) — CRITICAL (Eliminates timer-based flaky tests and reduces test duration by 100×)
+   - 1.5 [Use Fake Timers for Time-Dependent Code](references/async-fake-timers.md) — CRITICAL (eliminates timer-based flaky tests and cuts test duration sharply)
    - 1.6 [Use Test Context Expect in Concurrent Tests](references/async-concurrent-expect.md) — CRITICAL (Prevents snapshot collision and assertion cross-contamination in parallel tests)
    - 1.7 [Use vi.waitFor for Async Conditions](references/async-waitfor-polling.md) — CRITICAL (Replaces arbitrary timeouts with condition-based waiting, eliminating flaky tests)
 2. Test Setup & Isolation — **CRITICAL**
@@ -32,8 +32,8 @@ Comprehensive testing best practices guide for Vitest, designed for AI agents an
    - 2.2 [Clean Up State in afterEach Hooks](references/setup-beforeeach-cleanup.md) — CRITICAL (Prevents test pollution where one test's side effects cause subsequent tests to fail)
    - 2.3 [Reset Modules When Testing Module State](references/setup-reset-modules.md) — HIGH (Ensures modules with cached state are properly isolated between tests)
    - 2.4 [Restore Mocks After Each Test](references/setup-restore-mocks.md) — CRITICAL (Prevents mock leakage where mocked behavior persists into unrelated tests)
-   - 2.5 [Use beforeAll for Expensive One-Time Setup](references/setup-beforeall-expensive.md) — HIGH (Reduces test suite time by 50-90% for tests with expensive setup)
-   - 2.6 [Use Test Factories for Complex Test Data](references/setup-test-factories.md) — MEDIUM (Reduces test setup boilerplate by 60% and improves test readability)
+   - 2.5 [Use beforeAll for Expensive One-Time Setup](references/setup-beforeall-expensive.md) — HIGH (Reduces test suite time for tests with expensive setup)
+   - 2.6 [Use Test Factories for Complex Test Data](references/setup-test-factories.md) — MEDIUM (Reduces test setup boilerplate and improves test readability)
 3. Mocking Patterns — **HIGH**
    - 3.1 [Avoid Over-Mocking](references/mock-avoid-overmocking.md) — HIGH (Prevents tests that pass despite broken code by testing mocks instead of behavior)
    - 3.2 [Choose vi.spyOn vs vi.mock Appropriately](references/mock-spyon-vs-mock.md) — HIGH (Prevents over-mocking and ensures tests exercise real code paths)
@@ -43,12 +43,12 @@ Comprehensive testing best practices guide for Vitest, designed for AI agents an
    - 3.6 [Use mockImplementation for Dynamic Mocks](references/mock-implementation-not-value.md) — HIGH (Enables context-aware mocks that respond differently based on input)
    - 3.7 [Use MSW for Network Request Mocking](references/mock-msw-network.md) — HIGH (Provides realistic request/response mocking at the network level)
 4. Performance — **HIGH**
-   - 4.1 [Choose the Right Pool for Performance](references/perf-pool-selection.md) — HIGH (2-5× performance difference between pool types on large test suites)
-   - 4.2 [Disable Test Isolation When Safe](references/perf-disable-isolation.md) — HIGH (30-50% faster test execution for well-isolated tests)
+   - 4.1 [Choose the Right Pool for Performance](references/perf-pool-selection.md) — HIGH (performance difference between pool types on large test suites)
+   - 4.2 [Disable Test Isolation When Safe](references/perf-disable-isolation.md) — HIGH (faster test execution for well-isolated tests)
    - 4.3 [Use Bail for Fast Failure in CI](references/perf-bail-fast-fail.md) — MEDIUM (Saves CI minutes by stopping early when tests fail)
-   - 4.4 [Use happy-dom Over jsdom When Possible](references/perf-happy-dom.md) — HIGH (2-3× faster DOM operations compared to jsdom)
+   - 4.4 [Use happy-dom Over jsdom When Possible](references/perf-happy-dom.md) — HIGH (faster DOM operations compared to jsdom)
    - 4.5 [Use Run Mode in CI Environments](references/perf-run-mode-ci.md) — MEDIUM (Avoids watch mode overhead and file system polling in CI)
-   - 4.6 [Use Sharding for CI Parallelization](references/perf-sharding.md) — HIGH (Linear speedup with additional CI nodes (3 nodes = ~3× faster))
+   - 4.6 [Use Sharding for CI Parallelization](references/perf-sharding.md) — HIGH (Linear speedup with additional CI nodes))
 5. Snapshot Testing — **MEDIUM**
    - 5.1 [Avoid Large Snapshots](references/snap-avoid-large.md) — MEDIUM (Large snapshots are rarely reviewed and blindly updated, masking real bugs)
    - 5.2 [Ensure Stable Snapshot Serialization](references/snap-stable-serialization.md) — MEDIUM (Eliminates false snapshot failures from non-deterministic data)
@@ -63,7 +63,7 @@ Comprehensive testing best practices guide for Vitest, designed for AI agents an
 7. Assertions — **LOW-MEDIUM**
    - 7.1 [Choose toBe vs toEqual Correctly](references/assert-toequal-vs-tobe.md) — LOW (Prevents false positives from reference vs value comparison)
    - 7.2 [Test Edge Cases and Boundaries](references/assert-edge-cases.md) — MEDIUM (Catches bugs that happy-path-only tests miss)
-   - 7.3 [Test One Concept Per Test](references/assert-one-assertion-concept.md) — LOW-MEDIUM (Improves failure diagnosis and test maintainability)
+   - 7.3 [Test One Concept Per Test](references/assert-one-assertion-concept.md) — LOW-MEDIUM
    - 7.4 [Use expect.assertions for Async Tests](references/assert-expect-assertions.md) — MEDIUM (Prevents tests from passing when async assertions are skipped)
    - 7.5 [Use Specific Matchers Over Generic Ones](references/assert-specific-matchers.md) — MEDIUM (Provides clearer failure messages and catches more specific bugs)
 8. Test Organization — **LOW**
