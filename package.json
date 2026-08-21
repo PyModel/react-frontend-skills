@@ -1,9 +1,9 @@
 {
-  "name": "@pythoughts/react-frontend-skills",
+  "name": "@pymodel/react-frontend-skills",
   "version": "2.0.1",
-  "description": "18 production-grade AI agent skills for the React ecosystem — install into Claude Code, Codex, Cursor, OpenCode, Pi, Kiro and more.",
+  "description": "18 production-grade AI agent skills for React 19, Next.js 16, TypeScript 7, testing, data, UI, and frontend architecture.",
   "license": "MIT",
-  "author": "Mohamed Elkholy (Pythoughts)",
+  "author": "Mohamed Elkholy (PyModel)",
   "homepage": "https://github.com/PyModel/react-frontend-skills#readme",
   "repository": {
     "type": "git",
