@@ -1,65 +1,26 @@
 ---
 title: Throttle Rapid URL Updates
 impact: MEDIUM
-impactDescription: prevents browser history API rate limiting
-tags: perf, throttleMs, rate-limiting, typing, slider
+impactDescription: respects browser History API limits and bounds server updates
+tags: perf, limitUrlUpdates, throttle, rate-limiting, slider
 ---
 
 ## Throttle Rapid URL Updates
 
-Browsers rate-limit History API calls. Rapid updates (typing, sliders, dragging) can exceed this limit, causing dropped updates. Use `throttleMs` to batch updates.
-
-**Incorrect (every keystroke updates URL):**
+nuqs already applies a browser-adapted default throttle to URL writes. Increase it only when high-frequency state changes should update the URL or a `shallow: false` server route less often. Since nuqs 2.5, use `limitUrlUpdates: throttle(ms)`; `throttleMs` is deprecated.
 
 ```tsx
 'use client'
-import { useQueryState, parseAsString } from 'nuqs'
 
-export default function SearchBox() {
-  const [query, setQuery] = useQueryState('q', parseAsString.withDefault(''))
-  // Every keystroke pushes to history
-  // Browser may throttle after ~100 rapid updates
-
-  return (
-    <input
-      value={query}
-      onChange={e => setQuery(e.target.value)}
-    />
-  )
-}
-```
-
-**Correct (throttled updates):**
-
-```tsx
-'use client'
-import { useQueryState, parseAsString } from 'nuqs'
-
-export default function SearchBox() {
-  const [query, setQuery] = useQueryState('q', parseAsString.withDefault('').withOptions({
-    throttleMs: 300 // Batch updates every 300ms
-  }))
-  // UI updates instantly, URL updates at most every 300ms
-
-  return (
-    <input
-      value={query}
-      onChange={e => setQuery(e.target.value)}
-    />
-  )
-}
-```
-
-**For sliders and drag operations:**
-
-```tsx
-'use client'
-import { useQueryState, parseAsInteger } from 'nuqs'
+import { parseAsInteger, throttle, useQueryState } from 'nuqs'
 
 export default function VolumeSlider() {
-  const [volume, setVolume] = useQueryState('volume', parseAsInteger.withDefault(50).withOptions({
-    throttleMs: 100 // More responsive for continuous input
-  }))
+  const [volume, setVolume] = useQueryState(
+    'volume',
+    parseAsInteger.withDefault(50).withOptions({
+      limitUrlUpdates: throttle(100),
+    })
+  )
 
   return (
     <input
@@ -67,22 +28,22 @@ export default function VolumeSlider() {
       min={0}
       max={100}
       value={volume}
-      onChange={e => setVolume(Number(e.target.value))}
+      onChange={(event) => setVolume(Number(event.target.value))}
     />
   )
 }
 ```
 
-**Override per-update:**
+The hook state updates immediately; only the URL write and any `shallow: false` server request are rate-limited.
+
+Use a call-level override when one update must bypass the configured throttle:
 
 ```tsx
-// Normal updates use default throttle
-setQuery('new value')
+import { defaultRateLimit } from 'nuqs'
 
-// Force immediate update (e.g., on blur)
-setQuery('final value', { throttleMs: 0 })
+await setVolume(50, { limitUrlUpdates: defaultRateLimit })
 ```
 
-**Note:** Minimum throttle is 50ms. UI state updates instantly regardless of throttle.
+Use `debounce()` rather than `throttle()` when only the final high-frequency value matters. Values below nuqs/browser minimums may be ignored, so do not use a zero-duration throttle as an "immediate" escape hatch.
 
-Reference: [nuqs Throttling](https://nuqs.dev/docs/options)
+Reference: [nuqs rate-limiting options](https://nuqs.dev/docs/options#rate-limiting-url-updates)
