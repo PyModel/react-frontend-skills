@@ -1,102 +1,46 @@
 ---
-title: Add Realistic Response Delays
+title: Add Delays Only for Timing Behavior Under Test
 impact: HIGH
-impactDescription: Reveals race conditions; tests loading states; catches timing bugs
+impactDescription: exercises loading, timeout, cancellation, and race behavior without slowing every test
 tags: response, delay, async, loading, timing
 ---
 
-## Add Realistic Response Delays
+## Add Delays Only for Timing Behavior Under Test
 
-Use `delay()` to simulate network latency in handlers. This reveals race conditions, tests loading states, and ensures your application handles realistic response timing.
-
-**Incorrect (instant responses hide timing issues):**
+Keep baseline handlers deterministic and fast. Add `delay()` in the specific test or development scenario whose contract includes a loading state, timeout, cancellation, race, or hung request. A random global delay makes tests slower and less reproducible.
 
 ```typescript
-http.get('/api/user', () => {
-  // Instant response - loading states never visible
-  // Race conditions in component never triggered
-  return HttpResponse.json({ name: 'John' })
-})
-```
-
-```typescript
-// Component test passes but has hidden race condition
-it('displays user', async () => {
-  render(<UserProfile />)
-  // Loading state flashes so briefly it's never testable
-  expect(await screen.findByText('John')).toBeInTheDocument()
-})
-```
-
-**Correct (realistic delays):**
-
-```typescript
-import { http, HttpResponse, delay } from 'msw'
+import { http, HttpResponse } from 'msw'
 
 export const handlers = [
-  http.get('/api/user', async () => {
-    // Simulate typical API latency
-    await delay(150)
-    return HttpResponse.json({ name: 'John' })
-  }),
+  http.get('/api/user', () =>
+    HttpResponse.json({ name: 'John' })
+  ),
 ]
 ```
 
-**Testing loading states:**
+Override timing in the test that needs it:
 
 ```typescript
-it('shows loading indicator while fetching', async () => {
+import { delay, http, HttpResponse } from 'msw'
+
+it('shows loading while the request is pending', async () => {
   server.use(
     http.get('/api/user', async () => {
-      await delay(500)  // Longer delay for visibility
+      await delay(100)
       return HttpResponse.json({ name: 'John' })
     })
   )
 
   render(<UserProfile />)
 
-  // Loading state is visible during delay
-  expect(screen.getByText('Loading...')).toBeInTheDocument()
-
-  // Content appears after delay
+  expect(screen.getByText('Loading…')).toBeInTheDocument()
   expect(await screen.findByText('John')).toBeInTheDocument()
-  expect(screen.queryByText('Loading...')).not.toBeInTheDocument()
 })
 ```
 
-**Global delay for all handlers:**
+Use `delay('infinite')` only when the test controls cancellation or timeout and cannot hang indefinitely. Avoid `delay('real')` in automated tests because randomized timing weakens reproducibility; it can be useful in opt-in development scenarios.
 
-```typescript
-import { http, delay } from 'msw'
+Do not use arbitrary delay values to wait in the test itself. Assert observable state with the testing framework's async utilities.
 
-export const handlers = [
-  // Apply delay to all requests
-  http.all('*', async () => {
-    await delay(100)
-    // No return = continue to next matching handler
-  }),
-
-  http.get('/api/user', () => {
-    return HttpResponse.json({ name: 'John' })
-  }),
-]
-```
-
-**Delay modes:**
-
-```typescript
-// Fixed delay
-await delay(200)
-
-// Random delay within range (simulates variable network)
-await delay('real')  // Random 100-400ms
-
-// Infinite delay (simulates hung request)
-await delay('infinite')
-```
-
-**When NOT to use this pattern:**
-- Unit tests focused on business logic may skip delays for speed
-- CI pipelines may use shorter delays to reduce test duration
-
-Reference: [MSW delay() API](https://mswjs.io/docs/api/delay)
+Reference: [MSW delay API](https://mswjs.io/docs/api/delay)
