@@ -11,7 +11,7 @@ Name features after business domains, not technical implementations. This makes 
 
 **Incorrect (technical naming):**
 
-```
+```text
 src/features/
 ├── data-grid/          # What data? What domain?
 ├── form-handler/       # What form? What entity?
@@ -22,7 +22,7 @@ src/features/
 
 **Correct (domain naming):**
 
-```
+```text
 src/features/
 ├── user/               # User management domain
 ├── product/            # Product catalog domain
@@ -44,7 +44,7 @@ src/features/
 
 **Sub-features:**
 
-```
+```text
 src/features/
 ├── user/
 │   ├── ...            # Core user feature
