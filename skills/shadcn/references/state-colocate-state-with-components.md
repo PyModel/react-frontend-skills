@@ -92,7 +92,10 @@ function CartProvider({ children }) {
 
 // 4. Server state (fetched data)? → React Query/SWR
 function UserProfile() {
-  const { data: user } = useQuery(["user"], fetchUser)
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: fetchUser,
+  })
   // Server state managed separately from UI state
 }
 ```
