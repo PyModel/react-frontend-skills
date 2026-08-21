@@ -9,6 +9,22 @@ tags: cache, use-cache, directive, data-fetching, cache-components
 
 The `'use cache'` directive is part of Next.js 16 Cache Components. Enable the model with top-level `cacheComponents: true`, then place the directive at file, component, or function scope for work whose inputs and outputs are serializable and safe to reuse.
 
+**Incorrect (reading request-time data inside a cached scope):**
+
+```typescript
+import { cookies } from 'next/headers'
+
+export async function getDashboard() {
+  'use cache'
+  const userId = (await cookies()).get('userId')?.value
+  return getDashboardForUser(userId)
+}
+```
+
+Request-time APIs cannot be called inside a cached scope, and caching personalized output under shared arguments can leak data.
+
+**Correct (enable Cache Components and cache stable inputs):**
+
 ```typescript
 // next.config.ts
 import type { NextConfig } from 'next'
