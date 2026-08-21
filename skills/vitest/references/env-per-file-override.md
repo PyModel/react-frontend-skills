@@ -66,14 +66,28 @@ describe('Button', () => {
 // vitest.config.ts
 export default defineConfig({
   test: {
-    // Default to node for speed
-    environment: 'node',
-
-    // Pattern-based overrides
-    environmentMatchGlobs: [
-      ['src/components/**', 'happy-dom'],
-      ['src/hooks/**', 'happy-dom'],
-      ['tests/e2e/**', 'jsdom'],
+    // environmentMatchGlobs was removed in Vitest 4.0. Use projects instead.
+    projects: [
+      {
+        test: { name: 'node', include: ['src/**/*.test.ts'], environment: 'node' },
+      },
+      {
+        test: {
+          name: 'dom',
+          include: [
+            'src/components/**/*.test.{ts,tsx}',
+            'src/hooks/**/*.test.{ts,tsx}',
+          ],
+          environment: 'happy-dom',
+        },
+      },
+      {
+        test: {
+          name: 'e2e',
+          include: ['tests/e2e/**/*.test.{ts,tsx}'],
+          environment: 'jsdom',
+        },
+      },
     ],
   },
 })
