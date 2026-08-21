@@ -5,9 +5,9 @@ impactDescription: prevents invalid requests, enables dependent queries
 tags: cache, enabled, conditional, dependent-queries
 ---
 
-## Use enabled for Conditional Queries
+## Use enabled or skipToken for Conditional Queries
 
-Queries run immediately by default. Use `enabled` to defer queries until dependencies are available—essential for dependent queries and conditional fetching.
+Queries run when mounted by default. Use `enabled` to pause based on runtime state, or `skipToken` when TypeScript should prevent the query function from existing until its input is available.
 
 **Incorrect (query runs with undefined parameter):**
 
@@ -22,14 +22,15 @@ function UserProfile({ userId }: { userId?: string }) {
 }
 ```
 
-**Correct (enabled guards the query):**
+**Correct (skipToken keeps the query function type-safe):**
 
 ```typescript
+import { skipToken, useQuery } from '@tanstack/react-query'
+
 function UserProfile({ userId }: { userId?: string }) {
   const { data, isPending } = useQuery({
     queryKey: ['user', userId],
-    queryFn: () => fetchUser(userId!),
-    enabled: !!userId, // Only run when userId exists
+    queryFn: userId ? () => fetchUser(userId) : skipToken,
   })
 
   if (!userId) return <div>Select a user</div>
@@ -67,7 +68,9 @@ const { data: experiments } = useQuery({
 })
 ```
 
-**Note:** When `enabled` is false:
-- Query stays in `isPending` state
-- No network request is made
-- `data` remains undefined
+**Behavior notes:**
+- A disabled query with no cached data starts in `status: 'pending'` and `fetchStatus: 'idle'`; use both when distinguishing "not started" from active loading.
+- `refetch()` cannot execute a query whose `queryFn` is `skipToken`; use `enabled` if imperative refetch is part of the contract.
+- Prefer restructuring the API to remove dependent waterfalls when both resources can be fetched together.
+
+Reference: [TanStack Query disabling/pausing queries](https://tanstack.com/query/latest/docs/framework/react/guides/disabling-queries)
