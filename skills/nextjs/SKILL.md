@@ -41,9 +41,9 @@ Reference these guidelines when:
 
 ### 2. Caching Strategy (CRITICAL)
 
-- `cache-use-cache-directive` - Use the 'use cache' Directive for Explicit Caching
+- `cache-use-cache-directive` - Use 'use cache' with Cache Components
 - `cache-revalidate-tag` - Use revalidateTag with cacheLife Profiles
-- `cache-fetch-options` - Configure Fetch Cache Options Correctly
+- `cache-fetch-options` - Configure Fetch Cache Options Explicitly
 - `cache-revalidate-path` - Use revalidatePath for Route-Level Cache Invalidation
 - `cache-react-cache` - Use React cache() for Request Deduplication
 - `cache-segment-config` - Match route configuration to the active cache model
