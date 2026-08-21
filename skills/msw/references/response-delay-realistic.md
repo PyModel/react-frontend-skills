@@ -9,6 +9,8 @@ tags: response, delay, async, loading, timing
 
 Keep baseline handlers deterministic and fast. Add `delay()` in the specific test or development scenario whose contract includes a loading state, timeout, cancellation, race, or hung request. A random global delay makes tests slower and less reproducible.
 
+**Correct (deterministic baseline handlers):**
+
 ```typescript
 import { http, HttpResponse } from 'msw'
 
@@ -39,7 +41,38 @@ it('shows loading while the request is pending', async () => {
 })
 ```
 
-Use `delay('infinite')` only when the test controls cancellation or timeout and cannot hang indefinitely. Avoid `delay('real')` in automated tests because randomized timing weakens reproducibility; it can be useful in opt-in development scenarios.
+**Delay modes:**
+
+```typescript
+// Explicit, reproducible delay - use this when a test needs visible pending time
+await delay(200)
+
+// 'real' / bare delay(): randomized 100-400ms in the browser,
+// but a fixed 5ms under Node, so it will not make a loading state observable there
+await delay('real')
+
+// Infinite delay - simulates a hung request. Under Node this is setTimeout's
+// max int with .unref(), so it will not keep the process alive
+await delay('infinite')
+```
+
+Use `delay('infinite')` only when the test controls cancellation or timeout.
+
+**Incorrect (a global delay applied to every handler):**
+
+```typescript
+import { http, delay } from 'msw'
+
+export const handlers = [
+  // Slows every test in the suite to buy timing realism no assertion depends on
+  http.all('*', async () => {
+    await delay(100)
+    // No return = continue to the next matching handler
+  }),
+
+  http.get('/api/user', () => HttpResponse.json({ name: 'John' })),
+]
+```
 
 Do not use arbitrary delay values to wait in the test itself. Assert observable state with the testing framework's async utilities.
 
