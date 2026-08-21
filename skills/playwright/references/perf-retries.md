@@ -1,13 +1,13 @@
 ---
-title: Configure Retries for Flaky Test Recovery
+title: Use Retries to Detect and Diagnose Flakiness
 impact: MEDIUM
-impactDescription: reduces false negatives from intermittent failures
+impactDescription: classifies flaky tests and captures retry diagnostics without masking root causes
 tags: perf, retries, flaky, reliability, configuration
 ---
 
-## Configure Retries for Flaky Test Recovery
+## Use Retries to Detect and Diagnose Flakiness
 
-Some test flakiness is unavoidable (network, timing). Configure retries to automatically recover from intermittent failures, especially in CI.
+Retries let Playwright classify a test as flaky when it fails first and passes on retry. Use a small CI retry budget with traces to collect evidence, not to redefine an unstable test as healthy. Fix deterministic waits, shared state, and external dependencies at their source.
 
 **Incorrect (no retries, tests fail on first flake):**
 
@@ -57,20 +57,14 @@ export default defineConfig({
 // tests/critical.spec.ts
 import { test } from '@playwright/test';
 
-// Critical tests get extra retries
-test.describe('payment flow', () => {
-  test.describe.configure({ retries: 3 });
+// Override only when a documented external boundary needs different policy.
+test.describe('third-party sandbox', () => {
+  test.describe.configure({ retries: 1 })
 
-  test('complete checkout', async ({ page }) => {
-    // This test gets 3 retries
-  });
-});
-
-// Unstable third-party integration
-test('external API test', async ({ page }) => {
-  test.info().annotations.push({ type: 'flaky', description: 'External API' });
-  // ...
-});
+  test('completes the sandbox callback', async ({ page }) => {
+    // Keep diagnostics and track any flaky classification as a defect.
+  })
+})
 ```
 
 **Identify and fix flaky tests:**
@@ -100,7 +94,7 @@ npx playwright test --reporter=list
 
 # Output shows:
 # ✓ [1/2] test name (1.2s) [retry #1]
-# Investigate tests that consistently need retries
+# Any flaky classification still exits green by default; surface and track it
 ```
 
 Reference: [Playwright Retries](https://playwright.dev/docs/test-retries)
