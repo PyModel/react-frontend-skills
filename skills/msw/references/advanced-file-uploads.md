@@ -106,4 +106,4 @@ http.post('/api/upload/image', async ({ request }) => {
 **When NOT to use this pattern:**
 - JSON-only APIs don't need FormData parsing
 
-Reference: [MSW Request FormData](https://mswjs.io/docs/api/request)
+Reference: [MSW file uploads](https://mswjs.io/docs/http/mocking-responses/file-uploads)
