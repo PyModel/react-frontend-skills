@@ -9,6 +9,10 @@ tags: formcfg, validation-mode, re-renders, useForm
 
 The `mode` option controls when React Hook Form validates before the first submit. `onSubmit` is the default and minimizes validation work, but `onBlur`, `onTouched`, or `onChange` may better match the product's feedback requirements. Do not label a supported mode incorrect without measuring an expensive form.
 
+**Incorrect:** Ban `onChange` validation solely because it can re-render more often.
+
+**Correct:** Select the validation mode from the required feedback timing and actual resolver cost.
+
 **Live validation (use when the UX requires it):**
 
 ```typescript
