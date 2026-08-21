@@ -14,7 +14,7 @@ Define validation schemas outside the component to enable resolver caching. Sche
 ```typescript
 function RegistrationForm() {
   const schema = z.object({  // Created fresh on every render
-    email: z.string().email(),
+    email: z.email(),
     password: z.string().min(8),
   })
 
@@ -35,7 +35,7 @@ function RegistrationForm() {
 
 ```typescript
 const registrationSchema = z.object({  // Created once at module load
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(8),
 })
 
