@@ -1,55 +1,41 @@
 ---
-title: Configure Fetch Cache Options Correctly
+title: Configure Fetch Cache Options Explicitly
 impact: HIGH
-impactDescription: controls data freshness per request
+impactDescription: makes runtime freshness and revalidation behavior deliberate
 tags: cache, fetch, revalidate, data-fetching
 ---
 
-## Configure Fetch Cache Options Correctly
+## Configure Fetch Cache Options Explicitly
 
-The `fetch` API in Server Components supports cache configuration. Understand the three modes: force-cache (default), no-store, and time-based revalidation.
-
-**Incorrect (mixing cache strategies without intent):**
+In Next.js 15 and 16, a server `fetch()` without an explicit cache policy is not cached at runtime. Build-time prerendering may still reuse it during the build. State the intended policy instead of relying on older defaults.
 
 ```typescript
 export default async function Page() {
-  // Static data that rarely changes - correct
-  const config = await fetch('https://api.example.com/config')
-
-  // User-specific data that should be fresh - WRONG
-  const user = await fetch(`https://api.example.com/users/${userId}`)
-  // Using default caching for dynamic data!
-}
-```
-
-**Correct (explicit cache strategies):**
-
-```typescript
-export default async function Page() {
-  // Static data - cache indefinitely
   const config = await fetch('https://api.example.com/config', {
-    cache: 'force-cache'
+    cache: 'force-cache',
   })
 
-  // Dynamic data - never cache
   const user = await fetch(`https://api.example.com/users/${userId}`, {
-    cache: 'no-store'
+    cache: 'no-store',
   })
 
-  // Semi-dynamic - revalidate every 5 minutes
   const products = await fetch('https://api.example.com/products', {
-    next: { revalidate: 300 }
+    next: { revalidate: 300 },
   })
 
-  // Tagged for on-demand revalidation
   const posts = await fetch('https://api.example.com/posts', {
-    next: { tags: ['posts'] }
+    next: { tags: ['posts'] },
   })
 }
 ```
 
-**Cache strategy decision tree:**
-- User-specific or real-time → `no-store`
-- Changes hourly/daily → `next: { revalidate: N }`
-- Static/rarely changes → `force-cache`
-- Needs on-demand invalidation → `next: { tags: [...] }`
+Choose from the data contract:
+
+- Request-specific, authorization-dependent, or real-time data: `cache: 'no-store'`.
+- Reusable immutable data: `cache: 'force-cache'`.
+- Reusable data with a bounded freshness window: `next: { revalidate: seconds }`.
+- Reusable data requiring on-demand invalidation: attach `next.tags` and use the matching invalidation API.
+
+Do not cache personalized responses under a key shared by users. Also distinguish the persistent Data Cache from request memoization: identical GET fetches can be deduplicated during one server render without becoming cross-request cached data.
+
+Reference: [Next.js fetch API](https://nextjs.org/docs/app/api-reference/functions/fetch)
