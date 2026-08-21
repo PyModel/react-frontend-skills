@@ -50,14 +50,10 @@ export default function RootLayout({ children }) {
           strategy="lazyOnload"
         />
 
-        {/* Critical script - load before interactive */}
-        <Script
-          id="gtm"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){...})(window,document,'script','dataLayer','GTM-XXX');`
-          }}
-        />
+        {/* Rare critical bootstrap that must run before hydration */}
+        <Script id="consent-bootstrap" strategy="beforeInteractive">
+          {`window.consentConfig = { region: 'auto' };`}
+        </Script>
       </body>
     </html>
   )
@@ -68,4 +64,4 @@ export default function RootLayout({ children }) {
 - `beforeInteractive` - Critical scripts (rare)
 - `afterInteractive` - Analytics, tracking (default)
 - `lazyOnload` - Chat widgets, social buttons
-- `worker` - Offload to web worker (experimental)
+- `worker` - Experimental and version/router constrained; verify support in the installed Next.js docs
