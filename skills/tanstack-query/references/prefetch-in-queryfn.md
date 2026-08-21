@@ -1,13 +1,13 @@
 ---
-title: Prefetch Dependent Data in queryFn
+title: Start Follow-Up Prefetches When Their Keys Become Known
 impact: HIGH
 impactDescription: parallelizes dependent data fetching
 tags: prefetch, queryFn, parallel, dependent
 ---
 
-## Prefetch Dependent Data in queryFn
+## Start Follow-Up Prefetches When Their Keys Become Known
 
-When you know what data will be needed based on a response, start prefetching within the queryFn itself. This runs prefetches in parallel with the primary fetch.
+A truly dependent query cannot start before its prerequisite returns. If the first response reveals follow-up keys and those resources are very likely to render, start best-effort prefetches immediately after that response rather than waiting for child components to mount. Keep the primary query result independent from prefetch failure.
 
 **Incorrect (sequential dependent fetches):**
 
@@ -54,7 +54,7 @@ function Feed() {
       feed
         .filter(item => item.type === 'GRAPH')
         .forEach(item => {
-          queryClient.prefetchQuery({
+          void queryClient.prefetchQuery({
             queryKey: ['graph', item.id],
             queryFn: () => getGraphData(item.id),
           })
@@ -76,8 +76,6 @@ function Feed() {
 }
 ```
 
-**Timeline improvement:**
-```
-Before: Feed (100ms) → then Graph1 + Graph2 + Graph3 (150ms each) = 550ms
-After:  Feed (100ms) + Graphs prefetching in parallel = 150ms total
-```
+The graph requests still begin only after `getFeed()` resolves; the optimization is the head start before child mounting, not parallel execution with the prerequisite. Avoid prefetching a large fan-out speculatively. Prefer a flattened backend response or route-level prefetch when the data contract can provide all required keys earlier.
+
+Reference: [TanStack Query prefetching](https://tanstack.com/query/latest/docs/framework/react/guides/prefetching)
