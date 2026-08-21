@@ -65,6 +65,23 @@ npx skills experimental_sync
 
 `experimental_sync` reads the package from `node_modules` and installs all 18 skills into your detected agent.
 
+### Or connect through MCP
+
+The separate [`@pymodel/react-frontend-skills-mcp`](https://www.npmjs.com/package/@pymodel/react-frontend-skills-mcp) package exposes every skill and reference file through read-only MCP tools and resources:
+
+```json
+{
+  "mcpServers": {
+    "react-frontend-skills": {
+      "command": "npx",
+      "args": ["-y", "@pymodel/react-frontend-skills-mcp"]
+    }
+  }
+}
+```
+
+See [`mcp/README.md`](mcp/README.md) for the tool catalog and development details.
+
 ## Install per agent
 
 Target a single agent with `-a <agent>`. Use `-s '*'` for all skills and `-g` for a global install.
@@ -191,6 +208,7 @@ Each rule spells out the correct pattern with code, the anti-pattern to avoid, t
 
 ```text
 react-frontend-skills/
+├── mcp/                       # Publishable read-only MCP server
 ├── skills/
 │   ├── react/                # React 19 patterns
 │   ├── nextjs/               # Next.js 16 App Router
