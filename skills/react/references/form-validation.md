@@ -42,7 +42,7 @@ function SignupForm() {
 import { z } from 'zod'
 
 const signupSchema = z.object({
-  email: z.string().email('Invalid email format'),
+  email: z.email('Invalid email format'),
   password: z.string().min(8, 'Password must be 8+ characters')
 })
 
@@ -58,7 +58,7 @@ export async function signup(prevState: State, formData: FormData): Promise<Stat
   })
 
   if (!result.success) {
-    return { errors: result.error.flatten().fieldErrors }
+    return { errors: z.flattenError(result.error).fieldErrors }
   }
 
   await createUser(result.data)
