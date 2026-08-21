@@ -1,7 +1,7 @@
 ---
 title: Set Appropriate Line Height for Text Blocks
 impact: MEDIUM-HIGH
-impactDescription: improves readability by 25%+, reduces eye strain
+impactDescription: improves readability, reduces eye strain
 tags: typo, line-height, readability, leading, css
 ---
 
@@ -63,4 +63,4 @@ h2 {
 - Small headings: 1.2-1.3
 - UI labels/buttons: 1.1-1.3
 
-Reference: [web.dev Line Height](https://web.dev/articles/font-size#line_height)
+Reference: [WCAG 2.2 SC 1.4.12 Text Spacing](https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html)
