@@ -126,6 +126,23 @@ const jsonValueSchema: z.ZodType<JSONValue> = z.lazy(() =>
 )
 ```
 
+**Zod 4 getter alternative:**
+
+For object recursion, Zod 4 can infer a recursive schema through an accessor without a manual `ZodType` annotation:
+
+```typescript
+const Category = z.object({
+  name: z.string(),
+  get children() {
+    return z.array(Category)
+  },
+})
+
+type Category = z.infer<typeof Category>
+```
+
+Use `z.lazy()` when it better fits unions or non-object recursion.
+
 **Performance consideration:**
 
 Recursive validation cost depends on input depth and breadth. Benchmark unusually large structures and enforce application-level depth/size limits for untrusted input when denial-of-service resistance matters.
