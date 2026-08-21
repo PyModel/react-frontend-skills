@@ -72,4 +72,4 @@ setCoords({ zoom: 15 })
 setCoords({ lat: 51.5074, lng: -0.1278 })
 ```
 
-Reference: [nuqs useQueryStates](https://nuqs.dev/docs/usequerystates)
+Reference: [nuqs useQueryStates](https://nuqs.dev/docs/batching)
