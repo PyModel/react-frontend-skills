@@ -7,7 +7,7 @@ tags: sub, useWatch, default-value, hydration
 
 ## Provide defaultValue to useWatch for Initial Render
 
-useWatch returns undefined on the first render before the subscription is established. Provide a defaultValue to prevent undefined checks and potential UI flicker.
+On the initial render, `useWatch` returns the current form value when one is already registered; `defaultValue` (or `useForm({ defaultValues })`) is the fallback before the form has mounted. Provide one source of defaults consistently so controlled UI does not begin as `undefined`.
 
 **Incorrect (undefined on first render):**
 
