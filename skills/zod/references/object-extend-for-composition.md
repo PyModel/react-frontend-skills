@@ -7,7 +7,7 @@ tags: object, extend, composition, inheritance
 
 ## Use extend() for Adding Fields
 
-When building on an existing object schema, use `.extend()` for a concise extension or object spread for the best TypeScript performance and explicit strictness. Both preserve inference. If the base schema contains refinements, use `.safeExtend()` so incompatible overrides are rejected.
+When building on an existing object schema, use `.extend()` for a concise extension or object spread for the best TypeScript performance and explicit strictness. Both preserve inference. Regular `.extend()` throws when used on a schema that contains refinements; use `.safeExtend()` there. It additionally rejects an override whose schema is not assignable to the original.
 
 **Incorrect (duplicating the base fields):**
 
