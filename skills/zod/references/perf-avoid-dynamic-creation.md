@@ -65,6 +65,33 @@ function getSchemaForConfig(config: FieldConfig) {
 }
 ```
 
-Do not cache by an unbounded user-controlled string key. Rebuild when the contract truly changes, and prefer clarity for one-off schemas outside measured hot paths.
+For an expensive schema used only on an uncommon path, lazy initialization can avoid startup work without rebuilding it on every call:
+
+```typescript
+let reportSchema: z.ZodType | undefined
+
+function getReportSchema() {
+  reportSchema ??= z.object({
+    title: z.string(),
+    rows: z.array(z.record(z.string(), z.unknown())),
+  })
+  return reportSchema
+}
+```
+
+A factory is still appropriate when each call represents a genuinely different contract:
+
+```typescript
+function schemaForAllowedValues(values: readonly [string, ...string[]]) {
+  return z.enum(values)
+}
+```
+
+Do not cache by an unbounded user-controlled string key.
+
+**When NOT to use this pattern:**
+- A one-off schema outside a measured hot path
+- A schema whose contract genuinely changes per request
+- Tests where local construction makes each case clearer
 
 Reference: [Zod 4 performance notes](https://zod.dev/v4#benchmarks)
