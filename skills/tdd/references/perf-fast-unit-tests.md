@@ -9,6 +9,17 @@ tags: perf, speed, unit-tests, fast-feedback
 
 Unit tests should be deterministic and fast enough that developers run the relevant set continuously. There is no universal 100 ms per-test threshold: initialization, language runtime, hardware, and suite architecture differ. Measure the suite and protect a project-specific feedback budget.
 
+**Incorrect (turning a unit test into an uncontrolled integration test):**
+
+```typescript
+test('loads a user', async () => {
+  const response = await fetch('https://production.example.com/users/1')
+  expect(await response.json()).toMatchObject({ id: 1 })
+})
+```
+
+**Correct (exercise deterministic in-memory behavior):**
+
 Keep network, database, filesystem, clock, and process boundaries out of a unit test unless that boundary is the subject under test:
 
 ```typescript
