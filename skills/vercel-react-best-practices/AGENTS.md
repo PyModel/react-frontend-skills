@@ -2,7 +2,7 @@
 
 **Version 1.0.0**  
 Vercel Engineering  
-January 2026
+August 2026
 
 > **Note:**  
 > This document is mainly for agents and LLMs to follow when maintaining,  
@@ -14,7 +14,7 @@ January 2026
 
 ## Abstract
 
-Comprehensive performance optimization guide for React and Next.js applications, designed for AI agents and LLMs. Contains 40+ rules across 8 categories, prioritized by impact from critical (eliminating waterfalls, reducing bundle size) to incremental (advanced patterns). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
+Comprehensive performance optimization guide for React and Next.js applications, designed for AI agents and LLMs. Contains 57 rules across 8 categories, prioritized by impact from critical (eliminating waterfalls, reducing bundle size) to incremental (advanced patterns). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
 
 ---
 
@@ -648,9 +648,9 @@ import { verifySession } from '@/lib/auth'
 import { z } from 'zod'
 
 const updateProfileSchema = z.object({
-  userId: z.string().uuid(),
+  userId: z.uuid(),
   name: z.string().min(1).max(100),
-  email: z.string().email()
+  email: z.email()
 })
 
 export async function updateProfile(data: unknown) {
@@ -1002,7 +1002,7 @@ export async function POST(request: Request) {
     const userAgent = (await headers()).get('user-agent') || 'unknown'
     const sessionCookie = (await cookies()).get('session-id')?.value || 'anonymous'
     
-    logUserAction({ sessionCookie, userAgent })
+    await logUserAction({ sessionCookie, userAgent })
   })
   
   return new Response(JSON.stringify({ status: 'success' }), {
@@ -1012,7 +1012,7 @@ export async function POST(request: Request) {
 }
 ```
 
-The response is sent immediately while logging happens in the background.
+The response can finish before the callback runs, while Next.js keeps the route alive for the returned callback Promise. Await asynchronous work inside the callback so the platform can track its completion.
 
 **Common use cases:**
 
@@ -1022,7 +1022,7 @@ The response is sent immediately while logging happens in the background.
 
 - Sending notifications
 
-- Cache invalidation
+- Non-user-visible cache maintenance
 
 - Cleanup tasks
 
@@ -2119,7 +2119,7 @@ function Badge({ count }: { count: number }) {
 
 **Impact: LOW (reduces re-renders and improves code clarity)**
 
-Use `useTransition` instead of manual `useState` for loading states. This provides built-in `isPending` state and automatically manages transitions.
+Use `useTransition` when an Action performs a non-urgent update and the UI should remain responsive. Its `isPending` state can replace some manual pending bookkeeping. It does not cancel requests or guarantee that async results commit in request order.
 
 **Incorrect: manual loading state**
 
@@ -2150,20 +2150,22 @@ function SearchResults() {
 **Correct: useTransition with built-in pending state**
 
 ```tsx
-import { useTransition, useState } from 'react'
+import { useRef, useState, useTransition } from 'react'
 
 function SearchResults() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [isPending, startTransition] = useTransition()
+  const latestRequest = useRef(0)
 
   const handleSearch = (value: string) => {
-    setQuery(value) // Update input immediately
-    
+    setQuery(value) // Urgent input update
+    const requestId = ++latestRequest.current
+
     startTransition(async () => {
-      // Fetch and update results
       const data = await fetchResults(value)
-      setResults(data)
+      // Transitions do not cancel or order network requests.
+      if (requestId === latestRequest.current) setResults(data)
     })
   }
 
@@ -2181,11 +2183,13 @@ function SearchResults() {
 
 - **Automatic pending state**: No need to manually manage `setIsLoading(true/false)`
 
-- **Error resilience**: Pending state correctly resets even if the transition throws
+- **Pending state**: React tracks the Action while it is in progress
 
-- **Better responsiveness**: Keeps the UI responsive during updates
+- **Responsiveness**: Non-urgent rendering work can be interrupted
 
-- **Interrupt handling**: New transitions automatically cancel pending ones
+- **Ordering remains explicit**: Use `useActionState` for ordered Actions, or abort/version request-style work yourself
+
+Handle errors inside the Action or with the framework's error boundary. Do not rely on a Transition to swallow an async error.
 
 Reference: [https://react.dev/reference/react/useTransition](https://react.dev/reference/react/useTransition)
 
@@ -2725,7 +2729,7 @@ const min = Math.min(...numbers)
 const max = Math.max(...numbers)
 ```
 
-This works for small arrays, but can be slower or just throw an error for very large arrays due to spread operator limitations. Maximal array length is approximately 124000 in Chrome 143 and 638000 in Safari 18; exact numbers may vary - see [the fiddle](https://jsfiddle.net/qw1jabsx/4/). Use the loop approach for reliability.
+This is concise for small arrays, but spreading a very large array into function arguments can exceed engine-specific argument limits. Use the loop approach when input size is large or unbounded.
 
 ### 7.11 Use Set/Map for O(1) Lookups
 
