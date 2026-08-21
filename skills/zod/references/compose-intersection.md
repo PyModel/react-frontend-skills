@@ -27,14 +27,14 @@ const softDeleteSchema = z.object({
 const userSchema = z.object({
   id: z.string(),
   name: z.string(),
-  email: z.string().email(),
+  email: z.email(),
 })
 
 // Manual combination - verbose and error-prone
 const fullUserSchema = z.object({
   id: z.string(),
   name: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
@@ -60,7 +60,7 @@ const softDeleteSchema = z.object({
 const userSchema = z.object({
   id: z.string(),
   name: z.string(),
-  email: z.string().email(),
+  email: z.email(),
 })
 
 // Using .and() for intersection
@@ -122,23 +122,26 @@ const documentSchema = z.object({
 const fullDocumentSchema = withAudit(withVersioning(documentSchema))
 ```
 
-**Intersection vs Merge:**
+**Intersection vs object composition:**
 
 ```typescript
-// .merge() - replaces fields from first with second
 const a = z.object({ x: z.string(), y: z.number() })
-const b = z.object({ y: z.string() })  // y is string, not number
+const b = z.object({ y: z.string() })
 
-a.merge(b)  // { x: string, y: string } - b's y wins
+// Zod 4 object composition: the later shape replaces overlapping fields.
+// Prefer object spread for the best TypeScript performance.
+const overridden = z.object({ ...a.shape, ...b.shape })
+// { x: string, y: string }
 
-// .and() - requires fields to be compatible
-// If both have y with different types, intersection fails at runtime
-a.and(b)  // Validation will fail - y can't be both number and string
+// Intersection requires both schemas to pass.
+a.and(b) // Validation fails because y cannot be both number and string.
 ```
 
 **When NOT to use this pattern:**
-- When schemas have overlapping fields with different types (use merge)
-- When you need to override fields (use extend)
-- Simple cases where extend works fine
+- When object schemas have fields you intend to override; use object spread or `.extend()`
+- When callers need object helpers such as `.pick()` or `.omit()` on the result; prefer object composition
+- Simple cases where `.extend()` is clearer
+
+> Zod 4 deprecates `.merge()` in favor of `.extend()` or object spread.
 
 Reference: [Zod API - intersection](https://zod.dev/api#intersection)
