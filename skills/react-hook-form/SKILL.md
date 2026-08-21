@@ -1,6 +1,6 @@
 ---
 name: react-hook-form
-description: React Hook Form performance optimization for client-side form validation using useForm, useWatch, useController, and useFieldArray. This skill should be used when building client-side controlled forms with React Hook Form library. This skill does NOT cover React 19 Server Actions, useActionState, or server-side form handling (use react-19 skill for those).
+description: Current React Hook Form v7 guidance for useForm, useWatch, useController, useFieldArray, validation, subscriptions, and UI-library integration. React Server Actions and useActionState are covered by the react skill.
 ---
 
 # React Hook Form Best Practices
@@ -34,11 +34,11 @@ Reference these guidelines when:
 
 ### 1. Form Configuration (CRITICAL)
 
-- `formcfg-validation-mode` - Use onSubmit mode for optimal performance
-- `formcfg-revalidate-mode` - Set reValidateMode to onBlur for post-submit performance
+- `formcfg-validation-mode` - Choose validation mode from UX and validation cost
+- `formcfg-revalidate-mode` - Choose post-submit revalidation deliberately
 - `formcfg-default-values` - Always provide defaultValues for form initialization
 - `formcfg-async-default-values` - Use async defaultValues for server data
-- `formcfg-should-unregister` - Enable shouldUnregister for dynamic form memory efficiency
+- `formcfg-should-unregister` - Choose shouldUnregister from submission semantics
 - `formcfg-useeffect-dependency` - Avoid useForm return object in useEffect dependencies
 
 ### 2. Field Subscription (CRITICAL)
@@ -56,7 +56,7 @@ Reference these guidelines when:
 - `ctrl-usecontroller-isolation` - Use useController for re-render isolation
 - `ctrl-avoid-double-registration` - Avoid double registration with useController
 - `ctrl-controller-field-props` - Wire Controller field props correctly for UI libraries
-- `ctrl-single-usecontroller-per-component` - Use single useController per component
+- `ctrl-single-usecontroller-per-component` - Split controlled fields when isolation helps
 - `ctrl-local-state-combination` - Combine local state with useController for UI-only state
 
 ### 4. Validation Patterns (HIGH)
@@ -82,7 +82,7 @@ Reference these guidelines when:
 - `formstate-useformstate-isolation` - Use useFormState for isolated state subscriptions
 - `formstate-getfieldstate-for-single-field` - Use getFieldState for single field state access
 - `formstate-subscribe-to-specific-fields` - Subscribe to specific field names in useFormState
-- `formstate-avoid-isvalid-with-onsubmit` - Avoid isValid with onSubmit mode for button state
+- `formstate-avoid-isvalid-with-onsubmit` - Align submit gating with validation mode
 
 ### 7. Integration Patterns (MEDIUM)
 
@@ -93,7 +93,7 @@ Reference these guidelines when:
 
 ### 8. Advanced Patterns (LOW)
 
-- `adv-formprovider-memo` - Wrap FormProvider children with React.memo
+- `adv-formprovider-memo` - Memoize FormProvider children only after profiling
 - `adv-devtools-performance` - Disable DevTools in production and during performance testing
 - `adv-testing-wrapper` - Create test wrapper with QueryClient and AuthProvider
 
@@ -107,8 +107,8 @@ Read individual reference files for detailed explanations and code examples:
 ## Related Skills
 
 - For schema validation with Zod resolver, see `zod` skill
-- For React 19 server actions, see `react-19` skill
-- For UI/UX form design, see `frontend-design` skill
+- For React 19 server actions, see `react` skill
+- For UI/UX form design, see `ui-design` skill
 
 ## Full Compiled Document
 
