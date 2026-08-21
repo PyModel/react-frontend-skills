@@ -56,7 +56,7 @@ Reference these guidelines when:
 
 - [`wait-web-first-assertions`](references/wait-web-first-assertions.md) - Use web-first assertions
 - [`wait-avoid-hard-waits`](references/wait-avoid-hard-waits.md) - Avoid hard waits
-- [`wait-network-idle`](references/wait-network-idle.md) - Use network idle for complex pages
+- [`wait-network-idle`](references/wait-network-idle.md) - Wait for observable readiness, not network idle
 - [`wait-action-retries`](references/wait-action-retries.md) - Let actions auto-wait before interacting
 - [`wait-soft-assertions`](references/wait-soft-assertions.md) - Use soft assertions for non-critical checks
 - [`wait-custom-timeout`](references/wait-custom-timeout.md) - Configure timeouts appropriately
@@ -90,8 +90,8 @@ Reference these guidelines when:
 - [`perf-sharding`](references/perf-sharding.md) - Use sharding for large test suites
 - [`perf-headless-ci`](references/perf-headless-ci.md) - Use headless mode in CI
 - [`perf-browser-selection`](references/perf-browser-selection.md) - Select browsers strategically
-- [`perf-reuse-server`](references/perf-reuse-server.md) - Reuse development server when possible
-- [`perf-retries`](references/perf-retries.md) - Configure retries for flaky test recovery
+- [`perf-reuse-server`](references/perf-reuse-server.md) - Reuse a matching local server when safe
+- [`perf-retries`](references/perf-retries.md) - Use retries to detect and diagnose flakiness
 
 ### 8. Debugging & CI (LOW-MEDIUM)
 
