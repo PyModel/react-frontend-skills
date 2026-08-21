@@ -7,7 +7,7 @@ tags: action, revalidation, cache, mutation
 
 ## Revalidate Cache After Mutations
 
-Always invalidate relevant cached data after mutations. Use `revalidatePath` for routes and `revalidateTag` for tagged data.
+After a mutation, invalidate only cached reads affected by the write. Use `revalidatePath` for route-level invalidation, `revalidateTag(tag, 'max')` for stale-while-revalidate content, or `updateTag(tag)` inside a Server Action for immediate read-your-writes behavior.
 
 **Incorrect (stale cache after mutation):**
 
@@ -26,7 +26,7 @@ export async function deletePost(postId: string) {
 ```typescript
 'use server'
 
-import { revalidatePath, revalidateTag } from 'next/cache'
+import { revalidatePath, revalidateTag, updateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 export async function deletePost(postId: string) {
@@ -35,9 +35,8 @@ export async function deletePost(postId: string) {
   // Option 1: Revalidate specific path
   revalidatePath('/posts')
 
-  // Option 2: Revalidate by tag (more granular)
-  // Next.js 16 requires a cacheLife profile; 'max' = stale-while-revalidate
-  revalidateTag('posts', 'max')
+  // Option 2: expire and immediately refresh for this user's write
+  updateTag('posts')
 
   redirect('/posts')
 }
@@ -66,10 +65,12 @@ revalidatePath(`/posts/${postId}`)
 // All routes using a layout
 revalidatePath('/dashboard', 'layout')
 
-// By cache tag (Next.js 16 requires a cacheLife profile)
+// Stale-while-revalidate for webhook/content updates
 revalidateTag('posts', 'max')
 
-// Multiple tags
-revalidateTag('posts', 'max')
-revalidateTag(`post-${postId}`, 'max')
+// Immediate read-your-writes in a Server Action
+updateTag('posts')
+updateTag(`post-${postId}`)
 ```
+
+Reference: [Next.js updating cached data](https://nextjs.org/docs/app/getting-started/caching-and-revalidating#updating-data)
