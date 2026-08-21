@@ -1,11 +1,11 @@
 ---
 name: shadcn
-description: shadcn/ui component library best practices and patterns (formerly shadcn-ui). This skill should be used when writing, reviewing, or refactoring shadcn/ui components to ensure proper architecture, accessibility, and performance. Triggers on tasks involving Radix primitives, Tailwind styling, form validation with React Hook Form, data tables, theming, or component composition patterns.
+description: Current shadcn/ui component guidance for projects generated with Radix UI or Base UI, including primitive-specific composition, Tailwind CSS v4 theming, accessibility, forms, tables, and state patterns. Inspect the checked-in component implementation before applying Radix asChild or Base UI render APIs.
 ---
 
 # shadcn/ui Community Best Practices
 
-Comprehensive best practices guide for shadcn/ui applications, maintained by the shadcn/ui community. Contains 42 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
+Current best-practices guide for shadcn/ui applications. Before applying primitive-specific guidance, inspect whether the checked-in components use Radix UI or Base UI; current shadcn supports both and their composition APIs differ.
 
 ## When to Apply
 
@@ -33,7 +33,7 @@ Reference these guidelines when:
 
 ### 1. Component Architecture (CRITICAL)
 
-- [`arch-use-asChild-for-custom-triggers`](references/arch-use-asChild-for-custom-triggers.md) - Use asChild prop for custom trigger elements
+- [`arch-use-asChild-for-custom-triggers`](references/arch-use-asChild-for-custom-triggers.md) - Use the generated primitive's composition API
 - [`arch-preserve-radix-primitive-structure`](references/arch-preserve-radix-primitive-structure.md) - Maintain Radix compound component hierarchy
 - [`arch-extend-variants-with-cva`](references/arch-extend-variants-with-cva.md) - Use Class Variance Authority for type-safe variants
 - [`arch-use-cn-for-class-merging`](references/arch-use-cn-for-class-merging.md) - Use cn() utility for safe Tailwind class merging
@@ -51,8 +51,8 @@ Reference these guidelines when:
 ### 3. Styling & Theming (HIGH)
 
 - [`style-use-css-variables-for-theming`](references/style-use-css-variables-for-theming.md) - Use CSS variables for theme colors
-- [`style-avoid-important-overrides`](references/style-avoid-important-overrides.md) - Never use !important for style overrides
-- [`style-use-tailwind-theme-extend`](references/style-use-tailwind-theme-extend.md) - Extend Tailwind theme for design tokens
+- [`style-avoid-important-overrides`](references/style-avoid-important-overrides.md) - Prefer variants and class composition over important overrides
+- [`style-use-tailwind-theme-extend`](references/style-use-tailwind-theme-extend.md) - Define Tailwind v4 theme tokens in CSS
 - [`style-consistent-spacing-scale`](references/style-consistent-spacing-scale.md) - Use consistent Tailwind spacing scale
 - [`style-responsive-design-patterns`](references/style-responsive-design-patterns.md) - Apply mobile-first responsive design
 - [`style-dark-mode-support`](references/style-dark-mode-support.md) - Support dark mode with CSS variables
