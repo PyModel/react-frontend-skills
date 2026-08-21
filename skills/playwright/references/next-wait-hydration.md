@@ -89,6 +89,15 @@ test('interactive dropdown works', async ({ page }) => {
 });
 ```
 
+**Incorrect (network quiet is not a hydration contract):**
+
+```typescript
+test('fully hydrated page', async ({ page }) => {
+  await page.goto('/dashboard', { waitUntil: 'networkidle' })
+  await page.getByRole('button', { name: 'Action' }).click()
+})
+```
+
 Do not use `networkidle` as a hydration signal; Playwright discourages it for testing, and network quiet does not prove React attached the required handlers. Prefer an observable product state. Add a dedicated marker only when no user-visible readiness contract exists.
 
 Reference: [Next.js Hydration](https://nextjs.org/docs/messages/react-hydration-error)
