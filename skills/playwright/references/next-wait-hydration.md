@@ -29,11 +29,10 @@ test('submit form', async ({ page }) => {
 test('submit form', async ({ page }) => {
   await page.goto('/contact');
 
-  // Wait for hydration - JavaScript has loaded and attached handlers
-  // Option 1: Wait for client-only element to appear
-  await expect(page.getByTestId('hydration-complete')).toBeVisible();
+  // Prefer a product-specific ready state. If the app exposes an explicit
+  // hydration marker, assert that marker rather than network activity.
+  await expect(page.locator('html')).toHaveAttribute('data-hydrated', 'true');
 
-  // Option 2: Wait for interactive element state
   await expect(page.getByRole('button', { name: 'Submit' })).toBeEnabled();
 
   // Now safe to interact
@@ -47,18 +46,17 @@ test('submit form', async ({ page }) => {
 // components/HydrationMarker.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export function HydrationMarker() {
-  const [hydrated, setHydrated] = useState(false);
-
   useEffect(() => {
-    setHydrated(true);
+    document.documentElement.dataset.hydrated = 'true';
+    return () => {
+      delete document.documentElement.dataset.hydrated;
+    };
   }, []);
 
-  if (!hydrated) return null;
-
-  return <div data-testid="hydration-complete" style={{ display: 'none' }} />;
+  return null;
 }
 
 // app/layout.tsx
@@ -91,16 +89,6 @@ test('interactive dropdown works', async ({ page }) => {
 });
 ```
 
-**Alternative: networkidle for full hydration:**
-
-```typescript
-test('fully hydrated page', async ({ page }) => {
-  // networkidle waits for all JS to load and execute
-  await page.goto('/dashboard', { waitUntil: 'networkidle' });
-
-  // Page is fully hydrated
-  await page.getByRole('button', { name: 'Action' }).click();
-});
-```
+Do not use `networkidle` as a hydration signal; Playwright discourages it for testing, and network quiet does not prove React attached the required handlers. Prefer an observable product state. Add a dedicated marker only when no user-visible readiness contract exists.
 
 Reference: [Next.js Hydration](https://nextjs.org/docs/messages/react-hydration-error)
