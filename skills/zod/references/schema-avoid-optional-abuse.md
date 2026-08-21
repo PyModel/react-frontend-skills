@@ -45,9 +45,9 @@ import { z } from 'zod'
 
 // Required fields are required, optional fields are intentional
 const userSchema = z.object({
-  id: z.string().uuid(),  // Required
+  id: z.uuid(),  // Required
   name: z.string().min(1),  // Required, non-empty
-  email: z.string().email(),  // Required
+  email: z.email(),  // Required
   role: z.enum(['admin', 'user', 'guest']),  // Required
   nickname: z.string().optional(),  // Intentionally optional
   bio: z.string().nullable(),  // Can be explicitly null
@@ -74,9 +74,9 @@ function greetUser(user: User) {
 ```typescript
 // Base schema with required fields
 const userSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string().min(1),
-  email: z.string().email(),
+  email: z.email(),
 })
 
 // All fields optional for PATCH updates
