@@ -73,4 +73,6 @@ updateTag('posts')
 updateTag(`post-${postId}`)
 ```
 
+`updateTag` requires `cacheComponents: true` and can only be called from a Server Action. In Route Handlers and webhooks use `revalidateTag(tag, 'max')` instead.
+
 Reference: [Next.js updating cached data](https://nextjs.org/docs/app/getting-started/caching-and-revalidating#updating-data)
