@@ -60,7 +60,7 @@ vitest run --allowOnly=false
 ```typescript
 // If you must skip, document why
 it.skip('should integrate with legacy API', () => {
-  // TODO: Re-enable when legacy API migration complete (JIRA-1234)
+  // Tracked by JIRA-1234; remove the skip when that issue closes.
 })
 
 // Or use todo for planned tests
