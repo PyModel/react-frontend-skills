@@ -7,7 +7,7 @@ tags: memo, compiler, automatic, optimization
 
 ## Leverage React Compiler for Automatic Memoization
 
-React Compiler (stable in React 19) automatically memoizes components and values. Reduce manual useMemo/useCallback when compiler is enabled.
+React Compiler 1.0 is stable and can automatically memoize eligible components and values. It is separate tooling and is not enabled merely by installing React 19. Reduce manual `useMemo`/`useCallback` only after the project enables the compiler and passes its diagnostics.
 
 **Incorrect (verbose manual memoization):**
 
@@ -66,15 +66,19 @@ function ProductPage({ product }: { product: Product }) {
 // Cleaner code, compiler handles memoization
 ```
 
-**Enabling React Compiler:**
+**Enabling React Compiler with Babel:**
+
+```bash
+npm install --save-dev babel-plugin-react-compiler
+```
 
 ```javascript
 // babel.config.js
 module.exports = {
-  plugins: [
-    ['babel-plugin-react-compiler', {}]
-  ]
+  plugins: ['babel-plugin-react-compiler'],
 }
 ```
+
+Framework integrations may provide a version-specific configuration path; follow the installed framework's official guide instead of adding a second Babel pipeline.
 
 **Note:** Still use manual memoization for edge cases the compiler can't optimize, and measure with React Profiler.
