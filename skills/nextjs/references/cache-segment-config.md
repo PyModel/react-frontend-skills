@@ -1,59 +1,53 @@
 ---
-title: Configure Route Segment Caching with Exports
+title: Match Route Configuration to the Active Cache Model
 impact: MEDIUM-HIGH
-impactDescription: controls caching at route level
-tags: cache, segment-config, dynamic, revalidate
+impactDescription: avoids mixing incompatible Cache Components and legacy segment options
+tags: cache, segment-config, dynamic, revalidate, cache-components
 ---
 
-## Configure Route Segment Caching with Exports
+## Match Route Configuration to the Active Cache Model
 
-Use route segment config exports to control caching behavior at the route level. These settings apply to the entire route segment.
+Next.js 16 supports two caching models. First determine whether `cacheComponents: true` is enabled.
 
-**Incorrect (dynamic when static would work):**
+### Cache Components enabled
+
+Use `'use cache'`, `cacheLife()`, `cacheTag()`, `<Suspense>`, and request-time APIs. The legacy route segment options `dynamic`, `revalidate`, and `fetchCache` are disabled or unnecessary under Cache Components; do not layer them onto the new model.
+
+```typescript
+// next.config.ts
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = { cacheComponents: true }
+export default nextConfig
+```
 
 ```typescript
 // app/about/page.tsx
-export default async function AboutPage() {
-  const team = await fetch('https://api.example.com/team')
-  return <TeamSection team={team} />
-}
-// Defaults to dynamic rendering on every request
-```
-
-**Correct (explicit static generation):**
-
-```typescript
-// app/about/page.tsx
-export const dynamic = 'force-static'
-export const revalidate = 86400  // Revalidate daily
+import { cacheLife } from 'next/cache'
 
 export default async function AboutPage() {
-  const team = await fetch('https://api.example.com/team')
+  'use cache'
+  cacheLife('days')
+
+  const team = await getTeam()
   return <TeamSection team={team} />
 }
-// Generated at build time, revalidated daily
 ```
 
-**Segment config options:**
+### Cache Components disabled (previous model)
+
+Route segment configuration remains available. Use it only when the whole segment genuinely shares that rendering policy; prefer per-fetch controls for mixed data.
 
 ```typescript
-// Force dynamic rendering (never cache)
-export const dynamic = 'force-dynamic'
-
-// Force static generation (build-time only)
 export const dynamic = 'force-static'
+export const revalidate = 86400
 
-// Revalidate time in seconds
-export const revalidate = 3600  // 1 hour
-
-// Generate static params for dynamic routes
-export async function generateStaticParams() {
-  const products = await getProducts()
-  return products.map((p) => ({ slug: p.slug }))
+export default async function AboutPage() {
+  const team = await getTeam()
+  return <TeamSection team={team} />
 }
 ```
 
-**Decision matrix:**
-- Static content → `force-static`
-- User-specific/auth → `force-dynamic`
-- Semi-static → `revalidate: N`
+For request-specific routes in the previous model, use `dynamic = 'force-dynamic'` or explicit uncached fetches. `generateStaticParams()` controls which dynamic route parameters are generated; it is not itself a cache invalidation API.
+
+Reference: [Next.js route segment config](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config)
