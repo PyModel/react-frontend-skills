@@ -2,7 +2,7 @@
 
 **Version 1.0.0**  
 community  
-January 2026
+August 2026
 
 > **Note:**  
 > This document is mainly for agents and LLMs to follow when maintaining,  
@@ -13,7 +13,7 @@ January 2026
 
 ## Abstract
 
-Comprehensive performance optimization guide for TanStack Query v5 applications, designed for AI agents and LLMs. Contains 40+ rules across 8 categories, prioritized by impact from critical (query key structure, caching configuration) to incremental (render optimization). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
+Comprehensive performance optimization guide for TanStack Query v5 applications, designed for AI agents and LLMs. Contains 40 rules across 8 categories, prioritized by impact from critical (query key structure, caching configuration) to incremental (render optimization). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
 
 ---
 
@@ -31,24 +31,24 @@ Comprehensive performance optimization guide for TanStack Query v5 applications,
    - 2.2 [Control Automatic Refetch Triggers](references/cache-refetch-triggers.md) — MEDIUM (prevents unexpected refetches, saves bandwidth)
    - 2.3 [Invalidate with Precision](references/cache-invalidation-precision.md) — HIGH (prevents over-invalidation cascade, improves performance)
    - 2.4 [Understand staleTime vs gcTime](references/cache-staletime-gctime.md) — CRITICAL (prevents unnecessary refetches and memory issues)
-   - 2.5 [Use enabled for Conditional Queries](references/cache-enabled-option.md) — HIGH (prevents invalid requests, enables dependent queries)
+   - 2.5 [Use enabled or skipToken for Conditional Queries](references/cache-enabled-option.md) — HIGH (prevents invalid requests, enables dependent queries)
    - 2.6 [Use placeholderData vs initialData Correctly](references/cache-placeholder-vs-initial.md) — HIGH (prevents stale data bugs and incorrect cache behavior)
 3. Mutation Patterns — **HIGH**
    - 3.1 [Avoid Parallel Mutations on Same Data](references/mutation-avoid-parallel.md) — MEDIUM (prevents race conditions and cache corruption)
    - 3.2 [Cancel Queries Before Optimistic Updates](references/mutation-cancel-queries.md) — HIGH (prevents race conditions, preserves optimistic state)
    - 3.3 [Implement Optimistic Updates with Rollback](references/mutation-optimistic-updates.md) — HIGH (instant UI feedback, proper error recovery)
-   - 3.4 [Invalidate in onSettled, Not onSuccess](references/mutation-invalidate-onsettled.md) — HIGH (ensures cache sync after errors too)
+   - 3.4 [Choose Mutation Invalidation Callbacks by Contract](references/mutation-invalidate-onsettled.md) — HIGH (ensures cache sync after errors too)
    - 3.5 [Use setQueryData for Immediate Cache Updates](references/mutation-setquerydata.md) — MEDIUM (instant UI updates without refetch roundtrip)
 4. Prefetching & Waterfalls — **HIGH**
-   - 4.1 [Avoid Request Waterfalls](references/prefetch-avoid-waterfalls.md) — CRITICAL (2-10× latency reduction)
+   - 4.1 [Avoid Request Waterfalls](references/prefetch-avoid-waterfalls.md) — CRITICAL (substantial latency reduction)
    - 4.2 [Flatten API to Reduce Waterfalls](references/prefetch-flatten-api.md) — CRITICAL (eliminates dependent query chains entirely)
-   - 4.3 [Prefetch Dependent Data in queryFn](references/prefetch-in-queryfn.md) — HIGH (parallelizes dependent data fetching)
+   - 4.3 [Start Follow-Up Prefetches When Their Keys Become Known](references/prefetch-in-queryfn.md) — HIGH (parallelizes dependent data fetching)
    - 4.4 [Prefetch in Server Components](references/prefetch-server-components.md) — HIGH (eliminates client-side waterfall, immediate data)
-   - 4.5 [Prefetch on Hover for Perceived Speed](references/prefetch-on-hover.md) — HIGH (200-400ms head start before navigation)
+   - 4.5 [Prefetch on Hover for Perceived Speed](references/prefetch-on-hover.md) — HIGH (head start before navigation)
 5. Infinite Queries — **MEDIUM**
    - 5.1 [Flatten Pages for Rendering](references/infinite-flatten-pages.md) — MEDIUM (simplifies component logic, enables virtualization)
    - 5.2 [Handle Infinite Query Loading States Correctly](references/infinite-loading-states.md) — MEDIUM (prevents UI glitches, shows appropriate feedback)
-   - 5.3 [Limit Infinite Query Pages with maxPages](references/infinite-max-pages.md) — HIGH (90% memory reduction in long sessions)
+   - 5.3 [Limit Infinite Query Pages with maxPages](references/infinite-max-pages.md) — HIGH (large memory reduction in long sessions)
    - 5.4 [Understand Infinite Query Refetch Behavior](references/infinite-refetch-behavior.md) — MEDIUM (prevents unexpected sequential refetches)
 6. Suspense Integration — **MEDIUM**
    - 6.1 [Always Pair Suspense with Error Boundaries](references/suspense-error-boundaries.md) — HIGH (prevents unhandled exceptions from crashing app)
@@ -62,10 +62,10 @@ Comprehensive performance optimization guide for TanStack Query v5 applications,
    - 7.4 [Use Global Error Handler for Common Errors](references/error-global-handler.md) — MEDIUM (centralizes error handling, consistent UX)
    - 7.5 [Use throwOnError with Error Boundaries](references/error-throw-on-error.md) — MEDIUM (bubbles errors to boundaries, enables catch-all handling)
 8. Render Optimization — **LOW-MEDIUM**
-   - 8.1 [Avoid Destructuring All Properties](references/render-tracked-props.md) — LOW (prevents subscribing to unused state changes)
+   - 8.1 [Preserve Tracked-Property Optimization](references/render-tracked-props.md) — LOW (prevents subscribing to unused state changes)
    - 8.2 [Memoize Select Functions](references/render-select-memoize.md) — MEDIUM (prevents repeated computation on every render)
    - 8.3 [Understand Structural Sharing](references/render-structural-sharing.md) — LOW (automatic reference stability for unchanged data)
-   - 8.4 [Use notifyOnChangeProps to Limit Re-renders](references/render-notify-props.md) — LOW-MEDIUM (prevents re-renders for unused state changes)
+   - 8.4 [Rely on Tracked Properties Before notifyOnChangeProps](references/render-notify-props.md) — LOW-MEDIUM
    - 8.5 [Use Select to Derive Data and Reduce Re-renders](references/render-select-derived.md) — MEDIUM (component only re-renders when derived value changes)
 
 ---
