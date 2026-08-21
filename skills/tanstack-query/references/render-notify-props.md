@@ -38,6 +38,24 @@ const { data, error } = useQuery({
 })
 ```
 
-An incomplete list can produce stale UI. `notifyOnChangeProps: 'all'` opts out of tracked-property optimization; it does not enable it. To warm another query without subscribing this component, call `queryClient.prefetchQuery()` from an event, loader, or deliberate effect instead of mounting a hidden `useQuery` with an empty notification list.
+An incomplete list can produce stale UI. In particular, an empty list suppresses all result-driven notifications:
+
+```typescript
+// Avoid: the component will not re-render when this query result changes.
+useQuery({
+  queryKey: ['data'],
+  queryFn: fetchData,
+  notifyOnChangeProps: [],
+})
+```
+
+`notifyOnChangeProps: 'all'` opts out of tracked-property optimization; it does not enable it. To warm another query without subscribing this component, prefetch explicitly:
+
+```typescript
+await queryClient.prefetchQuery({
+  queryKey: ['data'],
+  queryFn: fetchData,
+})
+```
 
 Reference: [TanStack Query render optimizations](https://tanstack.com/query/latest/docs/framework/react/guides/render-optimizations#tracked-properties)
