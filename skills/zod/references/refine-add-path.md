@@ -19,7 +19,7 @@ const formSchema = z.object({
   confirmPassword: z.string(),
 }).refine(
   (data) => data.password === data.confirmPassword,
-  { message: 'Passwords do not match' }  // No path specified
+  { error: 'Passwords do not match' }  // No path specified
 )
 
 const result = formSchema.safeParse({
@@ -28,7 +28,7 @@ const result = formSchema.safeParse({
 })
 
 if (!result.success) {
-  const flattened = result.error.flatten()
+  const flattened = z.flattenError(result.error)
   // {
   //   formErrors: ['Passwords do not match'],  // At form level!
   //   fieldErrors: {}  // Empty - no field association
@@ -49,7 +49,7 @@ const formSchema = z.object({
 }).refine(
   (data) => data.password === data.confirmPassword,
   {
-    message: 'Passwords do not match',
+    error: 'Passwords do not match',
     path: ['confirmPassword'],  // Error appears on this field
   }
 )
@@ -60,7 +60,7 @@ const result = formSchema.safeParse({
 })
 
 if (!result.success) {
-  const flattened = result.error.flatten()
+  const flattened = z.flattenError(result.error)
   // {
   //   formErrors: [],
   //   fieldErrors: {
@@ -82,21 +82,21 @@ const dateRangeSchema = z.object({
   maxDays: z.number().optional(),
 }).refine(
   (data) => data.endDate >= data.startDate,
-  { message: 'End date must be after start date', path: ['endDate'] }
+  { error: 'End date must be after start date', path: ['endDate'] }
 ).refine(
   (data) => {
     if (!data.minDays) return true
     const days = (data.endDate.getTime() - data.startDate.getTime()) / 86400000
     return days >= data.minDays
   },
-  { message: 'Date range is too short', path: ['endDate'] }
+  { error: 'Date range is too short', path: ['endDate'] }
 ).refine(
   (data) => {
     if (!data.maxDays) return true
     const days = (data.endDate.getTime() - data.startDate.getTime()) / 86400000
     return days <= data.maxDays
   },
-  { message: 'Date range is too long', path: ['endDate'] }
+  { error: 'Date range is too long', path: ['endDate'] }
 )
 ```
 
