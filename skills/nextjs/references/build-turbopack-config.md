@@ -51,6 +51,21 @@ next build --webpack
 
 A custom `webpack` configuration makes the default `next build` fail rather than silently ignoring that configuration. Migrate the configuration, explicitly choose `--webpack`, or deliberately use `--turbopack` after confirming the Webpack customization is unnecessary.
 
-The filesystem cache is local build output and must remain uncommitted. Configure or disable it only for a demonstrated environment-specific reason through the documented `turbopackFileSystemCache` options for the installed Next.js release.
+The filesystem cache is local build output and must remain uncommitted. In Next.js 16.3+, both caches default to `true`. Set the documented experimental keys only to override those defaults for a demonstrated environment-specific reason:
 
-Reference: [Next.js 16 upgrade guide](https://nextjs.org/docs/app/guides/upgrading/version-16#turbopack-by-default)
+```typescript
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
+  experimental: {
+    turbopackFileSystemCacheForDev: false,
+    turbopackFileSystemCacheForBuild: false,
+  },
+}
+
+export default nextConfig
+```
+
+References:
+- [Next.js 16 upgrade guide](https://nextjs.org/docs/app/guides/upgrading/version-16#turbopack-by-default)
+- [Turbopack filesystem cache](https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopackFileSystemCache)
