@@ -1,68 +1,37 @@
 ---
-title: Keep Unit Tests Under 100ms
+title: Keep Unit Tests Fast Enough for Continuous Feedback
 impact: MEDIUM
-impactDescription: enables rapid feedback loops
+impactDescription: preserves a short red-green-refactor loop without arbitrary per-test budgets
 tags: perf, speed, unit-tests, fast-feedback
 ---
 
-## Keep Unit Tests Under 100ms
+## Keep Unit Tests Fast Enough for Continuous Feedback
 
-Individual unit tests should complete in milliseconds. Slow tests discourage frequent execution and break the TDD rhythm.
+Unit tests should be deterministic and fast enough that developers run the relevant set continuously. There is no universal 100 ms per-test threshold: initialization, language runtime, hardware, and suite architecture differ. Measure the suite and protect a project-specific feedback budget.
 
-**Incorrect (slow unit test):**
-
-```typescript
-test('validates user data', async () => {
-  // Real database connection - 50-200ms
-  const db = await connectToDatabase()
-  await db.seed(testData)
-
-  // Real API call - 100-500ms
-  const validationResult = await externalValidationService.validate(userData)
-
-  // File system operations - 10-50ms
-  await writeValidationReport(validationResult)
-
-  expect(validationResult.isValid).toBe(true)
-})
-// Total: 160-750ms per test
-// 100 tests = 16-75 seconds
-```
-
-**Correct (fast unit test):**
+Keep network, database, filesystem, clock, and process boundaries out of a unit test unless that boundary is the subject under test:
 
 ```typescript
-test('validates user data format', () => {
-  // In-memory, no I/O
-  const userData = createUser({ email: 'valid@example.com', age: 25 })
-
-  const result = validateUserData(userData)
-
-  expect(result.isValid).toBe(true)
-})
-// Total: <5ms
-
-test('returns errors for invalid email', () => {
-  const userData = createUser({ email: 'invalid' })
-
-  const result = validateUserData(userData)
+test('rejects an invalid email', () => {
+  const result = validateUserData(
+    createUser({ email: 'invalid' })
+  )
 
   expect(result.errors).toContain('Invalid email format')
 })
-// Total: <5ms
-// 100 tests = <500ms
 ```
 
-**Techniques for fast tests:**
-- Mock external dependencies
-- Use in-memory implementations
-- Avoid file I/O in unit tests
-- Lazy-load expensive resources
-- Parallelize independent tests
+Test real boundary behavior in integration tests with controlled infrastructure rather than replacing every collaborator with interaction-heavy mocks.
 
-**Benchmarks:**
-- Single unit test: <100ms
-- Unit test suite: <10 seconds
-- Full test run: <5 minutes
+Useful practices:
 
-Reference: [The Practical Test Pyramid - Martin Fowler](https://martinfowler.com/articles/practical-test-pyramid.html)
+- Run the smallest relevant tests during red-green-refactor.
+- Use deterministic in-memory fakes for external boundaries when behavior permits.
+- Share immutable expensive setup only when isolation remains intact.
+- Profile slow files and setup hooks before optimizing individual assertions.
+- Track suite duration over time in CI when feedback latency matters.
+- Keep integration and E2E coverage for contracts unit tests cannot prove.
+
+Choose budgets from the repository's baseline and team workflow, then treat meaningful regressions as failures or review signals.
+
+Reference: [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html)
