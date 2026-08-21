@@ -1,13 +1,13 @@
 ---
-title: Wrap FormProvider Children with React.memo
+title: Memoize FormProvider Children Only After Profiling
 impact: LOW
 impactDescription: prevents cascade re-renders from FormProvider state updates
 tags: adv, FormProvider, memo, optimization
 ---
 
-## Wrap FormProvider Children with React.memo
+## Memoize FormProvider Children Only After Profiling
 
-FormProvider triggers re-renders on form state updates. Wrap expensive child components with `React.memo` to prevent unnecessary re-renders when their props haven't changed.
+`FormProvider` exposes form methods through context. `React.memo` can skip parent-prop re-renders, but it does not block updates for context values a child consumes. Subscribe as deep and narrowly as possible with `useWatch`, `useFormState({ name, exact })`, or `useController`; add memoization only after profiling.
 
 **Incorrect (children re-render on any form state change):**
 
