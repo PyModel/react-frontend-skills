@@ -41,7 +41,7 @@ async function calculateTotals(data: unknown) {
 import { z } from 'zod'
 
 const orderSchema = z.object({
-  customerId: z.string().uuid(),
+  customerId: z.uuid(),
   items: z.array(z.object({
     productId: z.string(),
     quantity: z.number().int().positive(),
