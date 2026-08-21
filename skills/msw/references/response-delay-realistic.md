@@ -74,6 +74,19 @@ export const handlers = [
 ]
 ```
 
-Do not use arbitrary delay values to wait in the test itself. Assert observable state with the testing framework's async utilities.
+Do not use arbitrary delay values to wait in the test itself:
+
+```typescript
+render(<UserProfile />)
+await new Promise((resolve) => setTimeout(resolve, 200))
+expect(screen.getByText('John')).toBeInTheDocument()
+```
+
+Assert observable state with the testing framework's async utilities instead:
+
+```typescript
+render(<UserProfile />)
+expect(await screen.findByText('John')).toBeInTheDocument()
+```
 
 Reference: [MSW delay API](https://mswjs.io/docs/api/delay)
