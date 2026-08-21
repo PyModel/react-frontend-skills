@@ -58,4 +58,4 @@ Without `font-display`, browsers may hide text until custom fonts load (FOIT). T
 - `optional`: No CLS, but font may not appear on first visit
 - `fallback`: Brief block, then swap window (balanced)
 
-Reference: [web.dev font-display](https://web.dev/articles/font-display)
+Reference: [web.dev font best practices](https://web.dev/articles/font-best-practices#choose-an-appropriate-font-display-strategy)
