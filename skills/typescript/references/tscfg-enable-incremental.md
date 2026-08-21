@@ -1,7 +1,7 @@
 ---
 title: Enable Incremental Compilation
 impact: CRITICAL
-impactDescription: 50-90% faster rebuilds
+impactDescription: faster rebuilds
 tags: tscfg, incremental, tsconfig, compilation, caching
 ---
 
@@ -40,7 +40,7 @@ tsc  # 15 seconds every build
 ```
 
 ```bash
-tsc  # 15s first build, 1-3s subsequent builds
+tsc  # Compare cold and subsequent build times in this project.
 ```
 
 **For monorepos (composite projects):**
