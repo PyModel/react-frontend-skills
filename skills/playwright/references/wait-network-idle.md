@@ -46,6 +46,20 @@ test('refreshes dashboard data', async ({ page }) => {
 })
 ```
 
+Do not replace `networkidle` with a fixed sleep:
+
+```typescript
+await page.goto('/analytics')
+await page.waitForTimeout(2_000)
+```
+
+For pages with polling or long-lived connections, assert the user-visible state directly:
+
+```typescript
+await page.goto('/chat')
+await expect(page.getByTestId('chat-messages')).toBeVisible()
+```
+
 Use `waitUntil: 'domcontentloaded'`, `'load'`, or `'commit'` only when that browser event is itself relevant. Prefer locators and web-first assertions for application readiness.
 
 Reference: [Playwright page.goto waitUntil](https://playwright.dev/docs/api/class-page#page-goto-option-wait-until)
