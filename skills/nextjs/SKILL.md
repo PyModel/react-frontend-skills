@@ -1,6 +1,6 @@
 ---
 name: nextjs
-description: Next.js 16 App Router performance optimization guidelines (formerly nextjs-16-app-router). This skill should be used when writing Next.js 16 code, configuring caching, implementing Server Components in Next.js, setting up App Router routing, or configuring next.config.js. This skill does NOT cover generic React 19 patterns (use react-19 skill) or non-Next.js server rendering.
+description: Current Next.js 16 App Router guidance for caching, Cache Components, Server Components, routing, Server Actions, and next.config.js. Use for Next.js 16.x code. Generic React 19 patterns are covered by the react skill.
 ---
 
 # Next.js Community Next.js 16 App Router Best Practices
@@ -36,7 +36,7 @@ Reference these guidelines when:
 - `build-optimize-package-imports` - Configure optimizePackageImports for Icon Libraries
 - `build-dynamic-imports` - Use Dynamic Imports for Heavy Components
 - `build-barrel-files` - Avoid Barrel File Imports in App Router
-- `build-turbopack-config` - Enable Turbopack File System Caching
+- `build-turbopack-config` - Configure Turbopack at the top level
 - `build-external-packages` - Configure Server External Packages for Node Dependencies
 
 ### 2. Caching Strategy (CRITICAL)
@@ -46,7 +46,7 @@ Reference these guidelines when:
 - `cache-fetch-options` - Configure Fetch Cache Options Correctly
 - `cache-revalidate-path` - Use revalidatePath for Route-Level Cache Invalidation
 - `cache-react-cache` - Use React cache() for Request Deduplication
-- `cache-segment-config` - Configure Route Segment Caching with Exports
+- `cache-segment-config` - Match route configuration to the active cache model
 
 ### 3. Server Components & Data Fetching (HIGH)
 
@@ -104,7 +104,7 @@ Read individual reference files for detailed explanations and code examples:
 
 ## Related Skills
 
-- For React 19 fundamentals, see `react-19` skill
+- For React 19 fundamentals, see `react` skill
 - For data fetching patterns, see `tanstack-query` skill
 - For client-side forms, see `react-hook-form` skill
 
