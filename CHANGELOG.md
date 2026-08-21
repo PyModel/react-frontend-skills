@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Next.js 16 caching/Turbopack guidance, TypeScript 7 migration notes, Zod 4 APIs, nuqs 2 rate limiting, Vitest 4 requirements, Playwright readiness guidance, Tailwind CSS 4 integration, and shadcn Radix/Base UI scope.
 - Replaced unsupported impact estimates with project-specific measurement guidance and repaired stale official links.
 - Updated repository metadata for the `PyModel/react-frontend-skills` location.
+- Changed the canonical npm package scope to `@pymodel/react-frontend-skills`.
 
 ## [2.0.0] - 2026-06-20
 
