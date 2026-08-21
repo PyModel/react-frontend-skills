@@ -1,39 +1,32 @@
 ---
-title: Enable Turbopack File System Caching
+title: Configure Turbopack at the Top Level
 impact: CRITICAL
-impactDescription: significantly faster cold starts and restarts on large apps
+impactDescription: uses the supported Next.js 16 bundler and cache configuration
 tags: build, turbopack, caching, development
 ---
 
-## Enable Turbopack File System Caching
+## Configure Turbopack at the Top Level
 
-Next.js 16 makes Turbopack the default bundler. Its filesystem cache for development is a **beta opt-in** that persists compiler artifacts on disk between runs, significantly speeding up compile times across restarts on large projects. Enable it explicitly — it is not on by default.
+Next.js 16 uses Turbopack by default for both `next dev` and `next build`. Turbopack filesystem caching is also enabled by default for development and production builds. Do not add an opt-in flag merely to obtain the default behavior.
 
-**Incorrect (removed config key / non-existent option):**
+**Incorrect (removed or fictitious options):**
 
 ```typescript
-// next.config.ts
 const nextConfig = {
   experimental: {
-    // `experimental.turbo` was renamed to top-level `turbopack` in 15.3
-    // and is removed in Next.js 16. `persistentCaching` is not a real option.
     turbo: {
-      persistentCaching: false,
+      persistentCaching: true,
     },
   },
 }
 ```
 
-**Correct (opt into FS caching; configure loaders under top-level `turbopack`):**
+**Correct (only configure supported custom behavior):**
 
 ```typescript
-// next.config.ts
-const nextConfig = {
-  experimental: {
-    // Beta opt-in: persist Turbopack artifacts across dev restarts
-    turbopackFileSystemCacheForDev: true,
-  },
-  // Custom loaders live under the top-level `turbopack` key (not `experimental.turbo`)
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
   turbopack: {
     rules: {
       '*.svg': {
@@ -43,18 +36,21 @@ const nextConfig = {
     },
   },
 }
-```
 
-**Development command:**
+export default nextConfig
+```
 
 ```bash
-# Turbopack is the default bundler in Next.js 16
+# Turbopack is the default in Next.js 16.
 next dev
+next build
 
-# Opt out to webpack only if you rely on a custom webpack setup
-next dev --webpack
+# Use Webpack only when an unresolved compatibility requirement demands it.
+next build --webpack
 ```
 
-**Note:** Filesystem caching is still beta. Turbopack writes its cache under `.next/cache`, which is already gitignored — keep it that way so the cache stays local.
+A custom `webpack` configuration makes the default `next build` fail rather than silently ignoring that configuration. Migrate the configuration, explicitly choose `--webpack`, or deliberately use `--turbopack` after confirming the Webpack customization is unnecessary.
 
-Reference: [Next.js 16 Release Notes](https://nextjs.org/blog/next-16)
+The filesystem cache is local build output and must remain uncommitted. Configure or disable it only for a demonstrated environment-specific reason through the documented `turbopackFileSystemCache` options for the installed Next.js release.
+
+Reference: [Next.js 16 upgrade guide](https://nextjs.org/docs/app/guides/upgrading/version-16#turbopack-by-default)
