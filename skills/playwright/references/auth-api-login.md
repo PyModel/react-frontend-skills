@@ -1,7 +1,7 @@
 ---
 title: Use API Login for Faster Auth Setup
 impact: HIGH
-impactDescription: 5-10× faster than UI login
+impactDescription: faster than UI login
 tags: auth, api, request, login, performance
 ---
 
@@ -32,7 +32,7 @@ setup('authenticate', async ({ page }) => {
 import { test as setup } from '@playwright/test';
 
 setup('authenticate', async ({ request }) => {
-  // API login: ~100-500ms
+  // API login avoids rendering and interacting with the login UI.
   const response = await request.post('/api/auth/login', {
     data: {
       email: 'user@example.com',
@@ -86,7 +86,7 @@ setup('authenticate via API', async ({ request, browser }) => {
 ```
 
 **Benefits:**
-- 5-10× faster auth setup
+- Usually faster and less coupled to login-page presentation
 - No UI rendering overhead
 - More reliable (no form interaction)
 - Tests auth API endpoint as side effect
