@@ -4,13 +4,13 @@
   "description": "18 production-grade AI agent skills for the React ecosystem — install into Claude Code, Codex, Cursor, OpenCode, Pi, Kiro and more.",
   "license": "MIT",
   "author": "Mohamed Elkholy (Pythoughts)",
-  "homepage": "https://github.com/Pythoughts-labs/react-frontend-skills#readme",
+  "homepage": "https://github.com/PyModel/react-frontend-skills#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Pythoughts-labs/react-frontend-skills.git"
+    "url": "git+https://github.com/PyModel/react-frontend-skills.git"
   },
   "bugs": {
-    "url": "https://github.com/Pythoughts-labs/react-frontend-skills/issues"
+    "url": "https://github.com/PyModel/react-frontend-skills/issues"
   },
   "keywords": [
     "agent-skills",
