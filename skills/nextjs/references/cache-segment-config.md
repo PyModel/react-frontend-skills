@@ -11,7 +11,17 @@ Next.js 16 supports two caching models. First determine whether `cacheComponents
 
 ### Cache Components enabled
 
-Use `'use cache'`, `cacheLife()`, `cacheTag()`, `<Suspense>`, and request-time APIs. The legacy route segment options `dynamic`, `revalidate`, and `fetchCache` are disabled or unnecessary under Cache Components; do not layer them onto the new model.
+Use `'use cache'`, `cacheLife()`, `cacheTag()`, `<Suspense>`, and request-time APIs. Exporting `dynamic`, `revalidate`, `fetchCache`, `dynamicParams`, `runtime`, or `experimental_ppr` from a page, layout, or route is a build error when `cacheComponents` is enabled. Remove them rather than layering them onto the new model.
+
+**Incorrect (legacy segment exports under Cache Components):**
+
+```typescript
+// app/about/page.tsx
+export const dynamic = 'force-static'
+export const revalidate = 86400
+```
+
+**Correct (Cache Components model):**
 
 ```typescript
 // next.config.ts
