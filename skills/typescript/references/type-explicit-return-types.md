@@ -1,15 +1,15 @@
 ---
 title: Add Explicit Return Types to Exported Functions
 impact: CRITICAL
-impactDescription: 30-50% faster declaration emit
+impactDescription: can reduce declaration inference work and makes public contracts explicit
 tags: type, return-types, exports, inference, performance
 ---
 
 ## Add Explicit Return Types to Exported Functions
 
-Explicit return types accelerate compilation by eliminating inference overhead. Named types are more compact than inferred anonymous types, speeding up declaration file generation and consumption.
+For exported APIs in declaration-emitting libraries, an explicit named return type can reduce declaration inference work and prevents implementation details from leaking into the public `.d.ts` surface. Do not annotate every local function: inference is usually clearer and the benefit is workload-dependent.
 
-**Incorrect (inferred return type, slow declaration emit):**
+**Risky for a public declaration-emitting API (large inferred shape):**
 
 ```typescript
 export function fetchUserProfile(userId: string) {
@@ -27,7 +27,7 @@ export function fetchUserProfile(userId: string) {
 // Inferred: Promise<{ id: string; name: string; email: string; createdAt: Date; permissions: Permission[] }>
 ```
 
-**Correct (explicit return type, fast compilation):**
+**Prefer a named contract at the package boundary:**
 
 ```typescript
 interface UserProfile {
@@ -51,10 +51,11 @@ export function fetchUserProfile(userId: string): Promise<UserProfile> {
 }
 ```
 
-**When to skip explicit return types:**
-- Private/internal functions with simple returns
-- Arrow functions in local scope
-- Functions where the return type is obvious (e.g., `(): void`)
+**Use inference by default when:**
+- The function is private/local
+- The inferred return is small and stable
+- The project does not emit declarations for that boundary
+- An annotation would merely repeat an obvious implementation type
 
 **Benefits:**
 - Declaration files use named type instead of expanded inline type
