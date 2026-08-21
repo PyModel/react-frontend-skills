@@ -1,109 +1,70 @@
 ---
-title: Choose strict() vs strip() for Unknown Keys
+title: Choose an Explicit Unknown-Key Policy
 impact: MEDIUM-HIGH
-impactDescription: Default passthrough mode leaks unexpected data; strict() catches schema mismatches, strip() silently removes extras
-tags: object, strict, strip, passthrough
+impactDescription: makes rejection, stripping, or preservation of unknown keys deliberate
+tags: object, strictObject, looseObject, unknown-keys
 ---
 
-## Choose strict() vs strip() for Unknown Keys
+## Choose an Explicit Unknown-Key Policy
 
-By default, Zod objects use `.strip()` behavior, silently removing unrecognized keys. This can hide schema/data mismatches. Use `.strict()` to reject unknown keys (catching errors) or explicitly use `.strip()` to document the intention.
+`z.object()` strips unrecognized keys by default. In Zod 4, prefer the top-level object constructors when a non-default policy matters: `z.strictObject()` rejects unknown keys and `z.looseObject()` preserves them. The legacy `.strict()`, `.strip()`, and `.passthrough()` methods remain for compatibility but are deprecated guidance.
 
-**Default behavior (strip - silent removal):**
+**Default: strip unknown keys:**
 
 ```typescript
-import { z } from 'zod'
+import * as z from 'zod'
 
 const userSchema = z.object({
   id: z.string(),
   name: z.string(),
 })
 
-const input = {
-  id: '123',
-  name: 'John',
-  role: 'admin',  // Extra field
-  secretToken: 'abc123',  // Another extra field
-}
-
-const user = userSchema.parse(input)
+userSchema.parse({ id: '123', name: 'John', role: 'admin' })
 // { id: '123', name: 'John' }
-// Extra fields silently removed - was this intentional?
 ```
 
-**Using strict() to catch schema mismatches:**
+**Reject unknown keys at a closed boundary:**
 
 ```typescript
-import { z } from 'zod'
-
-const userSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-}).strict()
-
-const input = {
-  id: '123',
-  name: 'John',
-  role: 'admin',
-}
-
-userSchema.parse(input)
-// ZodError: Unrecognized key(s) in object: 'role'
-
-// This catches:
-// - Client sending fields the server doesn't expect
-// - Schema out of sync with actual data structure
-// - Typos in field names
-```
-
-**When to use each mode:**
-
-```typescript
-// strict() - Catch unexpected data (API contracts)
-const apiRequestSchema = z.object({
+const apiRequestSchema = z.strictObject({
   action: z.string(),
   payload: z.unknown(),
-}).strict()  // Fail if client sends unknown fields
+})
 
-// strip() - Clean up data (explicit intention)
-const dbInsertSchema = z.object({
-  name: z.string(),
-  email: z.string(),
-}).strip()  // Explicitly remove metadata before insert
-
-// passthrough() - Keep everything (pass-through proxy)
-const proxySchema = z.object({
-  id: z.string(),
-}).passthrough()  // Keep fields we don't validate
-
-const input = { id: '123', extra: 'data' }
-proxySchema.parse(input)  // { id: '123', extra: 'data' }
+apiRequestSchema.parse({
+  action: 'create',
+  payload: {},
+  unexpected: true,
+})
+// ZodError: unrecognized key "unexpected"
 ```
 
-**Choosing the right mode:**
-
-| Mode | Behavior | Use When |
-|------|----------|----------|
-| `.strict()` | Reject unknown keys | API contracts, security-sensitive, debugging |
-| `.strip()` (default) | Remove unknown keys | General validation, data cleaning |
-| `.passthrough()` | Keep unknown keys | Proxying, partial validation |
-
-**Handling specific unknown keys:**
+**Preserve unknown keys for pass-through data:**
 
 ```typescript
-const schema = z.object({
+const proxySchema = z.looseObject({
   id: z.string(),
-  name: z.string(),
-}).catchall(z.unknown())  // Allow any additional fields of any type
+})
 
-// Or restrict additional fields to specific type
-const metadataSchema = z.object({
-  id: z.string(),
-}).catchall(z.string())  // Only allow string extras
+proxySchema.parse({ id: '123', upstreamField: 'data' })
+// { id: '123', upstreamField: 'data' }
 ```
 
-**When NOT to use this pattern:**
-- `.strict()`: When forwarding data to another system that may add fields
-- `.passthrough()`: When you need to ensure only known fields are stored
+**Validate additional keys:**
 
-Reference: [Zod API - Objects](https://zod.dev/api#objects)
+```typescript
+const metadataSchema = z.object({
+  id: z.string(),
+}).catchall(z.string())
+```
+
+| Constructor | Unknown-key behavior | Typical use |
+| --- | --- | --- |
+| `z.object()` | Strip | General parsing and data projection |
+| `z.strictObject()` | Reject | Closed API contracts and typo detection |
+| `z.looseObject()` | Preserve | Proxies and intentionally extensible payloads |
+| `.catchall(schema)` | Validate and preserve | Typed extension fields |
+
+Unknown-key rejection is not a substitute for authorization or output allow-listing. Choose the policy from the boundary contract.
+
+Reference: [Zod object schemas](https://zod.dev/api#objects)
