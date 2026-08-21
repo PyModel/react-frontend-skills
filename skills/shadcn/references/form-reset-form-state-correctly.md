@@ -74,17 +74,19 @@ function ContactForm() {
 **For edit forms (reset to fetched data):**
 
 ```tsx
-const { data: user } = useQuery(["user", userId], fetchUser)
+const { data: user } = useQuery({
+  queryKey: ['user', userId],
+  queryFn: () => fetchUser(userId),
+})
 
 const form = useForm<UserFormValues>({
   resolver: zodResolver(userSchema),
 })
+const { reset } = form
 
 useEffect(() => {
-  if (user) {
-    form.reset(user) // Reset to fetched data when available
-  }
-}, [user, form])
+  if (user) reset(user)
+}, [user, reset])
 ```
 
 Reference: [React Hook Form reset](https://react-hook-form.com/docs/useform/reset)
