@@ -107,9 +107,8 @@ Read individual reference files for detailed explanations and code examples:
 
 ## Related Skills
 
-- For feature planning, see `feature-spec` skill
 - For data fetching, see `tanstack-query` skill
-- For React component patterns, see `react-19` skill
+- For React component patterns, see `react` skill
 
 ## Full Compiled Document
 
