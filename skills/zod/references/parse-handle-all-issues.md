@@ -15,7 +15,7 @@ Zod collects all validation failures, not just the first one. When displaying er
 import { z } from 'zod'
 
 const formSchema = z.object({
-  email: z.string().email('Invalid email'),
+  email: z.email('Invalid email'),
   password: z.string().min(8, 'Password must be 8+ characters'),
   confirmPassword: z.string(),
   age: z.number().min(18, 'Must be 18 or older'),
@@ -47,7 +47,7 @@ validateForm({})
 import { z } from 'zod'
 
 const formSchema = z.object({
-  email: z.string().email('Invalid email'),
+  email: z.email('Invalid email'),
   password: z.string().min(8, 'Password must be 8+ characters'),
   confirmPassword: z.string(),
   age: z.number().min(18, 'Must be 18 or older'),
@@ -87,13 +87,13 @@ validateForm({})
 // User sees ALL errors, fixes everything, submits once!
 ```
 
-**Using flatten() for simpler error structure:**
+**Using Zod 4's flat error helper:**
 
 ```typescript
 const result = formSchema.safeParse(data)
 
 if (!result.success) {
-  const flattened = result.error.flatten()
+  const flattened = z.flattenError(result.error)
   // {
   //   formErrors: [],  // Top-level errors
   //   fieldErrors: {
@@ -122,4 +122,4 @@ const form = useForm({
 - Rate-limited APIs where you want to fail fast on first error
 - Large batch processing where full validation is expensive
 
-Reference: [Zod Error Handling](https://zod.dev/error-handling)
+Reference: [Zod error formatting](https://zod.dev/error-formatting)
