@@ -7,9 +7,11 @@ tags: composition, props, architecture
 
 ## Avoid Boolean Prop Proliferation
 
-Don't add boolean props like `isThread`, `isEditing`, `isDMThread` to customize
-component behavior. Each boolean doubles possible states and creates
-unmaintainable conditional logic. Use composition instead.
+Avoid accumulating boolean mode props like `isThread`, `isEditing`, and
+`isDMThread` when they create mutually exclusive variants or impossible
+combinations. Use explicit variants or composition for those modes. Boolean
+props remain appropriate for independent platform semantics such as `disabled`,
+`required`, or `readOnly`.
 
 **Incorrect (boolean props create exponential complexity):**
 
