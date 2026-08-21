@@ -1,61 +1,47 @@
 ---
-title: Use asChild for Custom Trigger Elements
+title: Use the Generated Primitive's Composition API
 impact: CRITICAL
-impactDescription: preserves accessibility and event handling
-tags: arch, asChild, radix, composition, triggers
+impactDescription: avoids nested interactive elements while preserving primitive behavior
+tags: arch, radix, base-ui, asChild, render, composition, triggers
 ---
 
-## Use asChild for Custom Trigger Elements
+## Use the Generated Primitive's Composition API
 
-When using custom elements as triggers for Radix-based components, use the `asChild` prop to merge behavior onto your custom element instead of wrapping it.
+Current shadcn projects can be generated for Radix UI or Base UI. Inspect the checked-in component implementation or project configuration before composing a custom trigger:
 
-**Incorrect (nested button elements, broken a11y):**
+- Radix variants commonly use `asChild`.
+- Base UI variants commonly use a `render` element prop.
 
-```tsx
-function UserMenu() {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Button variant="ghost">
-          <UserIcon className="h-4 w-4" />
-          Account
-        </Button>
-      </DropdownMenuTrigger>
-      {/* Creates <button><button>...</button></button> - invalid HTML */}
-      <DropdownMenuContent>
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Settings</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
-}
-```
+Do not mix the two APIs.
 
-**Correct (single button element with merged props):**
+**Incorrect (nested interactive elements):**
 
 ```tsx
-function UserMenu() {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost">
-          <UserIcon className="h-4 w-4" />
-          Account
-        </Button>
-      </DropdownMenuTrigger>
-      {/* Renders single <button> with all Radix props merged */}
-      <DropdownMenuContent>
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Settings</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
-}
+<DropdownMenuTrigger>
+  <Button variant="ghost">Account</Button>
+</DropdownMenuTrigger>
 ```
 
-**When to use asChild:**
-- Trigger components (DialogTrigger, PopoverTrigger, DropdownMenuTrigger)
-- When your custom component already renders a focusable element
-- When you need to preserve your component's styling and props
+If both components render `<button>`, this creates invalid nested interactive content.
 
-Reference: [Radix UI Composition](https://www.radix-ui.com/primitives/docs/guides/composition)
+**Radix-generated component:**
+
+```tsx
+<DropdownMenuTrigger asChild>
+  <Button variant="ghost">Account</Button>
+</DropdownMenuTrigger>
+```
+
+**Base UI-generated component:**
+
+```tsx
+<DropdownMenuTrigger render={<Button variant="ghost" />}>
+  Account
+</DropdownMenuTrigger>
+```
+
+The custom component must forward the props and ref required by the underlying primitive. Verify the rendered element, keyboard behavior, accessible name, focus restoration, and event composition after wrapping it.
+
+References:
+- [shadcn Radix dropdown menu](https://ui.shadcn.com/docs/components/radix/dropdown-menu)
+- [shadcn Base UI dropdown menu](https://ui.shadcn.com/docs/components/base/dropdown-menu)
