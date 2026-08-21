@@ -1,98 +1,63 @@
 ---
-title: Debounce Search Input Before URL Update
+title: Debounce Server-Bound Search Updates
 impact: MEDIUM
-impactDescription: reduces server requests during typing
-tags: perf, debounce, search, typing, server-load
+impactDescription: avoids a server request for each intermediate search value
+tags: perf, debounce, limitUrlUpdates, search, server-load
 ---
 
-## Debounce Search Input Before URL Update
+## Debounce Server-Bound Search Updates
 
-For search inputs with `shallow: false`, debounce the URL update to avoid hammering the server with requests on every keystroke. Keep local state for instant UI feedback.
-
-**Incorrect (server request per keystroke):**
+For `shallow: false` searches, use nuqs' `debounce()` rate limit so the URL and server update after typing settles. The hook state still updates immediately. Prefer a call-level debounce because clearing the field or pressing Enter usually needs an immediate update.
 
 ```tsx
 'use client'
-import { useQueryState, parseAsString } from 'nuqs'
+
+import { useTransition } from 'react'
+import {
+  debounce,
+  defaultRateLimit,
+  parseAsString,
+  useQueryState,
+} from 'nuqs'
 
 export default function SearchBox() {
-  const [query, setQuery] = useQueryState('q', parseAsString.withDefault('').withOptions({
-    shallow: false // Every keystroke triggers server fetch
-  }))
-
-  return (
-    <input
-      value={query}
-      onChange={e => setQuery(e.target.value)}
-    />
+  const [isPending, startTransition] = useTransition()
+  const [query, setQuery] = useQueryState(
+    'q',
+    parseAsString.withDefault('').withOptions({
+      shallow: false,
+      startTransition,
+    })
   )
-}
-```
-
-**Correct (debounced URL update):**
-
-```tsx
-'use client'
-import { useState, useEffect, useTransition } from 'react'
-import { useQueryState, parseAsString } from 'nuqs'
-
-export default function SearchBox() {
-  const [isLoading, startTransition] = useTransition()
-  const [query, setQuery] = useQueryState('q', parseAsString.withDefault('').withOptions({
-    shallow: false,
-    startTransition
-  }))
-
-  // Local state for instant UI
-  const [inputValue, setInputValue] = useState(query)
-
-  // Sync URL → input when URL changes externally
-  useEffect(() => {
-    setInputValue(query)
-  }, [query])
-
-  // Debounce input → URL
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (inputValue !== query) {
-        setQuery(inputValue || null)
-      }
-    }, 300)
-    return () => clearTimeout(timeout)
-  }, [inputValue, query, setQuery])
 
   return (
-    <div>
+    <label>
+      Search
       <input
-        value={inputValue}
-        onChange={e => setInputValue(e.target.value)}
-        placeholder="Search..."
+        value={query}
+        onChange={(event) => {
+          const value = event.target.value
+          void setQuery(value || null, {
+            limitUrlUpdates:
+              value === '' ? defaultRateLimit : debounce(500),
+          })
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            void setQuery(query || null, {
+              limitUrlUpdates: defaultRateLimit,
+            })
+          }
+        }}
       />
-      {isLoading && <span>Searching...</span>}
-    </div>
+      {isPending ? <span>Searching…</span> : null}
+    </label>
   )
 }
 ```
 
-**Alternative (useDeferredValue):**
+Debouncing URL writes is intended for server-side fetching through RSCs or route loaders. If TanStack Query or another client library fetches from the hook's returned state, debounce that state before invoking the client query instead; nuqs state itself is immediate.
 
-```tsx
-'use client'
-import { useDeferredValue } from 'react'
-import { useQueryState, parseAsString } from 'nuqs'
+`useDeferredValue` defers rendering work; it does not impose a fixed debounce window and is not a substitute for controlling server request frequency.
 
-export default function SearchBox() {
-  const [query, setQuery] = useQueryState('q', parseAsString.withDefault(''))
-  const deferredQuery = useDeferredValue(query)
-  const isStale = query !== deferredQuery
-
-  return (
-    <div style={{ opacity: isStale ? 0.7 : 1 }}>
-      <input value={query} onChange={e => setQuery(e.target.value)} />
-      <Results query={deferredQuery} />
-    </div>
-  )
-}
-```
-
-Reference: [React useDeferredValue](https://react.dev/reference/react/useDeferredValue)
+Reference: [nuqs debounce option](https://nuqs.dev/docs/options#debounce)
