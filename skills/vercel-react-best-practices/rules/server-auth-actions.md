@@ -60,9 +60,9 @@ import { verifySession } from '@/lib/auth'
 import { z } from 'zod'
 
 const updateProfileSchema = z.object({
-  userId: z.string().uuid(),
+  userId: z.uuid(),
   name: z.string().min(1).max(100),
-  email: z.string().email()
+  email: z.email()
 })
 
 export async function updateProfile(data: unknown) {
