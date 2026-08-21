@@ -1,131 +1,64 @@
 ---
-title: Use flatten() for Form Error Display
+title: Use Zod 4 Error Formatting Helpers
 impact: HIGH
-impactDescription: Raw ZodError.issues requires manual path parsing; flatten() provides field-keyed errors ready for form display
-tags: error, flatten, forms, user-experience
+impactDescription: produces form-friendly or nested error structures without deprecated instance methods
+tags: error, flattenError, treeifyError, forms, user-experience
 ---
 
-## Use flatten() for Form Error Display
+## Use Zod 4 Error Formatting Helpers
 
-`ZodError.issues` is an array that requires manual processing to map errors to form fields. `ZodError.flatten()` returns an object with `fieldErrors` keyed by field name, ready for form libraries and UI display.
+`ZodError.issues` preserves complete issue metadata. For UI rendering, use the Zod 4 top-level helpers: `z.flattenError()` for one-level forms and `z.treeifyError()` for nested schemas. The instance methods `error.flatten()` and `error.format()` are deprecated.
 
-**Incorrect (manual issue processing):**
+**Flat form errors:**
 
 ```typescript
-import { z } from 'zod'
+import * as z from 'zod'
 
 const formSchema = z.object({
-  email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Password too short'),
+  email: z.email({ error: 'Invalid email' }),
+  password: z.string().min(8, { error: 'Password too short' }),
+})
+
+const result = formSchema.safeParse(data)
+
+if (!result.success) {
+  const { formErrors, fieldErrors } = z.flattenError(result.error)
+
+  // formErrors: string[] for root-level issues
+  // fieldErrors: { [field: string]: string[] | undefined }
+  console.log(fieldErrors.email)
+}
+```
+
+`z.flattenError()` groups by the first path segment. Do not expect dotted keys for deeply nested fields.
+
+**Nested errors:**
+
+```typescript
+const nestedSchema = z.object({
   profile: z.object({
-    name: z.string().min(1, 'Name required'),
+    name: z.string().min(1, { error: 'Name required' }),
   }),
 })
 
-function getFieldErrors(error: z.ZodError) {
-  const errors: Record<string, string> = {}
+const result = nestedSchema.safeParse(data)
 
-  for (const issue of error.issues) {
-    // Manual path joining - error prone
-    const field = issue.path.join('.')
-    if (!errors[field]) {
-      errors[field] = issue.message
-    }
+if (!result.success) {
+  const tree = z.treeifyError(result.error)
+  const nameErrors = tree.properties?.profile?.properties?.name?.errors
+}
+```
+
+**Full metadata or custom mapping:**
+
+```typescript
+if (!result.success) {
+  for (const issue of result.error.issues) {
+    console.log(issue.code, issue.path, issue.message)
   }
-
-  return errors
-}
-
-const result = formSchema.safeParse(data)
-if (!result.success) {
-  const errors = getFieldErrors(result.error)
-  // { email: 'Invalid email', 'profile.name': 'Name required' }
 }
 ```
 
-**Correct (using flatten):**
+When using `@hookform/resolvers/zod`, consume React Hook Form's `formState.errors`; the resolver performs its own mapping.
 
-```typescript
-import { z } from 'zod'
-
-const formSchema = z.object({
-  email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Password too short'),
-  profile: z.object({
-    name: z.string().min(1, 'Name required'),
-  }),
-})
-
-const result = formSchema.safeParse(data)
-
-if (!result.success) {
-  const { formErrors, fieldErrors } = result.error.flatten()
-
-  // formErrors: string[] - top-level errors (from .refine on the object)
-  // fieldErrors: { [key]: string[] } - errors by field
-
-  // Ready for form display
-  console.log(fieldErrors)
-  // {
-  //   email: ['Invalid email'],
-  //   password: ['Password too short'],
-  //   'profile.name': ['Name required']
-  // }
-}
-```
-
-**With React Hook Form:**
-
-```typescript
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-
-const { register, formState: { errors } } = useForm({
-  resolver: zodResolver(formSchema),
-})
-
-// errors are already flattened by the resolver
-// <input {...register('email')} />
-// {errors.email && <span>{errors.email.message}</span>}
-```
-
-**Customizing flatten output:**
-
-```typescript
-const flattened = result.error.flatten((issue) => ({
-  message: issue.message,
-  code: issue.code,
-}))
-
-// fieldErrors now contains custom objects
-// {
-//   email: [{ message: 'Invalid email', code: 'invalid_string' }],
-// }
-```
-
-**For deeply nested objects, use format():**
-
-```typescript
-const result = formSchema.safeParse(data)
-
-if (!result.success) {
-  const formatted = result.error.format()
-  // {
-  //   _errors: [],
-  //   email: { _errors: ['Invalid email'] },
-  //   profile: {
-  //     _errors: [],
-  //     name: { _errors: ['Name required'] }
-  //   }
-  // }
-
-  // Access nested errors naturally
-  formatted.profile?.name?._errors  // ['Name required']
-}
-```
-
-**When NOT to use this pattern:**
-- When you need access to full issue metadata (code, path as array)
-- When using a form library that expects different error format
-
-Reference: [Zod Error Handling](https://zod.dev/error-handling)
+Reference: [Zod error formatting](https://zod.dev/error-formatting)
