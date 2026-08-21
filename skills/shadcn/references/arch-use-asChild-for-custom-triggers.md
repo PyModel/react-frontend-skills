@@ -24,6 +24,8 @@ Do not mix the two APIs.
 
 If both components render `<button>`, this creates invalid nested interactive content.
 
+**Correct (use the generated primitive's composition API):**
+
 **Radix-generated component:**
 
 ```tsx
