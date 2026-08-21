@@ -1,6 +1,6 @@
 ---
 name: vitest
-description: Current Vitest 4 guidance for setup, async tests, vi mocks, browser mode, snapshots, coverage, worker pools, and test performance. TDD methodology is covered by tdd and network mocking by msw.
+description: Current Vitest 4 guidance for setup, async tests, vi mocks, snapshots, worker pools, environments, assertions, and test performance. TDD methodology is covered by tdd and network mocking by msw.
 ---
 
 # Vitest Best Practices
@@ -16,6 +16,8 @@ Reference these guidelines when:
 - Reviewing test code in PRs
 - Migrating from Jest to Vitest
 - Optimizing CI/CD test performance
+
+Jest-specific APIs and configuration outside documented migration differences are out of scope; use Jest's own documentation for tests that still run under Jest.
 
 ## Rule Categories by Priority
 
