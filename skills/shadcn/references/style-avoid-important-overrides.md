@@ -1,41 +1,30 @@
 ---
-title: Avoid !important Overrides
+title: Prefer Variant and Class Composition Over Important Overrides
 impact: HIGH
-impactDescription: maintains style specificity and component customization
-tags: style, important, specificity, tailwind, overrides
+impactDescription: preserves predictable customization while allowing documented escape hatches
+tags: style, important, specificity, tailwind-v4, overrides
 ---
 
-## Avoid !important Overrides
+## Prefer Variant and Class Composition Over Important Overrides
 
-Never use `!important` to override shadcn/ui styles. It breaks the cascade and prevents component consumers from customizing styles.
+Prefer component variants, CSS variables, and `cn()`/`tailwind-merge` ordering over `!important`. Tailwind v4 supports the important modifier, but it should be a targeted escape hatch for specificity you cannot otherwise control, not the default component API.
 
-**Incorrect (using !important):**
+**Avoid locking every consumer out:**
 
 ```tsx
 function BrandButton({ children }: { children: React.ReactNode }) {
   return (
-    <Button className="!bg-brand-500 !text-white !hover:bg-brand-600">
-      {/* !important prevents any further customization */}
+    <Button className="bg-brand! text-white! hover:bg-brand/90!">
       {children}
     </Button>
   )
 }
-
-// Consumer cannot override
-function Page() {
-  return (
-    <BrandButton className="bg-red-500">
-      {/* bg-red-500 ignored due to !important */}
-      Click me
-    </BrandButton>
-  )
-}
 ```
 
-**Correct (proper specificity with cn()):**
+**Prefer composable defaults:**
 
 ```tsx
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
 function BrandButton({
   className,
@@ -47,30 +36,23 @@ function BrandButton({
   return (
     <Button
       className={cn(
-        "bg-brand-500 text-white hover:bg-brand-600",
+        'bg-brand text-brand-foreground hover:bg-brand/90',
         className
       )}
     >
-      {/* User className passed last, can override defaults */}
       {children}
     </Button>
   )
 }
-
-// Consumer can customize
-function Page() {
-  return (
-    <BrandButton className="bg-red-500 hover:bg-red-600">
-      {/* Works - className overrides defaults via cn() */}
-      Click me
-    </BrandButton>
-  )
-}
 ```
 
-**If styles aren't applying:**
-1. Check class order in `cn()` - later classes win
-2. Verify Tailwind config includes your custom colors
-3. Use browser DevTools to inspect computed styles
+When an important override is necessary, document why and use Tailwind v4's trailing syntax (`bg-red-500!`). The old leading syntax (`!bg-red-500`) is deprecated.
 
-Reference: [Tailwind Important Modifier](https://tailwindcss.com/docs/configuration#important-modifier)
+If a class does not win as expected:
+
+1. Confirm the component forwards `className` and places it last in `cn()`.
+2. Confirm the conflicting utilities are understood by the installed `tailwind-merge` version.
+3. Prefer a component variant or semantic token over increasing specificity.
+4. Inspect portal/content elements separately; the class may be applied to the wrong primitive.
+
+Reference: [Tailwind CSS important modifier](https://tailwindcss.com/docs/styling-with-utility-classes#using-the-important-modifier)
