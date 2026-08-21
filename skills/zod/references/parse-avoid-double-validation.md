@@ -15,8 +15,8 @@ Once data is validated by Zod, trust the result. Re-validating the same data in 
 import { z } from 'zod'
 
 const userSchema = z.object({
-  id: z.string().uuid(),
-  email: z.string().email(),
+  id: z.uuid(),
+  email: z.email(),
   name: z.string(),
 })
 
@@ -50,8 +50,8 @@ const userRepository = {
 import { z } from 'zod'
 
 const userSchema = z.object({
-  id: z.string().uuid(),
-  email: z.string().email(),
+  id: z.uuid(),
+  email: z.email(),
   name: z.string(),
 })
 
@@ -91,13 +91,13 @@ const userRepository = {
 ```typescript
 // Different schemas for different layers
 const apiUserSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(8),  // Only in API layer
 })
 
 const dbUserSchema = z.object({
-  id: z.string().uuid(),
-  email: z.string().email(),
+  id: z.uuid(),
+  email: z.email(),
   passwordHash: z.string(),  // Transformed before storage
 })
 
