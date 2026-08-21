@@ -1,7 +1,7 @@
 ---
 title: Preload Critical Web Fonts
 impact: MEDIUM-HIGH
-impactDescription: reduces font load time by 100-300ms
+impactDescription: reduces font load time
 tags: typo, preload, fonts, performance, loading
 ---
 
@@ -16,7 +16,7 @@ Fonts are discovered late in the loading waterfall (after CSS parses). Preloadin
   <link rel="stylesheet" href="styles.css">
   <!-- styles.css contains @font-face rules -->
   <!-- Browser: download CSS → parse → discover font → download font -->
-  <!-- Font download starts 200-500ms after CSS -->
+  <!-- Font download cannot start until the stylesheet is parsed -->
 </head>
 ```
 
