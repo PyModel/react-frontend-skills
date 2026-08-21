@@ -13,9 +13,12 @@ Use shadcn/ui Skeleton components to show content placeholders during data loadi
 
 ```tsx
 function UserProfile({ userId }: { userId: string }) {
-  const { data: user, isLoading } = useQuery(["user", userId], fetchUser)
+  const { data: user, isPending } = useQuery({
+    queryKey: ['user', userId],
+    queryFn: () => fetchUser(userId),
+  })
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex justify-center p-8">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -64,9 +67,12 @@ function UserProfileSkeleton() {
 }
 
 function UserProfile({ userId }: { userId: string }) {
-  const { data: user, isLoading } = useQuery(["user", userId], fetchUser)
+  const { data: user, isPending } = useQuery({
+    queryKey: ['user', userId],
+    queryFn: () => fetchUser(userId),
+  })
 
-  if (isLoading) {
+  if (isPending) {
     return <UserProfileSkeleton />
     // Same dimensions as loaded content - no layout shift
   }
