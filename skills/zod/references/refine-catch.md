@@ -86,7 +86,7 @@ const productSchema = z.object({
   // Legacy field that might be missing or wrong format
   legacyCode: z.string().catch('UNKNOWN'),
   // External data that might be malformed
-  metadata: z.record(z.string()).catch({}),
+  metadata: z.record(z.string(), z.unknown()).catch({}),
 })
 
 // API returns partial data
