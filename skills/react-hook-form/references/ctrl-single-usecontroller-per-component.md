@@ -1,20 +1,20 @@
 ---
-title: Use Single useController Per Component
+title: Split Controlled Fields When Isolation Helps
 impact: MEDIUM-HIGH
-impactDescription: prevents prop name collisions and simplifies component logic
+impactDescription: improves field ownership and re-render isolation where useful
 tags: ctrl, useController, component-design, separation
 ---
 
-## Use Single useController Per Component
+## Split Controlled Fields When Isolation Helps
 
-Each component should use at most one useController. Multiple useControllers in a single component cause prop name collisions and complex state management. Split into separate components instead.
+React Hook Form permits multiple `useController` calls in one component, and their returned objects do not collide when named clearly. Split fields into dedicated components when it improves ownership, reuse, or re-render isolation; do not enforce one hook per component mechanically.
 
-**Incorrect (multiple useControllers cause collisions):**
+**Valid but coupled (both fields re-render together):**
 
 ```typescript
 function DateRangeInput({ control }: { control: Control<FormData> }) {
   const startField = useController({ name: 'startDate', control })
-  const endField = useController({ name: 'endDate', control })  // Prop names collide
+  const endField = useController({ name: 'endDate', control })
 
   return (
     <div>
@@ -33,7 +33,7 @@ function DateRangeInput({ control }: { control: Control<FormData> }) {
 }
 ```
 
-**Correct (separate components for each controlled field):**
+**Isolated reusable fields:**
 
 ```typescript
 function DateRangeInput({ control }: { control: Control<FormData> }) {
