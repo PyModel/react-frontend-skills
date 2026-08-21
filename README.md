@@ -28,7 +28,7 @@ Tired of your agent being dumb, especially with React? This skill pack is the so
 
 React Frontend Skills is a collection of 18 AI agent skills for the React ecosystem. Drop them into your coding assistant and it starts applying real patterns for performance, UI, testing, data, and architecture instead of whatever it remembered from 2023.
 
-Each skill is a portable folder (`SKILL.md` plus `AGENTS.md` plus `references/`) that follows the open agent-skills convention, so it works across every major AI coding agent. No lock-in.
+Each skill is a portable `SKILL.md` folder, usually with detailed `references/` or `rules/` and often an `AGENTS.md` index. The layout follows the open agent-skills convention, so it works across major AI coding agents.
 
 Coverage: React 19 and Next.js 16 performance, Tailwind CSS v4 and shadcn/ui, testing with Vitest, Playwright and MSW, data handling with TanStack Query, Zod, React Hook Form and nuqs, plus feature-based architecture.
 
@@ -129,44 +129,44 @@ If your project pins a different version, trust that version's official docs ove
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
-| [react](skills/react) | 40+ | React 19 concurrent rendering, Server Components, hook optimization |
-| [nextjs](skills/nextjs) | 40+ | Next.js 16 App Router, caching, server components, routing |
+| [react](skills/react) | 40 | React 19 concurrent rendering, Server Components, hook optimization |
+| [nextjs](skills/nextjs) | 40 | Next.js 16 App Router, caching, server components, routing |
 | [typescript](skills/typescript) | 44 | TypeScript 7 migration, compiler config, type safety, async patterns |
 
 ### UI and styling
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
-| [tailwind](skills/tailwind) | 42+ | Tailwind CSS v4 optimization, utility patterns, theming |
-| [shadcn](skills/shadcn) | 42+ | shadcn/ui components, Radix primitives, accessibility |
-| [ui-design](skills/ui-design) | 42+ | UI and UX practices, accessibility, responsive design |
-| [web-design-guidelines](skills/web-design-guidelines) | 100+ | General web design principles |
+| [tailwind](skills/tailwind) | 42 | Tailwind CSS v4 optimization, utility patterns, theming |
+| [shadcn](skills/shadcn) | 42 | shadcn/ui with Radix or Base UI primitives, accessibility |
+| [ui-design](skills/ui-design) | 42 | UI and UX practices, accessibility, responsive design |
+| [web-design-guidelines](skills/web-design-guidelines) | dynamic | Fetches the current upstream web interface guidelines |
 
 ### Data and state
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
-| [tanstack-query](skills/tanstack-query) | 40+ | Data fetching, caching, mutations, optimistic updates |
-| [react-hook-form](skills/react-hook-form) | 41+ | Form validation, performance, field arrays |
-| [zod](skills/zod) | 43+ | Schema validation, type inference, error handling |
-| [nuqs](skills/nuqs) | 42+ | Type-safe URL query state for Next.js |
+| [tanstack-query](skills/tanstack-query) | 40 | Data fetching, caching, mutations, optimistic updates |
+| [react-hook-form](skills/react-hook-form) | 41 | Form validation, performance, field arrays |
+| [zod](skills/zod) | 43 | Schema validation, type inference, error handling |
+| [nuqs](skills/nuqs) | 42 | Type-safe URL query state for Next.js |
 
 ### Testing
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
 | [vitest](skills/vitest) | 44 | Vitest 4 setup, mocking, async testing, worker pools |
-| [playwright](skills/playwright) | 43+ | End-to-end testing, selectors, authentication, CI |
-| [msw](skills/msw) | 45+ | API mocking with Mock Service Worker |
-| [tdd](skills/tdd) | 42+ | Test-driven development methodology |
+| [playwright](skills/playwright) | 43 | End-to-end testing, selectors, authentication, CI |
+| [msw](skills/msw) | 45 | API mocking with Mock Service Worker |
+| [tdd](skills/tdd) | 42 | Test-driven development methodology |
 
 ### Architecture and practices
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
-| [feature-arch](skills/feature-arch) | 42+ | Feature-based architecture, module organization |
-| [vercel-composition-patterns](skills/vercel-composition-patterns) | n/a | React composition patterns |
-| [vercel-react-best-practices](skills/vercel-react-best-practices) | 57+ | React performance optimization |
+| [feature-arch](skills/feature-arch) | 42 | Feature-based architecture, module organization |
+| [vercel-composition-patterns](skills/vercel-composition-patterns) | 7 | React composition patterns |
+| [vercel-react-best-practices](skills/vercel-react-best-practices) | 57 | React performance optimization |
 
 ## Why
 
@@ -239,7 +239,7 @@ cat skills/nextjs/references/cache-use-cache-directive.md
 Contributions are welcome.
 
 1. Fork the repo
-2. Add a skill folder under `skills/your-skill/` with `SKILL.md`, `AGENTS.md`, and `references/`
+2. Add a skill folder under `skills/your-skill/` with `SKILL.md` and any supporting `references/`, `rules/`, or metadata it needs
 3. Open a pull request
 
 Improving an existing skill counts just as much. New rules, corrections, version bumps: open a PR.
