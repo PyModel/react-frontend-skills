@@ -1,6 +1,6 @@
 ---
 name: tanstack-query
-description: TanStack Query v5 performance optimization for data fetching, caching, mutations, and query patterns. This skill should be used when using useQuery, useMutation, queryClient, prefetch patterns, or TanStack Query caching. This skill does NOT cover generating query hooks from OpenAPI (use orval skill) or mocking API responses in tests (use test-msw skill).
+description: Current TanStack Query v5 guidance for queries, mutations, caching, prefetching, Suspense, and render optimization. Use with useQuery, useMutation, queryClient, queryOptions, skipToken, mutation scopes, or cache invalidation. API mocking is covered by the msw skill.
 license: MIT
 metadata:
   author: community
@@ -51,12 +51,12 @@ Reference these guidelines when:
 - `cache-placeholder-vs-initial` - Use placeholderData vs initialData correctly
 - `cache-invalidation-precision` - Invalidate with precision
 - `cache-refetch-triggers` - Control automatic refetch triggers
-- `cache-enabled-option` - Use enabled for conditional queries
+- `cache-enabled-option` - Use enabled or skipToken for conditional queries
 
 ### 3. Mutation Patterns (HIGH)
 
 - `mutation-optimistic-updates` - Implement optimistic updates with rollback
-- `mutation-invalidate-onsettled` - Invalidate in onSettled, not onSuccess
+- `mutation-invalidate-onsettled` - Choose invalidation callbacks by mutation contract
 - `mutation-cancel-queries` - Cancel queries before optimistic updates
 - `mutation-setquerydata` - Use setQueryData for immediate cache updates
 - `mutation-avoid-parallel` - Avoid parallel mutations on same data
@@ -65,7 +65,7 @@ Reference these guidelines when:
 
 - `prefetch-avoid-waterfalls` - Avoid request waterfalls
 - `prefetch-on-hover` - Prefetch on hover for perceived speed
-- `prefetch-in-queryfn` - Prefetch dependent data in queryFn
+- `prefetch-in-queryfn` - Start follow-up prefetches when keys become known
 - `prefetch-server-components` - Prefetch in Server Components
 - `prefetch-flatten-api` - Flatten API to reduce waterfalls
 
@@ -95,9 +95,9 @@ Reference these guidelines when:
 
 - `render-select-memoize` - Memoize select functions
 - `render-select-derived` - Use select to derive data and reduce re-renders
-- `render-notify-props` - Use notifyOnChangeProps to limit re-renders
+- `render-notify-props` - Rely on tracked properties before notifyOnChangeProps
 - `render-structural-sharing` - Understand structural sharing
-- `render-tracked-props` - Avoid destructuring all properties
+- `render-tracked-props` - Preserve tracked-property optimization
 
 ## How to Use
 
@@ -113,9 +113,8 @@ Each reference file contains:
 
 ## Related Skills
 
-- For generating type-safe query hooks, see `orval` skill
-- For mocking API responses in tests, see `test-msw` skill
-- For React 19 data fetching patterns, see `react-19` skill
+- For mocking API responses in tests, see `msw` skill
+- For React 19 data fetching patterns, see `react` skill
 
 ## Full Compiled Document
 
