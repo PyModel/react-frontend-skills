@@ -36,7 +36,7 @@ Reference these guidelines when:
 - [`build-vite-plugin`](references/build-vite-plugin.md) - Use Vite Plugin Over PostCSS
 - [`build-css-import`](references/build-css-import.md) - Use CSS Import Over @tailwind Directives
 - [`build-content-detection`](references/build-content-detection.md) - Leverage Automatic Content Detection
-- [`build-node-version`](references/build-node-version.md) - Use Node.js 20+ for Optimal Performance
+- [`build-node-version`](references/build-node-version.md) - Use Node.js 20+ for the upgrade tool
 - [`build-postcss-simplify`](references/build-postcss-simplify.md) - Remove Redundant PostCSS Plugins
 - [`build-cli-package`](references/build-cli-package.md) - Use Correct CLI Package
 
