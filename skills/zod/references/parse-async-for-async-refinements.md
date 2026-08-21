@@ -15,7 +15,7 @@ If your schema uses `refine()` or `superRefine()` with async validation (like da
 import { z } from 'zod'
 
 const userSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   username: z.string().min(3),
 }).refine(
   async (data) => {
@@ -38,7 +38,7 @@ const user = userSchema.parse(formData)
 import { z } from 'zod'
 
 const userSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   username: z.string().min(3),
 }).refine(
   async (data) => {
@@ -62,7 +62,7 @@ if (!result.success) {
 
 ```typescript
 const enrichedUserSchema = z.object({
-  userId: z.string().uuid(),
+  userId: z.uuid(),
 }).transform(async (data) => {
   // Async data enrichment
   const user = await db.users.findById(data.userId)
@@ -84,7 +84,7 @@ import { z } from 'zod'
 import { NextRequest, NextResponse } from 'next/server'
 
 const registerSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(8),
 }).superRefine(async (data, ctx) => {
   const existingUser = await db.users.findByEmail(data.email)
