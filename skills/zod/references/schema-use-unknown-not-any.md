@@ -61,7 +61,7 @@ const userCreatedSchema = z.object({
   type: z.literal('user.created'),
   payload: z.object({
     userId: z.string(),
-    email: z.string().email(),
+    email: z.email(),
   }),
 })
 
