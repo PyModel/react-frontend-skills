@@ -9,6 +9,19 @@ tags: formstate, isValid, onSubmit, validation-mode, accessibility
 
 `formState.isValid` is derived from the form's validation result. In an `onSubmit` form, using it to disable the submit button before users can submit often conflicts with submit-time validation and can hide how to resolve errors. Subscribing to `formState.isValid` also makes React Hook Form run a full-form validation on mount and on every value change, even with `mode: 'onSubmit'` (v7.39.0+). With an expensive resolver that is real work you did not ask for.
 
+**Incorrect (gate an `onSubmit` form on live validity):**
+
+```tsx
+const {
+  handleSubmit,
+  formState: { isValid },
+} = useForm({ mode: 'onSubmit' })
+
+return <button disabled={!isValid}>Submit</button>
+```
+
+**Correct (keep submit available and prevent duplicate submissions):**
+
 For submit-time validation, keep the button available and prevent duplicate submissions with `isSubmitting`:
 
 ```tsx
