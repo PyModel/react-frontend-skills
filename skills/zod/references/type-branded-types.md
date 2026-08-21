@@ -14,8 +14,8 @@ Plain strings and numbers are interchangeable in TypeScript's structural type sy
 ```typescript
 import { z } from 'zod'
 
-const userIdSchema = z.string().uuid()
-const orderIdSchema = z.string().uuid()
+const userIdSchema = z.uuid()
+const orderIdSchema = z.uuid()
 
 type UserId = z.infer<typeof userIdSchema>  // string
 type OrderId = z.infer<typeof orderIdSchema>  // string - same type!
@@ -34,8 +34,8 @@ getOrder(userId)  // No error! TypeScript allows this bug
 ```typescript
 import { z } from 'zod'
 
-const userIdSchema = z.string().uuid().brand<'UserId'>()
-const orderIdSchema = z.string().uuid().brand<'OrderId'>()
+const userIdSchema = z.uuid().brand<'UserId'>()
+const orderIdSchema = z.uuid().brand<'OrderId'>()
 
 type UserId = z.infer<typeof userIdSchema>
 // string & { __brand: 'UserId' }
@@ -58,12 +58,12 @@ getOrder(orderId)  // Works correctly
 
 ```typescript
 // IDs for different entities
-const UserId = z.string().uuid().brand<'UserId'>()
-const ProductId = z.string().uuid().brand<'ProductId'>()
-const OrderId = z.string().uuid().brand<'OrderId'>()
+const UserId = z.uuid().brand<'UserId'>()
+const ProductId = z.uuid().brand<'ProductId'>()
+const OrderId = z.uuid().brand<'OrderId'>()
 
 // Email (validated and branded)
-const Email = z.string().email().brand<'Email'>()
+const Email = z.email().brand<'Email'>()
 
 // Positive numbers
 const PositiveInt = z.number().int().positive().brand<'PositiveInt'>()
@@ -79,9 +79,9 @@ const Slug = z.string().regex(/^[a-z0-9-]+$/).brand<'Slug'>()
 
 ```typescript
 const User = z.object({
-  id: z.string().uuid().brand<'UserId'>(),
-  email: z.string().email().brand<'Email'>(),
-  referredBy: z.string().uuid().brand<'UserId'>().optional(),
+  id: z.uuid().brand<'UserId'>(),
+  email: z.email().brand<'Email'>(),
+  referredBy: z.uuid().brand<'UserId'>().optional(),
 })
 
 type User = z.infer<typeof User>
