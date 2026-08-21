@@ -1,13 +1,13 @@
 ---
-title: Limit to One Primary Call-to-Action Per Screen
+title: Establish a Clear Primary Action per Task Context
 impact: HIGH
 impactDescription: reduces decision paralysis, improves click-through rates
 tags: layout, cta, conversion, ux, decisions
 ---
 
-## Limit to One Primary Call-to-Action Per Screen
+## Establish a Clear Primary Action per Task Context
 
-Multiple competing CTAs create decision paralysis. Users who can't decide often do nothing. Make one action visually dominant per screen.
+When a region represents one task, give its recommended next action clear visual priority and style alternatives as secondary or tertiary actions. Complex dashboards can legitimately contain multiple primary actions in separate task contexts; do not enforce one button for an entire viewport.
 
 **Incorrect (multiple competing CTAs):**
 
@@ -59,6 +59,6 @@ Multiple competing CTAs create decision paralysis. Users who can't decide often 
 - Primary: Filled button, high contrast, largest size
 - Secondary: Outlined button or text link
 - Tertiary: Plain text link, smallest size
-- Rule: Only one primary CTA visible at a time
+- Rule: Avoid multiple equal-emphasis actions inside the same decision context
 
-Reference: [Baymard CTA Research](https://baymard.com/blog/primary-secondary-buttons)
+Reference: [Material Design buttons](https://m3.material.io/components/buttons/guidelines)
