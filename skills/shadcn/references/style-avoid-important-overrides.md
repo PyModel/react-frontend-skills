@@ -9,7 +9,7 @@ tags: style, important, specificity, tailwind-v4, overrides
 
 Prefer component variants, CSS variables, and `cn()`/`tailwind-merge` ordering over `!important`. Tailwind v4 supports the important modifier, but it should be a targeted escape hatch for specificity you cannot otherwise control, not the default component API.
 
-**Avoid locking every consumer out:**
+**Incorrect (locking every consumer out):**
 
 ```tsx
 function BrandButton({ children }: { children: React.ReactNode }) {
@@ -21,7 +21,7 @@ function BrandButton({ children }: { children: React.ReactNode }) {
 }
 ```
 
-**Prefer composable defaults:**
+**Correct (composable defaults):**
 
 ```tsx
 import { cn } from '@/lib/utils'
