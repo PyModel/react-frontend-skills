@@ -21,7 +21,7 @@ export default defineConfig({
     { name: 'mobile-chrome', use: { ...devices['Pixel 5'] } },
     { name: 'mobile-safari', use: { ...devices['iPhone 12'] } },
   ],
-  // All 5 browsers run on every commit - 5× the time
+  // Every configured project adds execution and maintenance cost.
 });
 ```
 
@@ -94,12 +94,6 @@ npx playwright test
 npx playwright test --project=firefox
 ```
 
-**Speed comparison:**
-
-| Strategy | Time | Coverage |
-|----------|------|----------|
-| Chromium only | 1× | 70% of issues |
-| Chromium + Firefox | 2× | 90% of issues |
-| All 5 browsers | 5× | 99% of issues |
+Choose the matrix from the product's supported-browser policy and usage data. Chromium-only smoke tests do not prove cross-browser compatibility, and adding projects does not imply a fixed percentage of defects found. Run the full supported matrix often enough to block incompatible releases.
 
 Reference: [Playwright Projects](https://playwright.dev/docs/test-projects)
