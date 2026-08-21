@@ -5,9 +5,9 @@ impactDescription: prevents race conditions and cache corruption
 tags: mutation, parallel, race-condition, isPending
 ---
 
-## Avoid Parallel Mutations on Same Data
+## Serialize or Version Conflicting Mutations
 
-Multiple parallel mutations on the same resource cause race conditions—the last response wins regardless of which mutation was "correct." Disable UI or use mutation state to prevent this.
+Parallel writes to the same resource can complete out of order. Choose a contract: disable duplicate submissions, debounce replaceable input, attach server-side versions/idempotency keys, or serialize mutations with a shared TanStack Query `scope.id`.
 
 **Incorrect (allow parallel mutations):**
 
@@ -59,7 +59,22 @@ function TodoItem({ todo }: { todo: Todo }) {
 }
 ```
 
-**Alternative: disable during mutation:**
+**Serialize writes for the same resource:**
+
+```typescript
+function useTodoMutation(todoId: string) {
+  return useMutation({
+    mutationFn: updateTodo,
+    scope: { id: `todo:${todoId}` },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['todos', todoId] }),
+  })
+}
+```
+
+Mutations with the same scope ID run serially; different resources can still mutate concurrently. Serialization preserves submission order but does not replace server-side concurrency control.
+
+**Alternative: disable duplicate submission:**
 
 ```typescript
 function SaveButton({ todo }: { todo: Todo }) {
