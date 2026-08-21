@@ -1,70 +1,41 @@
 ---
-title: Ensure Compatible Next.js Version
+title: Verify Framework Compatibility Before Setup
 impact: CRITICAL
-impactDescription: prevents cryptic runtime errors from version mismatch
-tags: setup, nextjs, version, compatibility, app-router
+impactDescription: selects the supported nuqs adapter and framework range
+tags: setup, nextjs, version, compatibility, adapters
 ---
 
-## Ensure Compatible Next.js Version
+## Verify Framework Compatibility Before Setup
 
-nuqs requires specific Next.js versions depending on the router you use. Using incompatible versions causes runtime errors or missing functionality.
+nuqs 2.x supports Next.js 14.2 or newer for both App and Pages Routers. Earlier Next.js releases require the legacy nuqs 1.x line; do not combine nuqs 2.x with an unsupported router version.
 
-**Version Requirements:**
+| Framework/router | Supported range for nuqs 2.x |
+| --- | --- |
+| Next.js App or Pages Router | `next >= 14.2.0` |
+| React SPA | `react ^18.3 \|\| ^19` |
+| React Router v6 | `react-router-dom ^6` |
+| React Router v7 | `react-router ^7` |
+| React Router v8 | `react-router ^8` |
 
-| Router | Minimum Next.js | Notes |
-|--------|-----------------|-------|
-| App Router | 14.2.0+ | Full support including streaming |
-| App Router (basic) | 14.0.0+ | Limited features |
-| Pages Router | 12.0.0+ | Full support |
-
-**Check your version:**
-
-```bash
-npm list next
-# or
-yarn why next
-# or
-pnpm why next
-```
-
-**Incorrect (outdated Next.js):**
-
-```json
-{
-  "dependencies": {
-    "next": "13.5.0",
-    "nuqs": "^2.0.0"
-  }
-}
-// May cause: "Cannot read property 'push' of undefined"
-// Or: URL updates not reflected
-```
-
-**Correct (compatible version):**
-
-```json
-{
-  "dependencies": {
-    "next": "14.2.0",
-    "nuqs": "^2.0.0"
-  }
-}
-```
-
-**Upgrade command:**
+Inspect the installed versions rather than copying a version into `package.json`:
 
 ```bash
-npm install next@latest
-# or
-yarn add next@latest
-# or
-pnpm add next@latest
+npm ls nuqs next react react-router react-router-dom
 ```
 
-**Common symptoms of version mismatch:**
-- `useQueryState` returns undefined
-- URL doesn't update on state change
-- Hydration mismatches
-- `TypeError: Cannot read property 'push' of undefined`
+Choose the adapter that matches the actual router:
 
-Reference: [nuqs Requirements](https://nuqs.dev/docs/getting-started)
+```tsx
+// Next.js App Router
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
+
+// Next.js Pages Router
+import { NuqsAdapter } from 'nuqs/adapters/next/pages'
+
+// Mixed Next.js routers (slightly larger unified adapter)
+import { NuqsAdapter } from 'nuqs/adapters/next'
+```
+
+When upgrading a working application, follow the nuqs migration guide and the framework's own migration guide; a blind `@latest` install can combine multiple unrelated major migrations.
+
+Reference: [nuqs installation and compatibility](https://nuqs.dev/docs/installation)
