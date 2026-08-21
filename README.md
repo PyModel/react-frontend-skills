@@ -189,7 +189,7 @@ Each rule spells out the correct pattern with code, the anti-pattern to avoid, t
 
 ## Project structure
 
-```
+```text
 react-frontend-skills/
 ├── skills/
 │   ├── react/                # React 19 patterns
