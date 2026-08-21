@@ -1,11 +1,11 @@
 ---
 name: zod
-description: Zod schema validation best practices for type safety, parsing, and error handling. This skill should be used when defining z.object schemas, using z.string validations, safeParse, or z.infer. This skill does NOT cover React Hook Form integration patterns (use react-hook-form skill) or OpenAPI client generation (use orval skill).
+description: Zod 4 schema validation best practices for type safety, parsing, and error handling. Use when defining schemas, validating string formats, calling safeParse, formatting Zod errors, or inferring input/output types. React Hook Form integration is covered by the react-hook-form skill.
 ---
 
 # Zod Best Practices
 
-Comprehensive schema validation guide for Zod in TypeScript applications. Contains 43 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
+Comprehensive schema validation guide for Zod 4 in TypeScript applications. Contains 43 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
 
 ## When to Apply
 
@@ -63,14 +63,14 @@ Reference these guidelines when:
 ### 4. Error Handling (HIGH)
 
 - `error-custom-messages` - Provide custom error messages
-- `error-use-flatten` - Use flatten() for form error display
+- `error-use-flatten` - Use Zod 4 error formatting helpers
 - `error-path-for-nested` - Use issue.path for nested error location
 - `error-i18n` - Implement internationalized error messages
 - `error-avoid-throwing-in-refine` - Return false instead of throwing in refine
 
 ### 5. Object Schemas (MEDIUM-HIGH)
 
-- `object-strict-vs-strip` - Choose strict() vs strip() for unknown keys
+- `object-strict-vs-strip` - Choose an explicit unknown-key policy
 - `object-partial-for-updates` - Use partial() for update schemas
 - `object-pick-omit` - Use pick() and omit() for schema variants
 - `object-extend-for-composition` - Use extend() for adding fields
@@ -115,7 +115,6 @@ For the complete guide with all rules expanded: `AGENTS.md`
 ## Related Skills
 
 - For React Hook Form integration, see `react-hook-form` skill
-- For API client generation, see `orval` skill
 
 ## Sources
 
