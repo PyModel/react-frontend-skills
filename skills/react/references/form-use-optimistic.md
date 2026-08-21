@@ -30,7 +30,7 @@ function TodoList({ todos }: { todos: Todo[] }) {
     </form>
   )
 }
-// 200-500ms delay before new todo appears
+// New todo appears only after the server round trip.
 ```
 
 **Correct (optimistic update):**
