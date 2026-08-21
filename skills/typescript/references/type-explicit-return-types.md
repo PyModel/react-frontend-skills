@@ -9,7 +9,7 @@ tags: type, return-types, exports, inference, performance
 
 For exported APIs in declaration-emitting libraries, an explicit named return type can reduce declaration inference work and prevents implementation details from leaking into the public `.d.ts` surface. Do not annotate every local function: inference is usually clearer and the benefit is workload-dependent.
 
-**Risky for a public declaration-emitting API (large inferred shape):**
+**Incorrect (leaking a large inferred shape across a declaration boundary):**
 
 ```typescript
 export function fetchUserProfile(userId: string) {
@@ -27,7 +27,7 @@ export function fetchUserProfile(userId: string) {
 // Inferred: Promise<{ id: string; name: string; email: string; createdAt: Date; permissions: Permission[] }>
 ```
 
-**Prefer a named contract at the package boundary:**
+**Correct (named contract at the package boundary):**
 
 ```typescript
 interface UserProfile {
