@@ -16,8 +16,8 @@ When the same schema pattern appears in multiple places, extract it into a share
 import { z } from 'zod'
 
 const userSchema = z.object({
-  id: z.string().uuid(),
-  email: z.string().email(),
+  id: z.uuid(),
+  email: z.email(),
   name: z.string().min(1),
   createdAt: z.date(),
 })
@@ -26,10 +26,10 @@ const userSchema = z.object({
 import { z } from 'zod'
 
 const orderSchema = z.object({
-  id: z.string().uuid(),  // Duplicated
-  userId: z.string().uuid(),  // Same pattern
+  id: z.uuid(),  // Duplicated
+  userId: z.uuid(),  // Same pattern
   items: z.array(z.object({
-    productId: z.string().uuid(),  // Duplicated
+    productId: z.uuid(),  // Duplicated
     quantity: z.number().int().positive(),
   })),
   createdAt: z.date(),  // Duplicated
@@ -39,8 +39,8 @@ const orderSchema = z.object({
 import { z } from 'zod'
 
 const commentSchema = z.object({
-  id: z.string().uuid(),  // Same duplication
-  userId: z.string().uuid(),
+  id: z.uuid(),  // Same duplication
+  userId: z.uuid(),
   content: z.string().min(1),
   createdAt: z.date(),  // Inconsistency risk
 })
@@ -53,7 +53,7 @@ const commentSchema = z.object({
 import { z } from 'zod'
 
 // Reusable ID types
-export const uuid = z.string().uuid()
+export const uuid = z.uuid()
 export type UUID = z.infer<typeof uuid>
 
 // Timestamps
@@ -65,7 +65,8 @@ export const timestamps = z.object({
 // Base entity with ID
 export const baseEntity = z.object({
   id: uuid,
-}).merge(timestamps)
+  ...timestamps.shape,
+})
 
 export type BaseEntity = z.infer<typeof baseEntity>
 
@@ -82,7 +83,7 @@ import { z } from 'zod'
 import { baseEntity, uuid } from './common'
 
 export const userSchema = baseEntity.extend({
-  email: z.string().email(),
+  email: z.email(),
   name: z.string().min(1),
 })
 
