@@ -90,7 +90,7 @@ const event = z.discriminatedUnion('type', [
 
 // Database records with polymorphic types
 const notification = z.discriminatedUnion('channel', [
-  z.object({ channel: z.literal('email'), address: z.string().email() }),
+  z.object({ channel: z.literal('email'), address: z.email() }),
   z.object({ channel: z.literal('sms'), phoneNumber: z.string() }),
   z.object({ channel: z.literal('push'), deviceToken: z.string() }),
 ])
