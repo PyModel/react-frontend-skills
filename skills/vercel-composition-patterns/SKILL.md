@@ -40,8 +40,8 @@ Reference these guidelines when:
 
 ### 1. Component Architecture (HIGH)
 
-- `architecture-avoid-boolean-props` - Don't add boolean props to customize
-  behavior; use composition
+- `architecture-avoid-boolean-props` - Avoid boolean mode proliferation;
+  use explicit variants or composition
 - `architecture-compound-components` - Structure complex components with shared
   context
 
