@@ -18,7 +18,7 @@ function UserForm() {
   // Schema created on EVERY render - wasteful
   const userSchema = z.object({
     name: z.string().min(1),
-    email: z.string().email(),
+    email: z.email(),
     age: z.number().int().positive(),
   })
 
@@ -39,7 +39,7 @@ import { z } from 'zod'
 // Schema created ONCE at module load
 const userSchema = z.object({
   name: z.string().min(1),
-  email: z.string().email(),
+  email: z.email(),
   age: z.number().int().positive(),
 })
 
@@ -82,8 +82,8 @@ function DynamicForm({ minAge }: { minAge: number }) {
 import { z } from 'zod'
 
 export const userSchema = z.object({
-  id: z.string().uuid(),
-  email: z.string().email(),
+  id: z.uuid(),
+  email: z.email(),
 })
 
 // api/users.ts
