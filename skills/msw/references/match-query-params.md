@@ -86,4 +86,4 @@ http.get('/api/items', ({ request }) => {
 **When NOT to use this pattern:**
 - Endpoints that don't use query parameters
 
-Reference: [MSW Request Object](https://mswjs.io/docs/api/request)
+Reference: [MSW query parameters](https://mswjs.io/docs/http/intercepting-requests/query-parameters)
