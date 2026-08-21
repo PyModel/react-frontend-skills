@@ -46,8 +46,8 @@ function ChatRoom({ roomId, theme }) {
 ```
 
 **When to use useEffectEvent:**
-- Reading latest props/state in effect callbacks
-- Logging/analytics that shouldn't re-trigger effects
-- Side effects that depend on current values but aren't "about" those values
+- Reading the latest props/state from callbacks invoked by an Effect
+- Logging or notification logic that is non-reactive relative to the Effect
+- Keeping subscription setup reactive only to the values that define that subscription
 
-**Note:** `useEffectEvent` is stable in React 19.2. It replaces the pattern of suppressing exhaustive-deps warnings.
+`useEffectEvent` is stable in React 19.2. Call Effect Events only from Effects; do not pass them to children or use them to hide a genuinely reactive dependency. The current eslint plugin understands Effect Events and omits them from dependency requirements. It is a precise escape hatch, not a blanket replacement for `exhaustive-deps`.
