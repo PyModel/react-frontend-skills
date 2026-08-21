@@ -1,13 +1,13 @@
 ---
 title: Avoid await Inside Loops
 impact: HIGH
-impactDescription: N× faster for N iterations, 10 users = 10× improvement
+impactDescription: scales linearly with the number of iterations
 tags: async, loops, batching, waterfalls, performance
 ---
 
 ## Avoid await Inside Loops
 
-Using `await` inside a loop creates N sequential operations. Collect promises and await them together, or use `Promise.all()` with `map()` for parallel execution.
+`await` inside a loop serializes iterations. When iterations are independent and the downstream service can handle the concurrency, collect promises and await them together. Otherwise preserve order or use an explicit concurrency limit; unbounded `Promise.all()` can overload services and memory.
 
 **Incorrect (N sequential requests):**
 
@@ -20,7 +20,7 @@ async function enrichUsers(userIds: string[]): Promise<EnrichedUser[]> {
     const profile = await fetchProfile(userId)
     enrichedUsers.push({ ...user, profile })
   }
-  // 10 users × 2 requests × 100ms = 2000ms
+  // Every user waits for the previous user's requests.
 
   return enrichedUsers
 }
@@ -39,7 +39,7 @@ async function enrichUsers(userIds: string[]): Promise<EnrichedUser[]> {
       return { ...user, profile }
     })
   )
-  // 10 users processed in parallel = 100ms total
+  // Independent users can progress concurrently.
 
   return enrichedUsers
 }
