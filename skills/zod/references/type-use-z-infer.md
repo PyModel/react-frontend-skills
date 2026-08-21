@@ -24,9 +24,9 @@ interface User {
 
 // Separate schema
 const userSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string().min(1),
-  email: z.string().email(),
+  email: z.email(),
   age: z.number().int().positive(),
   role: z.enum(['admin', 'user']),  // Added to schema, forgot to add to interface!
 })
@@ -45,9 +45,9 @@ import { z } from 'zod'
 
 // Schema is the single source of truth
 const userSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string().min(1),
-  email: z.string().email(),
+  email: z.email(),
   age: z.number().int().positive(),
   role: z.enum(['admin', 'user']),
 })
