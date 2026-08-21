@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added the separately publishable `@pymodel/react-frontend-skills-mcp` stdio server with read-only tools and resources for all skill documentation.
+
 ## [2.0.1] - 2026-08-20
 
 ### Changed
