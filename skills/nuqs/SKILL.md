@@ -72,11 +72,11 @@ Reference these guidelines when:
 
 ### 5. Performance Optimization (MEDIUM)
 
-- [`perf-throttle-updates`](references/perf-throttle-updates.md) - Throttle rapid URL updates
+- [`perf-throttle-updates`](references/perf-throttle-updates.md) - Throttle URL updates with limitUrlUpdates
 - [`perf-clear-on-default`](references/perf-clear-on-default.md) - Use clearOnDefault for clean URLs
 - [`perf-avoid-rerender`](references/perf-avoid-rerender.md) - Memoize components using URL state
 - [`perf-serialize-utility`](references/perf-serialize-utility.md) - Use createSerializer for link URLs
-- [`perf-debounce-search`](references/perf-debounce-search.md) - Debounce search input before URL update
+- [`perf-debounce-search`](references/perf-debounce-search.md) - Debounce server-bound search updates
 
 ### 6. History & Navigation (MEDIUM)
 
