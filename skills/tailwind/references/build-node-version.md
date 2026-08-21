@@ -1,50 +1,21 @@
 ---
-title: Use Node.js 20+ for Optimal Performance
+title: Use Node.js 20+ for the Upgrade Tool
 impact: CRITICAL
-impactDescription: required for upgrade tool, enables modern optimizations
+impactDescription: satisfies the official @tailwindcss/upgrade requirement
 tags: build, node, runtime, compatibility, tooling
 ---
 
-## Use Node.js 20+ for Optimal Performance
+## Use Node.js 20+ for the Upgrade Tool
 
-Tailwind CSS v4 and its upgrade tool require Node.js 20 or higher. Older Node versions may cause build failures or suboptimal performance.
+The official `@tailwindcss/upgrade` tool requires Node.js 20 or newer. Do not generalize that migration-tool requirement into an unsupported runtime claim for every Tailwind integration; check the installed package, framework, and deployment runtime constraints together.
 
-**Incorrect (outdated Node version):**
-
-```json
-{
-  "engines": {
-    "node": ">=16.0.0"
-  }
-}
-```
+Check the migration environment before running the tool:
 
 ```bash
-# Node 16/18 may cause issues
+node --version
 npx @tailwindcss/upgrade
-# Error: Requires Node.js 20+
 ```
 
-**Correct (modern Node version):**
-
-```json
-{
-  "engines": {
-    "node": ">=20.0.0"
-  }
-}
-```
-
-```bash
-# Node 20+ runs optimally
-npx @tailwindcss/upgrade
-# Upgrade completes successfully
-```
-
-**Benefits:**
-- Full compatibility with Tailwind v4 tooling
-- Better performance from V8 engine improvements
-- Access to modern JavaScript features
-- Required for automated migration
+If the project must run on an older Node release, running the migration under Node 20 does not by itself change the application's declared runtime support. Set `package.json#engines` from the application and dependency runtime contract, not merely from the one-time upgrade command.
 
 Reference: [Tailwind CSS Upgrade Guide](https://tailwindcss.com/docs/upgrade-guide)
