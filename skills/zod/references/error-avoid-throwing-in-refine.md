@@ -26,7 +26,7 @@ const passwordSchema = z.object({
 })
 
 const formSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   passwords: passwordSchema,
   terms: z.boolean().refine((v) => v === true, 'Must accept terms'),
 })
@@ -55,7 +55,7 @@ const passwordSchema = z.object({
 )
 
 const formSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   passwords: passwordSchema,
   terms: z.boolean().refine((v) => v === true, 'Must accept terms'),
 })
@@ -109,7 +109,7 @@ passwordSchema.safeParse('weak')
 
 ```typescript
 const schema = z.object({
-  email: z.string().email(),
+  email: z.email(),
 }).refine(
   async (data) => {
     // Return boolean, don't throw
