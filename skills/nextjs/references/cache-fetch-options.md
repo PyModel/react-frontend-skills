@@ -9,6 +9,18 @@ tags: cache, fetch, revalidate, data-fetching
 
 In Next.js 15 and 16, a server `fetch()` without an explicit cache policy is not cached at runtime. Build-time prerendering may still reuse it during the build. State the intended policy instead of relying on older defaults.
 
+**Incorrect (assuming an implicit runtime cache):**
+
+```typescript
+export async function getProducts() {
+  // This is fresh at runtime in Next.js 15 and 16; it is not an implicit
+  // persistent cache entry.
+  return fetch('https://api.example.com/products')
+}
+```
+
+**Correct (policies match each data contract):**
+
 ```typescript
 export default async function Page() {
   const config = await fetch('https://api.example.com/config', {
