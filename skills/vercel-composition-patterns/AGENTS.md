@@ -2,7 +2,7 @@
 
 **Version 1.0.0**  
 Engineering  
-January 2026
+August 2026
 
 > **Note:**  
 > This document is mainly for agents and LLMs to follow when maintaining,  
@@ -44,11 +44,15 @@ proliferation and enable flexible composition.
 
 **Impact: CRITICAL (prevents unmaintainable component variants)**
 
-Don't add boolean props like `isThread`, `isEditing`, `isDMThread` to customize
+Avoid accumulating boolean mode props like `isThread`, `isEditing`, and
 
-component behavior. Each boolean doubles possible states and creates
+`isDMThread` when they create mutually exclusive variants or impossible
 
-unmaintainable conditional logic. Use composition instead.
+combinations. Use explicit variants or composition for those modes. Boolean
+
+props remain appropriate for independent platform semantics such as `disabled`,
+
+`required`, or `readOnly`.
 
 **Incorrect: boolean props create exponential complexity**
 
@@ -859,7 +863,7 @@ function ComposerFrame({ children }: { children: React.ReactNode }) {
 }
 
 function ComposerFooter({ children }: { children: React.ReactNode }) {
-  return <footer className='flex'>{children}</div>
+  return <footer className='flex'>{children}</footer>
 }
 
 // Usage is flexible
