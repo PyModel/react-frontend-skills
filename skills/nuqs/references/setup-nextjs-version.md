@@ -17,6 +17,28 @@ nuqs 2.x supports Next.js 14.2 or newer for both App and Pages Routers. Earlier 
 | React Router v7 | `react-router ^7` |
 | React Router v8 | `react-router ^8` |
 
+**Incorrect (nuqs 2 with an unsupported Next.js release):**
+
+```json
+{
+  "dependencies": {
+    "next": "13.5.0",
+    "nuqs": "^2.0.0"
+  }
+}
+```
+
+**Correct (supported Next.js range):**
+
+```json
+{
+  "dependencies": {
+    "next": "^16.0.0",
+    "nuqs": "^2.0.0"
+  }
+}
+```
+
 Inspect the installed versions rather than copying a version into `package.json`:
 
 ```bash
