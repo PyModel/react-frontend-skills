@@ -1,13 +1,13 @@
 ---
-title: Enable strictFunctionTypes for Faster Variance Checks
+title: Enable strictFunctionTypes for Sound Function Assignments
 impact: CRITICAL
-impactDescription: enables optimized variance checking
+impactDescription: rejects unsafe function-parameter assignments and enables variance-based checking
 tags: tscfg, strict, strictFunctionTypes, variance, performance
 ---
 
-## Enable strictFunctionTypes for Faster Variance Checks
+## Enable strictFunctionTypes for Sound Function Assignments
 
-With `strictFunctionTypes` enabled, TypeScript uses fast variance-based checking for function parameters. Without it, TypeScript falls back to slower structural comparison for every function type.
+`strictFunctionTypes` checks function-typed properties contravariantly instead of permitting unsafe bivariance. Enable it through `strict` for correctness. Variance information can also help compiler performance for well-structured types, but do not present the flag as a standalone speed switch.
 
 **Incorrect (slow structural checking):**
 
@@ -23,9 +23,8 @@ With `strictFunctionTypes` enabled, TypeScript uses fast variance-based checking
 ```typescript
 type Handler<T> = (event: T) => void
 
-// Without strictFunctionTypes, TypeScript uses bidirectional
-// (bivariant) checking - comparing structures both ways
-const handler: Handler<MouseEvent> = (e: Event) => { }  // Allowed but unsafe
+// Unsafe: a callback that only accepts MouseEvent may be called with any Event.
+const handler: Handler<Event> = (e: MouseEvent) => { } // Allowed without strict checking
 ```
 
 **Correct (fast variance checking):**
@@ -41,9 +40,8 @@ const handler: Handler<MouseEvent> = (e: Event) => { }  // Allowed but unsafe
 ```typescript
 type Handler<T> = (event: T) => void
 
-// With strictFunctionTypes, TypeScript uses contravariant
-// checking for parameters - faster and type-safe
-const handler: Handler<MouseEvent> = (e: Event) => { }  // Error: Event is not MouseEvent
+// Rejected: the assigned callback cannot handle every Event.
+const handler: Handler<Event> = (e: MouseEvent) => { } // Error
 ```
 
 **Note:** The `strict` flag enables `strictFunctionTypes` along with other strict options. Enable `strict` for all new projects.
@@ -62,4 +60,6 @@ interface StrictEmitter<T> {
 }
 ```
 
-Reference: [TypeScript Performance Wiki](https://github.com/microsoft/TypeScript/wiki/Performance#controlling-types-inclusion)
+References:
+- [TypeScript strictFunctionTypes](https://www.typescriptlang.org/tsconfig/strictFunctionTypes.html)
+- [TypeScript performance wiki](https://github.com/microsoft/TypeScript/wiki/Performance#using-faster-variance-checks)
