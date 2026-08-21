@@ -75,9 +75,9 @@ enum Role {
   Guest = 'guest',
 }
 
-// Use z.nativeEnum for TS enums
+// Zod 4: z.enum() accepts enum-like objects; z.nativeEnum() is deprecated.
 const userSchema = z.object({
-  role: z.nativeEnum(Role),
+  role: z.enum(Role),
 })
 ```
 
