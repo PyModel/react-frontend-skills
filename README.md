@@ -255,5 +255,5 @@ MIT, 2026 [Mohamed Elkholy](https://github.com/PyModel). See [LICENSE](LICENSE).
 </p>
 
 <p align="center">
-  Built and maintained by <strong>PyModel</strong> · <a href="https://github.com/PyModel">@PyModel</a>
+  Built and maintained by <strong>elkaix</strong> · <a href="https://github.com/elkaix">@elkaix</a>
 </p>
