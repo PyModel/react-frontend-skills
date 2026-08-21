@@ -1,13 +1,13 @@
 ---
-title: Enable shouldUnregister for Dynamic Form Memory Efficiency
+title: Choose shouldUnregister from Submission Semantics
 impact: HIGH
 impactDescription: reduces memory usage for forms with frequently mounted/unmounted fields
 tags: formcfg, should-unregister, dynamic-forms, memory
 ---
 
-## Enable shouldUnregister for Dynamic Form Memory Efficiency
+## Choose shouldUnregister from Submission Semantics
 
-By default, unmounted fields retain their values and validation state. For forms with frequently added/removed fields, enable `shouldUnregister` to automatically clean up unmounted fields.
+By default, unmounted fields retain their values and remain in the submitted form data. Set `shouldUnregister: true` only when an unmounted input should behave like a native form control and disappear from submission. This changes data semantics; it is not merely a memory optimization.
 
 **Incorrect (unmounted fields persist in memory):**
 
@@ -36,7 +36,7 @@ function MultiStepForm() {
 
 ```typescript
 const { register, handleSubmit } = useForm({
-  shouldUnregister: true,  // Unmounted fields removed from form state
+  shouldUnregister: true,  // Unmounted fields are omitted from submission
 })
 
 function MultiStepForm() {
@@ -58,5 +58,7 @@ function MultiStepForm() {
 **When NOT to use:**
 - Multi-step wizards where you need to preserve values across steps
 - Conditional fields that should retain values when hidden
+
+With `useFieldArray`/`Controller`, avoid `shouldUnregister` when reorder or remount behavior would discard values unexpectedly. Test conditional-field, reset, and default-value flows.
 
 Reference: [useForm - shouldUnregister](https://react-hook-form.com/docs/useform)
