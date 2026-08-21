@@ -32,7 +32,7 @@ userSchema.parse({ id: null, age: "twenty", active: "yes" })
 import { z } from 'zod'
 
 const userSchema = z.object({
-  id: z.string().uuid(),  // Specific format validation
+  id: z.uuid(),  // Specific format validation
   age: z.number().int().positive(),  // Correct type with constraints
   active: z.boolean(),  // Exact boolean type
 })
