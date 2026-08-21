@@ -9,6 +9,19 @@ tags: mutation, invalidation, onSettled, onSuccess, optimistic-updates
 
 There is no universal rule to invalidate in `onSettled` instead of `onSuccess`. Choose from what the server can change and whether the mutation used an optimistic cache update.
 
+**Incorrect (unconditional invalidation for an ordinary mutation):**
+
+```typescript
+useMutation({
+  mutationFn: createTodo,
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+})
+```
+
+This refetches after an ordinary rejection even when the server made no change.
+
+**Correct (invalidate from the callback that matches the mutation contract):**
+
 **Ordinary mutation: invalidate after confirmed success:**
 
 ```typescript
