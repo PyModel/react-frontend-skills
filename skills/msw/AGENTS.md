@@ -2,7 +2,7 @@
 
 **Version 1.0.0**  
 mswjs  
-January 2026
+August 2026
 
 > **Note:**  
 > This document is mainly for agents and LLMs to follow when maintaining,  
@@ -25,7 +25,7 @@ Comprehensive API mocking guide for MSW v2 applications, designed for AI agents 
    - 1.3 [Configure TypeScript for MSW v2](references/setup-typescript-config.md) — CRITICAL (TypeScript 4.7+ required; incorrect config causes type errors)
    - 1.4 [Configure Unhandled Request Behavior](references/setup-unhandled-requests.md) — CRITICAL (Catches missing handlers immediately; prevents silent test failures)
    - 1.5 [Require Node.js 18+ for MSW v2](references/setup-node-version.md) — CRITICAL (MSW v2 requires Node 18+; older versions cause complete failure)
-   - 1.6 [Use Correct Entrypoint for Node.js](references/setup-server-node-entrypoint.md) — CRITICAL (Zero mocking if wrong entrypoint; 100% test failures)
+   - 1.6 [Use Correct Entrypoint for Node.js](references/setup-server-node-entrypoint.md) — CRITICAL (wrong entrypoint means no mocking and failing tests)
 2. [Handler Architecture](references/_sections.md#2-handler-architecture) — **CRITICAL**
    - 2.1 [Define Happy Path Handlers as Baseline](references/handler-happy-path-first.md) — CRITICAL (Establishes reliable baseline; enables clean runtime overrides)
    - 2.2 [Destructure Resolver Arguments Correctly](references/handler-resolver-argument.md) — CRITICAL (Wrong destructuring pattern causes undefined values; silent failures)
@@ -44,18 +44,18 @@ Comprehensive API mocking guide for MSW v2 applications, designed for AI agents 
    - 3.6 [Use Correct JSDOM Environment for Jest](references/test-jsdom-environment.md) — HIGH (Prevents Node.js global conflicts; ensures proper fetch availability)
    - 3.7 [Use server.boundary() for Concurrent Tests](references/test-concurrent-boundary.md) — HIGH (Enables parallel test execution; prevents cross-test handler pollution)
 4. [Response Patterns](references/_sections.md#4-response-patterns) — **HIGH**
-   - 4.1 [Add Realistic Response Delays](references/response-delay-realistic.md) — HIGH (Reveals race conditions; tests loading states; catches timing bugs)
+   - 4.1 [Add Delays Only for Timing Behavior Under Test](references/response-delay-realistic.md) — HIGH (Reveals race conditions; tests loading states; catches timing bugs)
    - 4.2 [Mock Streaming Responses with ReadableStream](references/response-streaming.md) — HIGH (Tests streaming UIs, chat interfaces, and progressive loading)
    - 4.3 [Set Response Headers Correctly](references/response-custom-headers.md) — HIGH (Ensures CORS, caching, and authentication headers work as expected)
    - 4.4 [Simulate Error Responses Correctly](references/response-error-simulation.md) — HIGH (Validates error handling; catches missing error states in UI)
    - 4.5 [Use HttpResponse Static Methods](references/response-http-response-helpers.md) — HIGH (Automatic Content-Type headers; cleaner syntax; type safety)
    - 4.6 [Use One-Time Handlers for Sequential Scenarios](references/response-one-time-handlers.md) — HIGH (Models realistic multi-step flows; tests retry logic correctly)
 5. [Request Matching](references/_sections.md#5-request-matching) — **MEDIUM-HIGH**
-   - 5.1 [Access Query Parameters from Request URL](references/match-query-params.md) — MEDIUM-HIGH (Enables filtering, pagination, and search mocking)
-   - 5.2 [Match HTTP Methods Explicitly](references/match-http-methods.md) — MEDIUM-HIGH (Prevents cross-method interference; models REST APIs correctly)
-   - 5.3 [Order Handlers from Specific to General](references/match-handler-order.md) — MEDIUM-HIGH (Prevents general handlers from shadowing specific ones)
-   - 5.4 [Use Custom Predicates for Complex Matching](references/match-custom-predicate.md) — MEDIUM-HIGH (Enables header-based, body-based, and conditional request matching)
-   - 5.5 [Use URL Path Parameters Correctly](references/match-url-patterns.md) — MEDIUM-HIGH (Prevents silent handler mismatches; enables dynamic URL matching)
+   - 5.1 [Access Query Parameters from Request URL](references/match-query-params.md) — MEDIUM-HIGH
+   - 5.2 [Match HTTP Methods Explicitly](references/match-http-methods.md) — MEDIUM-HIGH
+   - 5.3 [Order Handlers from Specific to General](references/match-handler-order.md) — MEDIUM-HIGH
+   - 5.4 [Use Custom Predicates for Complex Matching](references/match-custom-predicate.md) — MEDIUM-HIGH
+   - 5.5 [Use URL Path Parameters Correctly](references/match-url-patterns.md) — MEDIUM-HIGH
 6. [GraphQL Mocking](references/_sections.md#6-graphql-mocking) — **MEDIUM**
    - 6.1 [Access GraphQL Variables Correctly](references/graphql-variables-access.md) — MEDIUM (Enables dynamic mock responses based on query input)
    - 6.2 [Handle Batched GraphQL Queries](references/graphql-batched-queries.md) — MEDIUM (Supports Apollo batching; prevents unhandled batch requests)
