@@ -1,13 +1,13 @@
 ---
-title: Reuse Development Server When Possible
+title: Reuse a Matching Local Server When Safe
 impact: MEDIUM
-impactDescription: eliminates 30-60s server startup per test run
+impactDescription: shortens local iteration without changing the tested server mode
 tags: perf, webserver, configuration, development, startup
 ---
 
-## Reuse Development Server When Possible
+## Reuse a Matching Local Server When Safe
 
-Starting a new server for each test run wastes time during local development. Reuse an existing server when available.
+`reuseExistingServer` can shorten local iteration, but Playwright only checks whether the URL responds; it cannot prove the existing process uses the expected build, environment, or revision. Reuse locally only when the developer controls that process. Keep CI isolated.
 
 **Incorrect (always starts new server):**
 
@@ -41,12 +41,12 @@ export default defineConfig({
 **Local development workflow:**
 
 ```bash
-# Terminal 1: Start dev server once
-npm run dev
+# Terminal 1: Start the same server mode configured for the suite.
+npm run start
 
-# Terminal 2: Run tests repeatedly (reuses server)
+# Terminal 2: Run tests repeatedly (reuses that matching server)
 npx playwright test
-npx playwright test --watch
+npx playwright test --ui   # interactive watch and re-run
 ```
 
 **Multiple servers for different apps:**
@@ -75,21 +75,13 @@ export default defineConfig({
 // playwright.config.ts
 export default defineConfig({
   webServer: {
-    command: process.env.CI
-      ? 'npm run build && npm run start' // Production build in CI
-      : 'npm run dev', // Dev server locally
+    command: 'npm run build && npm run start',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
   },
 });
 ```
 
-**Benefits of reuse:**
-
-| Scenario | New Server | Reuse Server |
-|----------|------------|--------------|
-| Local test run | 30-60s startup | Instant |
-| Watch mode | New server per run | Same server |
-| CI | Fresh server (correct) | N/A |
+Do not reuse a development server for a suite whose contract is a production build. If fast dev-server smoke tests are useful, define them as a separate project with an explicit, narrower purpose.
 
 Reference: [Playwright Web Server](https://playwright.dev/docs/test-webserver)
