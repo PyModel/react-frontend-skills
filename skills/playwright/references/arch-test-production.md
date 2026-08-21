@@ -7,7 +7,7 @@ tags: arch, production, build, next-start, configuration
 
 ## Test Against Production Builds
 
-Testing against `next dev` misses production-only issues like minification bugs, missing environment variables, and hydration mismatches. Always run E2E tests against `next build && next start`.
+A development server cannot validate production-only bundling, environment, and runtime behavior. Run CI/release E2E suites against a production build. A separate development-server smoke project may be useful for fast local feedback, but it does not replace the production-mode gate.
 
 **Incorrect (testing dev server):**
 
