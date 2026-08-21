@@ -113,18 +113,21 @@ result.error.issues.forEach(issue => {
 // Highlight items at indices: Set { 0 }
 ```
 
-**Using path with format():**
+**Using Zod 4's nested error helper:**
 
 ```typescript
-const formatted = result.error.format()
+if (!result.success) {
+  const tree = z.treeifyError(result.error)
 
-// Access errors at any path level
-formatted.customer?.address?.city?._errors  // ['City required']
-formatted.items?.[0]?.quantity?._errors  // ['Quantity must be positive']
+  tree.properties?.customer?.properties?.address
+    ?.properties?.city?.errors // ['City required']
+  tree.properties?.items?.items?.[0]
+    ?.properties?.quantity?.errors // ['Quantity must be positive']
+}
 ```
 
 **When NOT to use this pattern:**
 - Flat objects where field name is obvious
 - When using form libraries that handle path mapping
 
-Reference: [Zod Error Handling](https://zod.dev/error-handling)
+Reference: [Zod error formatting](https://zod.dev/error-formatting)
