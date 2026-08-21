@@ -1,11 +1,11 @@
 ---
 name: vitest
-description: Vitest testing framework patterns for test setup, async testing, mocking with vi.*, snapshots, and test performance (formerly test-vitest). This skill should be used when writing or debugging Vitest tests. This skill does NOT cover TDD methodology (use test-tdd skill), API mocking with MSW (use test-msw skill), or Jest-specific APIs.
+description: Current Vitest 4 guidance for setup, async tests, vi mocks, browser mode, snapshots, coverage, worker pools, and test performance. TDD methodology is covered by tdd and network mocking by msw.
 ---
 
 # Vitest Best Practices
 
-Comprehensive performance optimization and best practices guide for Vitest testing framework. Contains 44 rules across 8 categories, prioritized by impact to guide test writing, refactoring, and code review.
+Vitest 4-compatible testing guide with 44 rules across 8 categories. Vitest 4 requires Node.js 20+ and Vite 6+ when used with Vite.
 
 ## When to Apply
 
@@ -109,8 +109,8 @@ Read individual reference files for detailed explanations and code examples:
 
 ## Related Skills
 
-- For TDD methodology, see `test-tdd` skill
-- For API mocking with MSW, see `test-msw` skill
+- For TDD methodology, see `tdd` skill
+- For API mocking with MSW, see `msw` skill
 - For TypeScript testing patterns, see `typescript` skill
 
 ## Full Compiled Document
