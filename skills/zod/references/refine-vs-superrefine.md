@@ -93,7 +93,7 @@ const formSchema = z.object({
 )
 
 // Async validation
-const emailSchema = z.string().email().refine(
+const emailSchema = z.email().refine(
   async (email) => {
     const exists = await checkEmailExists(email)
     return !exists
