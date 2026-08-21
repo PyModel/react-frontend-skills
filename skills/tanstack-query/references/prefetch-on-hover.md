@@ -1,13 +1,13 @@
 ---
 title: Prefetch on Hover for Perceived Speed
 impact: HIGH
-impactDescription: 200-400ms head start before navigation
+impactDescription: head start before navigation
 tags: prefetch, hover, intent, perceived-performance
 ---
 
 ## Prefetch on Hover for Perceived Speed
 
-Users hover before clicking—use this 200-400ms window to prefetch data. The next page loads instantly from cache.
+Hover or keyboard focus can signal navigation intent and give a likely destination a head start. Prefetch only when the data cost, cache lifetime, and likelihood of navigation justify the request; a prefetched query may still be stale or pending when navigation occurs.
 
 **Without prefetch:**
 
