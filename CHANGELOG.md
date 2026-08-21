@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Audited all 18 skills against current official documentation and the August 2026 package baseline.
+- Updated Next.js 16 caching/Turbopack guidance, TypeScript 7 migration notes, Zod 4 APIs, nuqs 2 rate limiting, Vitest 4 requirements, Playwright readiness guidance, Tailwind CSS 4 integration, and shadcn Radix/Base UI scope.
+- Replaced unsupported impact estimates with project-specific measurement guidance and repaired stale official links.
+- Updated repository metadata for the `PyModel/react-frontend-skills` location.
+
 ## [2.0.0] - 2026-06-20
 
 ### Changed
@@ -22,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   AGENTS.md-aware agent.
 - `.gitignore` for OS/editor/Node artifacts.
 
-## [1.1.0] - 2026-01-28
+## 1.1.0 - 2026-01-28
 
 ### Added
 
@@ -66,7 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced contributing guide with clear examples
 - Updated acknowledgments with new skill sources
 
-## [1.0.0] - 2026-01-27
+## 1.0.0 - 2026-01-27
 
 ### Added
 
@@ -95,6 +104,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Priority-based skill organization (CRITICAL, HIGH, MEDIUM, LOW)
 - Category-based rule grouping for easy navigation
 
-[2.0.0]: https://github.com/Pythoughts-labs/react-frontend-skills/releases/tag/v2.0.0
-[1.1.0]: https://github.com/Pythoughts-labs/react-frontend-skills/releases/tag/v1.1.0
-[1.0.0]: https://github.com/Pythoughts-labs/react-frontend-skills/releases/tag/v1.0.0
+[2.0.0]: https://github.com/PyModel/react-frontend-skills/releases/tag/v2.0.0
