@@ -16,7 +16,7 @@ import { z } from 'zod'
 
 const userSchema = z.object({
   name: z.string().min(1),
-  email: z.string().email(),
+  email: z.email(),
   config: z.object({
     theme: z.string(),
   }),
@@ -46,7 +46,7 @@ const trimmedString = z.preprocess(
 
 const lowercaseEmail = z.preprocess(
   (val) => (typeof val === 'string' ? val.toLowerCase().trim() : val),
-  z.string().email()
+  z.email()
 )
 
 const jsonObject = z.preprocess(
