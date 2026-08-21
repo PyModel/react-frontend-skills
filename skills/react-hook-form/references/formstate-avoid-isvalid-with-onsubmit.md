@@ -1,58 +1,44 @@
 ---
-title: Avoid isValid with onSubmit Mode for Button State
+title: Align Submit Gating with Validation Mode
 impact: MEDIUM
-impactDescription: prevents validation on every render for button disabled state
-tags: formstate, isValid, onSubmit, validation-mode
+impactDescription: avoids contradictory submit UX and unnecessary live validity subscriptions
+tags: formstate, isValid, onSubmit, validation-mode, accessibility
 ---
 
-## Avoid isValid with onSubmit Mode for Button State
+## Align Submit Gating with Validation Mode
 
-When using `mode: 'onSubmit'`, accessing `isValid` forces validation on every render to determine the current validity state. This defeats the purpose of deferred validation.
+`formState.isValid` is derived from the form's validation result. In an `onSubmit` form, using it to disable the submit button before users can submit often conflicts with submit-time validation and can hide how to resolve errors. Subscribing to `formState.isValid` also makes React Hook Form run a full-form validation on mount and on every value change, even with `mode: 'onSubmit'` (v7.39.0+). With an expensive resolver that is real work you did not ask for.
 
-**Incorrect (isValid triggers validation despite onSubmit mode):**
+For submit-time validation, keep the button available and prevent duplicate submissions with `isSubmitting`:
 
-```typescript
-function RegistrationForm() {
-  const { register, handleSubmit, formState: { isValid } } = useForm({
-    mode: 'onSubmit',  // Expects validation only on submit
-  })
+```tsx
+const {
+  register,
+  handleSubmit,
+  formState: { errors, isSubmitting },
+} = useForm({ mode: 'onSubmit' })
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input {...register('email', { required: true })} />
-      <input {...register('password', { required: true })} />
-      <button disabled={!isValid}>Register</button>  {/* Forces validation on every render */}
-    </form>
-  )
-}
+return (
+  <form onSubmit={handleSubmit(onSubmit)}>
+    <input {...register('email', { required: 'Email is required' })} />
+    {errors.email ? <p>{errors.email.message}</p> : null}
+    <button disabled={isSubmitting}>
+      {isSubmitting ? 'Submitting…' : 'Submit'}
+    </button>
+  </form>
+)
 ```
 
-**Correct (use isSubmitting or allow submit attempt):**
+If the product deliberately prevents submission until valid, choose a live validation mode and subscribe to `isValid` explicitly:
 
-```typescript
-function RegistrationForm() {
-  const { register, handleSubmit, formState: { isSubmitting } } = useForm({
-    mode: 'onSubmit',
-  })
+```tsx
+const {
+  formState: { isValid, isSubmitting },
+} = useForm({ mode: 'onChange' })
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input {...register('email', { required: true })} />
-      <input {...register('password', { required: true })} />
-      <button disabled={isSubmitting}>
-        {isSubmitting ? 'Registering...' : 'Register'}
-      </button>
-    </form>
-  )
-}
+<button disabled={!isValid || isSubmitting}>Submit</button>
 ```
 
-**Alternative (use onChange mode if real-time validation needed):**
+Ensure disabled-state styling, error messaging, and assistive text explain what remains invalid. Do not use a disabled submit button as the only error-discovery mechanism.
 
-```typescript
-const { formState: { isValid } } = useForm({
-  mode: 'onChange',  // Explicit: validation runs on every change
-})
-```
-
-Reference: [useForm - mode](https://react-hook-form.com/docs/useform)
+Reference: [React Hook Form formState](https://react-hook-form.com/docs/useform/formstate)
