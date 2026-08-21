@@ -1,139 +1,70 @@
 ---
-title: Avoid Dynamic Schema Creation in Hot Paths
+title: Avoid Rebuilding Stable Schemas in Hot Paths
 impact: LOW-MEDIUM
-impactDescription: Zod 4's JIT compilation makes schema creation slower; creating schemas in loops adds ~0.15ms per creation
+impactDescription: avoids repeated schema allocation when one reusable schema expresses the same contract
 tags: perf, dynamic, hot-path, optimization
 ---
 
-## Avoid Dynamic Schema Creation in Hot Paths
+## Avoid Rebuilding Stable Schemas in Hot Paths
 
-Zod 4 uses JIT (Just-In-Time) compilation to speed up repeated parsing, but this makes initial schema creation slower. Avoid creating schemas inside loops or frequently-called functions—pre-create them instead.
+Zod schemas are immutable reusable values. Define a stable schema once when the validation contract is stable instead of reconstructing the same schema in a loop or on every render. Do not assume a fixed performance gain: measure schema construction and parsing in the target workload.
 
-**Incorrect (schema creation in hot path):**
+**Incorrect (same schema rebuilt for every item):**
 
 ```typescript
-import { z } from 'zod'
+import * as z from 'zod'
 
-async function validateBatch(items: unknown[]) {
-  const results = []
-
-  for (const item of items) {
-    // Schema created for EACH item - slow!
+function validateBatch(items: unknown[]) {
+  return items.map((item) => {
     const schema = z.object({
       id: z.string(),
       value: z.number(),
     })
 
-    results.push(schema.safeParse(item))
-  }
-
-  return results
+    return schema.safeParse(item)
+  })
 }
-
-// 1000 items = 1000 schema creations = ~150ms overhead
 ```
 
-**Correct (pre-created schema):**
+**Correct (stable schema reused):**
 
 ```typescript
-import { z } from 'zod'
+import * as z from 'zod'
 
-// Schema created ONCE
 const itemSchema = z.object({
   id: z.string(),
   value: z.number(),
 })
 
-async function validateBatch(items: unknown[]) {
-  // Reuse the same schema instance
-  return items.map(item => itemSchema.safeParse(item))
+function validateBatch(items: unknown[]) {
+  return items.map((item) => itemSchema.safeParse(item))
 }
-
-// 1000 items = 1 schema creation + 1000 fast parses
 ```
 
-**Dynamic schemas with caching:**
+**Cache genuinely dynamic schemas only when identity and lifetime are bounded:**
 
 ```typescript
-import { z } from 'zod'
+import * as z from 'zod'
 
-// Cache for dynamically-configured schemas
-const schemaCache = new WeakMap<object, z.ZodType>()
+interface FieldConfig {
+  fields: readonly string[]
+}
 
-function getSchemaForConfig(config: { fields: string[] }) {
-  // Check cache first
-  if (schemaCache.has(config)) {
-    return schemaCache.get(config)!
-  }
+const schemaCache = new WeakMap<FieldConfig, z.ZodType>()
 
-  // Create and cache
+function getSchemaForConfig(config: FieldConfig) {
+  const cached = schemaCache.get(config)
+  if (cached) return cached
+
   const shape: Record<string, z.ZodString> = {}
-  for (const field of config.fields) {
-    shape[field] = z.string()
-  }
+  for (const field of config.fields) shape[field] = z.string()
 
   const schema = z.object(shape)
   schemaCache.set(config, schema)
   return schema
 }
-
-// Subsequent calls with same config reuse cached schema
 ```
 
-**Lazy schema creation:**
+Do not cache by an unbounded user-controlled string key. Rebuild when the contract truly changes, and prefer clarity for one-off schemas outside measured hot paths.
 
-```typescript
-import { z } from 'zod'
-
-// Schema created only when first used
-let _userSchema: z.ZodObject<any> | null = null
-
-function getUserSchema() {
-  if (!_userSchema) {
-    _userSchema = z.object({
-      id: z.string().uuid(),
-      email: z.string().email(),
-      profile: z.object({
-        name: z.string(),
-        avatar: z.string().url().optional(),
-      }),
-    })
-  }
-  return _userSchema
-}
-
-// Or use a getter
-const schemas = {
-  _user: null as z.ZodType | null,
-  get user() {
-    if (!this._user) {
-      this._user = z.object({ /* ... */ })
-    }
-    return this._user
-  }
-}
-```
-
-**Benchmark considerations:**
-
-```typescript
-// Zod 4 JIT compilation:
-// - Schema creation: ~0.15ms per schema
-// - First parse: triggers JIT compile
-// - Subsequent parses: 7-14x faster
-
-// For schemas used once:
-// - Creation + parse: ~0.15ms + first-parse overhead
-// - Consider if validation is even needed
-
-// For schemas used many times:
-// - Create once, parse many: optimal
-// - JIT compilation amortized over all parses
-```
-
-**When NOT to use this pattern:**
-- One-off validation where schema is used once
-- Dynamically generated forms where fields change per request
-- Test files where performance doesn't matter
-
-Reference: [Zod v4 Performance](https://zod.dev/v4#performance)
+Reference: [Zod 4 performance notes](https://zod.dev/v4#benchmarks)
