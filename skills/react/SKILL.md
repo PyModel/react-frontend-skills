@@ -1,11 +1,11 @@
 ---
 name: react
-description: Current React 19.2 guidance for concurrent rendering, Server Components, Actions, effects, React Compiler, state, and memoization. Use for React components and hooks. Next.js-specific routing/caching belongs to the nextjs skill; React Hook Form integration belongs to react-hook-form.
+description: Current React 19.3 guidance for concurrent rendering, Server Components, Actions, effects, React Compiler, View Transitions, state, and memoization. Use for React components and hooks. Next.js-specific routing/caching belongs to the nextjs skill; React Hook Form integration belongs to react-hook-form.
 ---
 
 # React 19 Best Practices
 
-Comprehensive performance optimization guide for React 19 applications. Contains 40 rules across 8 categories, prioritized by impact from critical (concurrent rendering, server components) to incremental (component patterns).
+Comprehensive performance optimization guide for React 19 applications. Contains 43 rules across 8 categories, prioritized by impact from critical (concurrent rendering, server components) to incremental (component patterns). Covers the React 19.3 stabilizations: `<ViewTransition>`, Fragment refs, and direct Context providers in Server Components.
 
 ## Table of Contents
 
@@ -15,6 +15,7 @@ Comprehensive performance optimization guide for React 19 applications. Contains
    - 1.3 [Use useDeferredValue for Derived Expensive Values](references/conc-use-deferred-value.md) — CRITICAL (prevents jank in derived computations)
    - 1.4 [Use useTransition for Non-Blocking Updates](references/conc-use-transition.md) — CRITICAL (keeps UI responsive during heavy updates)
    - 1.5 [Write Concurrent-Safe Components](references/conc-concurrent-safe.md) — MEDIUM-HIGH
+   - 1.6 [Animate UI Changes with ViewTransition](references/conc-view-transitions.md) — MEDIUM (native View Transition API animations without manual class juggling)
 2. [Server Components](references/_sections.md#2-server-components) — **CRITICAL**
    - 2.1 [Avoid Client-Only Libraries in Server Components](references/rsc-avoid-client-only-libs.md) — MEDIUM-HIGH
    - 2.2 [Enable Streaming with Nested Suspense](references/rsc-streaming.md) — MEDIUM-HIGH
@@ -22,6 +23,7 @@ Comprehensive performance optimization guide for React 19 applications. Contains
    - 2.4 [Minimize Server/Client Boundary Crossings](references/rsc-server-client-boundary.md) — CRITICAL (reduces serialization overhead, smaller bundles)
    - 2.5 [Pass Only Serializable Props to Client Components](references/rsc-serializable-props.md) — HIGH (prevents runtime errors, ensures correct hydration)
    - 2.6 [Use Composition to Mix Server and Client Components](references/rsc-composition-pattern.md) — HIGH (maintains server rendering for static content)
+   - 2.7 [Render Context Providers in Server Components](references/rsc-context-provider.md) — LOW-MEDIUM (removes provider-wrapper components from the client tree; 19.3)
 3. [Actions & Forms](references/_sections.md#3-actions-&-forms) — **HIGH**
    - 3.1 [Use Form Actions Instead of onSubmit](references/form-actions.md) — HIGH (progressive enhancement, simpler code)
    - 3.2 [Use useActionState for Form State Management](references/form-use-action-state.md) — HIGH (declarative form handling, automatic pending states)
@@ -57,6 +59,7 @@ Comprehensive performance optimization guide for React 19 applications. Contains
    - 8.2 [Prefer Composition Over Props Explosion](references/rcomp-composition.md) — LOW-MEDIUM
    - 8.3 [Use Key to Reset Component State](references/rcomp-key-reset.md) — LOW-MEDIUM
    - 8.4 [Use Render Props for Inversion of Control](references/rcomp-render-props.md) — LOW-MEDIUM
+   - 8.5 [Attach DOM Behavior to Siblings with Fragment Refs](references/rcomp-fragment-refs.md) — LOW-MEDIUM (ref access to child DOM without wrapper elements; stable in 19.3)
 
 ## References
 
