@@ -12,10 +12,11 @@ nuqs 2.x supports Next.js 14.2 or newer for both App and Pages Routers. Earlier 
 | Framework/router | Supported range for nuqs 2.x |
 | --- | --- |
 | Next.js App or Pages Router | `next >= 14.2.0` |
-| React SPA | `react ^18.3 \|\| ^19` |
+| React SPA | `react >= 18.2 \|\| ^19` |
 | React Router v6 | `react-router-dom ^6` |
 | React Router v7 | `react-router ^7` |
 | React Router v8 | `react-router ^8` |
+| TanStack Router (experimental) | `@tanstack/react-router ^1` |
 
 **Incorrect (nuqs 2 with an unsupported Next.js release):**
 

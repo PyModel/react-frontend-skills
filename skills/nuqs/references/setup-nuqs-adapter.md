@@ -71,5 +71,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 - `nuqs/adapters/remix` - Remix
 - `nuqs/adapters/react-router/v6` - React Router v6
 - `nuqs/adapters/react-router/v7` - React Router v7
+- `nuqs/adapters/react-router/v8` - React Router v8 (re-exports v7; pin for future compatibility)
+- `nuqs/adapters/tanstack-router` - TanStack Router v1 (experimental)
 
 Reference: [nuqs Adapters](https://nuqs.dev/docs/adapters)
