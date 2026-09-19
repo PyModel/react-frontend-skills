@@ -1,8 +1,8 @@
 # MSW (Mock Service Worker)
 
-**Version 1.0.0**  
+**Version 1.1.0**  
 mswjs  
-August 2026
+August 2026 (updated for MSW 2.15)
 
 > **Note:**  
 > This document is mainly for agents and LLMs to follow when maintaining,  
@@ -61,12 +61,15 @@ Comprehensive API mocking guide for MSW v2 applications, designed for AI agents 
    - 6.2 [Handle Batched GraphQL Queries](references/graphql-batched-queries.md) — MEDIUM (Supports Apollo batching; prevents unhandled batch requests)
    - 6.3 [Return GraphQL Errors in Correct Format](references/graphql-error-responses.md) — MEDIUM (Ensures GraphQL clients parse errors correctly; tests error handling)
    - 6.4 [Use Operation Name for GraphQL Matching](references/graphql-operation-handlers.md) — MEDIUM (Enables precise operation targeting; prevents query/mutation conflicts)
+   - 6.5 [Resolve Operations Against a GraphQL Schema](references/graphql-schema-first.md) — MEDIUM (Schema-accurate mocks without hand-writing response shapes)
 7. [Advanced Patterns](references/_sections.md#7-advanced-patterns) — **MEDIUM**
    - 7.1 [Configure MSW for Vitest Browser Mode](references/advanced-vitest-browser.md) — MEDIUM (Enables browser-environment testing with proper worker setup)
    - 7.2 [Handle Cookies and Authentication](references/advanced-cookies-auth.md) — MEDIUM (Enables session-based auth testing; validates auth flows)
    - 7.3 [Implement Dynamic Mock Scenarios](references/advanced-dynamic-scenarios.md) — MEDIUM (Enables runtime mock state changes; supports complex test flows)
    - 7.4 [Mock File Upload Endpoints](references/advanced-file-uploads.md) — MEDIUM (Tests file upload forms and progress indicators)
    - 7.5 [Use bypass() for Passthrough Requests](references/advanced-bypass-requests.md) — MEDIUM (Enables mixing real and mocked APIs; supports hybrid testing)
+   - 7.6 [Mock WebSocket Connections with ws.link](references/advanced-websocket-mocking.md) — MEDIUM (Tests realtime features without a real server)
+   - 7.7 [Use defineNetworkFixture from @msw/playwright](references/advanced-playwright-integration.md) — MEDIUM (Controls MSW network from Playwright tests)
 8. [Debugging & Performance](references/_sections.md#8-debugging-&-performance) — **LOW**
    - 8.1 [Know Common MSW Issues and Fixes](references/debug-common-issues.md) — LOW (Quick reference for frequent problems; reduces debugging time)
    - 8.2 [Log Request Details for Debugging](references/debug-request-logging.md) — LOW (Provides detailed request inspection; identifies payload issues)
@@ -81,7 +84,9 @@ Comprehensive API mocking guide for MSW v2 applications, designed for AI agents 
 2. [https://mswjs.io/docs/best-practices/](https://mswjs.io/docs/best-practices/)
 3. [https://mswjs.io/docs/migrations/1.x-to-2.x/](https://mswjs.io/docs/migrations/1.x-to-2.x/)
 4. [https://mswjs.io/docs/runbook/](https://mswjs.io/docs/runbook/)
-5. [https://github.com/mswjs/msw](https://github.com/mswjs/msw)
+5. [https://mswjs.io/docs/websocket](https://mswjs.io/docs/websocket)
+6. [https://github.com/mswjs/msw](https://github.com/mswjs/msw)
+7. [https://github.com/mswjs/msw/tree/master/packages/playwright](https://github.com/mswjs/msw/tree/master/packages/playwright)
 
 ---
 

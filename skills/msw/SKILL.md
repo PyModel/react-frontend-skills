@@ -5,7 +5,7 @@ description: Current MSW v2 guidance for request handlers, Node/browser setup, H
 
 # MSW Best Practices
 
-Comprehensive API mocking guide for MSW v2 applications, designed for AI agents and LLMs. Contains 45 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
+Comprehensive API mocking guide for MSW v2 applications (current: MSW 2.15), designed for AI agents and LLMs. Contains 48 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
 
 ## When to Apply
 
@@ -85,6 +85,7 @@ Reference these guidelines when:
 - `graphql-error-responses` - Return GraphQL errors in correct format
 - `graphql-batched-queries` - Handle batched GraphQL queries
 - `graphql-variables-access` - Access GraphQL variables correctly
+- `graphql-schema-first` - Resolve operations against a GraphQL schema
 
 ### 7. Advanced Patterns (MEDIUM)
 
@@ -93,6 +94,8 @@ Reference these guidelines when:
 - `advanced-dynamic-scenarios` - Implement dynamic mock scenarios
 - `advanced-vitest-browser` - Configure MSW for Vitest browser mode
 - `advanced-file-uploads` - Mock file upload endpoints
+- `advanced-websocket-mocking` - Mock WebSocket connections with ws.link
+- `advanced-playwright-integration` - Use defineNetworkFixture from @msw/playwright
 
 ### 8. Debugging & Performance (LOW)
 
