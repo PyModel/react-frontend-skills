@@ -77,7 +77,7 @@ Comprehensive architecture guide for organizing React applications by features, 
 1. [https://www.robinwieruch.de/react-feature-architecture/](https://www.robinwieruch.de/react-feature-architecture/)
 2. [https://feature-sliced.design/](https://feature-sliced.design/)
 3. [https://github.com/alan2207/bulletproof-react/blob/master/docs/project-structure.md](https://github.com/alan2207/bulletproof-react/blob/master/docs/project-structure.md)
-4. [https://legacy.reactjs.org/docs/faq-structure.html](https://legacy.reactjs.org/docs/faq-structure.html)
+4. [https://react.dev/learn](https://react.dev/learn)
 
 ---
 

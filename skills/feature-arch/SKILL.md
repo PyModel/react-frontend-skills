@@ -105,6 +105,8 @@ Read individual reference files for detailed explanations and code examples:
 - [Section definitions](references/_sections.md) - Category structure and impact levels
 - Individual rules: `references/{prefix}-{slug}.md`
 
+The layering and boundary rules align with Feature-Sliced Design (FSD), the most widely adopted React architecture standard; see [feature-sliced.design](https://feature-sliced.design/) for the full methodology.
+
 ## Related Skills
 
 - For data fetching, see `tanstack-query` skill
