@@ -9,6 +9,7 @@
   <a href="https://github.com/PyModel/react-frontend-skills/network/members"><img src="https://img.shields.io/github/forks/PyModel/react-frontend-skills?style=flat&logo=github&logoColor=white&color=4f8cc9&labelColor=1c1c1c" alt="Forks" /></a>
   <a href="https://github.com/PyModel/react-frontend-skills/issues"><img src="https://img.shields.io/github/issues/PyModel/react-frontend-skills?style=flat&logo=github&logoColor=white&color=e07b39&labelColor=1c1c1c" alt="Issues" /></a>
   <a href="https://www.npmjs.com/package/@pymodel/react-frontend-skills"><img src="https://img.shields.io/npm/v/@pymodel/react-frontend-skills?style=flat&logo=npm&logoColor=white&color=cb3837&labelColor=1c1c1c" alt="npm" /></a>
+  <a href="https://skills.sh/PyModel/react-frontend-skills"><img src="https://skills.sh/b/PyModel/react-frontend-skills" alt="skills.sh installs" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/PyModel/react-frontend-skills?style=flat&color=3fb950&labelColor=1c1c1c" alt="License" /></a>
 </p>
 
