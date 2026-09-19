@@ -1,6 +1,6 @@
 # Vitest
 
-**Version 1.0.0**  
+**Version 1.1.0**  
 community  
 August 2026
 
@@ -34,6 +34,7 @@ Comprehensive testing best practices guide for Vitest, designed for AI agents an
    - 2.4 [Restore Mocks After Each Test](references/setup-restore-mocks.md) — CRITICAL (Prevents mock leakage where mocked behavior persists into unrelated tests)
    - 2.5 [Use beforeAll for Expensive One-Time Setup](references/setup-beforeall-expensive.md) — HIGH (Reduces test suite time for tests with expensive setup)
    - 2.6 [Use Test Factories for Complex Test Data](references/setup-test-factories.md) — MEDIUM (Reduces test setup boilerplate and improves test readability)
+   - 2.7 [Plan the Vitest 5 Migration Deliberately](references/setup-vitest5-migration.md) — CRITICAL (Avoids hard breaks from removed options, matcher changes, and id shifts)
 3. Mocking Patterns — **HIGH**
    - 3.1 [Avoid Over-Mocking](references/mock-avoid-overmocking.md) — HIGH (Prevents tests that pass despite broken code by testing mocks instead of behavior)
    - 3.2 [Choose vi.spyOn vs vi.mock Appropriately](references/mock-spyon-vs-mock.md) — HIGH (Prevents over-mocking and ensures tests exercise real code paths)

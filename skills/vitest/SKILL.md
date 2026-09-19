@@ -1,11 +1,11 @@
 ---
 name: vitest
-description: Current Vitest 4 guidance for setup, async tests, vi mocks, snapshots, worker pools, environments, assertions, and test performance. TDD methodology is covered by tdd and network mocking by msw.
+description: Current Vitest 5 guidance for setup, async tests, vi mocks, snapshots, worker pools, environments, assertions, and test performance. TDD methodology is covered by tdd and network mocking by msw.
 ---
 
 # Vitest Best Practices
 
-Vitest 4-compatible testing guide with 44 rules across 8 categories. Vitest 4 requires Node.js 20+ and Vite 6+ when used with Vite.
+Vitest 5-compatible testing guide with 45 rules across 8 categories. Vitest 5 requires Node.js 22.12+ and Vite 6.4+; Vitest 4.1 remains on backport support.
 
 ## When to Apply
 
@@ -52,6 +52,7 @@ Jest-specific APIs and configuration outside documented migration differences ar
 - `setup-beforeall-expensive` - Use beforeAll for expensive one-time setup
 - `setup-reset-modules` - Reset modules when testing module state
 - `setup-test-factories` - Use test factories for complex test data
+- `setup-vitest5-migration` - Plan the Vitest 5 migration deliberately (5.0)
 
 ### 3. Mocking Patterns (HIGH)
 
