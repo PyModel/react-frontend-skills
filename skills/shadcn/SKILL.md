@@ -5,7 +5,7 @@ description: Current shadcn/ui component guidance for projects generated with Ra
 
 # shadcn/ui Community Best Practices
 
-Current best-practices guide for shadcn/ui applications. Before applying primitive-specific guidance, inspect whether the checked-in components use Radix UI or Base UI; current shadcn supports both and their composition APIs differ.
+Current best-practices guide for shadcn/ui applications. Before applying primitive-specific guidance, inspect whether the checked-in components use Radix UI or Base UI; current shadcn supports both (Base UI is the default for new projects) and their composition APIs differ. Component installs and upgrades go through the current CLI (v4), which resolves namespaced registries.
 
 ## When to Apply
 
@@ -34,6 +34,8 @@ Reference these guidelines when:
 ### 1. Component Architecture (CRITICAL)
 
 - [`arch-use-asChild-for-custom-triggers`](references/arch-use-asChild-for-custom-triggers.md) - Use the generated primitive's composition API
+- [`arch-current-cli-registry`](references/arch-current-cli-registry.md) - Use the current CLI for component lifecycle (v4, registries, MCP)
+- [`arch-unified-radix-package`](references/arch-unified-radix-package.md) - Import primitives from the unified radix-ui package
 - [`arch-preserve-radix-primitive-structure`](references/arch-preserve-radix-primitive-structure.md) - Maintain Radix compound component hierarchy
 - [`arch-extend-variants-with-cva`](references/arch-extend-variants-with-cva.md) - Use Class Variance Authority for type-safe variants
 - [`arch-use-cn-for-class-merging`](references/arch-use-cn-for-class-merging.md) - Use cn() utility for safe Tailwind class merging

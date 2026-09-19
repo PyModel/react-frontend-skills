@@ -26,6 +26,8 @@ Comprehensive best practices guide for shadcn/ui applications, designed for AI a
    - 1.4 [Preserve Radix Primitive Structure](references/arch-preserve-radix-primitive-structure.md) — CRITICAL (maintains keyboard navigation and focus management)
    - 1.5 [Use the Generated Primitive's Composition API](references/arch-use-asChild-for-custom-triggers.md) — CRITICAL (preserves accessibility and event handling)
    - 1.6 [Use cn() for Safe Class Merging](references/arch-use-cn-for-class-merging.md) — CRITICAL (prevents Tailwind class conflicts)
+   - 1.7 [Use the Current CLI for Component Lifecycle](references/arch-current-cli-registry.md) — MEDIUM-HIGH (dry-run installs, namespaced registries, and agent-friendly inspection)
+   - 1.8 [Import Primitives from the Unified radix-ui Package](references/arch-unified-radix-package.md) — LOW-MEDIUM (one import source instead of dozens of @radix-ui packages)
 2. Accessibility Preservation — **CRITICAL**
    - 2.1 [Ensure Color Contrast Meets WCAG Standards](references/ally-ensure-color-contrast.md) — CRITICAL (enables readability for low vision users)
    - 2.2 [Maintain Focus Management in Modals](references/ally-maintain-focus-management.md) — CRITICAL (keyboard users cannot navigate or escape without it)
