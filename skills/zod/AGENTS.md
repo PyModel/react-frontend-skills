@@ -13,7 +13,7 @@ August 2026
 
 ## Abstract
 
-Comprehensive schema validation guide for Zod 4 in TypeScript applications, designed for AI agents and LLMs. Contains 43 rules across 8 categories, prioritized by impact from critical (schema definition, parsing) to incremental (performance, bundle optimization). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
+Comprehensive schema validation guide for Zod 4 in TypeScript applications, designed for AI agents and LLMs. Contains 44 rules across 8 categories, prioritized by impact from critical (schema definition, parsing) to incremental (performance, bundle optimization). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
 
 ---
 
@@ -64,6 +64,7 @@ Comprehensive schema validation guide for Zod 4 in TypeScript applications, desi
    - 7.3 [Distinguish transform() from refine() and coerce()](references/refine-transform-coerce.md) — MEDIUM (Using wrong method causes validation to pass with wrong data; each method has distinct purpose)
    - 7.4 [Use catch() for Fault-Tolerant Parsing](references/refine-catch.md) — MEDIUM (parse() fails on first invalid field; catch() provides fallback values, enabling partial success with degraded data)
    - 7.5 [Use default() for Optional Fields with Defaults](references/refine-defaults.md) — MEDIUM (Manual default handling spreads logic across codebase; .default() centralizes defaults in schema)
+   - 7.6 [Use z.codec() for Bidirectional Transformations](references/refine-use-codec.md) — LOW-MEDIUM (One schema owns both the decode and encode direction; Zod 4.1+)
 8. [Performance & Bundle](references/_sections.md#8-performance-&-bundle) — **LOW-MEDIUM**
    - 8.1 [Avoid Rebuilding Stable Schemas in Hot Paths](references/perf-avoid-dynamic-creation.md) — LOW-MEDIUM
    - 8.2 [Cache Schema Instances](references/perf-cache-schemas.md) — LOW-MEDIUM

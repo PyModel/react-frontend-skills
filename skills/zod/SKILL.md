@@ -5,7 +5,7 @@ description: Zod 4 schema validation best practices for type safety, parsing, an
 
 # Zod Best Practices
 
-Comprehensive schema validation guide for Zod 4 in TypeScript applications. Contains 43 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
+Comprehensive schema validation guide for Zod 4 in TypeScript applications. Contains 44 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
 
 ## When to Apply
 
@@ -89,6 +89,7 @@ Reference these guidelines when:
 
 - `refine-vs-superrefine` - Choose refine() vs superRefine() correctly
 - `refine-transform-coerce` - Distinguish transform() from refine() and coerce()
+- `refine-use-codec` - Use z.codec() for bidirectional transformations (4.1+)
 - `refine-add-path` - Add path to refinement errors
 - `refine-defaults` - Use default() for optional fields with defaults
 - `refine-catch` - Use catch() for fault-tolerant parsing
