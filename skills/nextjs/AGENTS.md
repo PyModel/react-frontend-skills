@@ -1,8 +1,8 @@
 # Next.js 16 App Router
 
-**Version 0.1.0**  
+**Version 0.2.0**  
 Next.js Community  
-August 2026
+August 2026 (updated for Next.js 16.3 preview)
 
 > **Note:**  
 > This document is mainly for agents and LLMs to follow when maintaining,  
@@ -41,10 +41,12 @@ Comprehensive performance optimization guide for Next.js 16 App Router applicati
    - 3.6 [Use Preload Pattern for Critical Data](references/server-preload-pattern.md) — MEDIUM-HIGH
 4. Routing & Navigation — **HIGH**
    - 4.1 [Configure Link Prefetching Appropriately](references/route-prefetching.md) — MEDIUM-HIGH
-   - 4.2 [Use Intercepting Routes for Modal Patterns](references/route-intercepting-routes.md) — HIGH (enables shareable modal URLs, better UX)
-   - 4.3 [Use notFound() for Missing Resources](references/route-not-found.md) — MEDIUM (proper 404 handling, better SEO)
-   - 4.4 [Use Parallel Routes for Independent Content](references/route-parallel-routes.md) — HIGH (independent loading, streaming, error handling)
-   - 4.5 [Use proxy.ts for Network Boundary Logic](references/route-proxy-ts.md) — MEDIUM-HIGH
+   - 4.2 [Make Navigations Instant with Stream, Cache, or Block](references/route-instant-navigations.md) — HIGH (SPA-like instant navigations; 16.3 preview, needs `cacheComponents`)
+   - 4.3 [Use Intercepting Routes for Modal Patterns](references/route-intercepting-routes.md) — HIGH (enables shareable modal URLs, better UX)
+   - 4.4 [Use notFound() for Missing Resources](references/route-not-found.md) — MEDIUM (proper 404 handling, better SEO)
+   - 4.5 [Use Parallel Routes for Independent Content](references/route-parallel-routes.md) — HIGH (independent loading, streaming, error handling)
+   - 4.6 [Use Partial Prefetching for Reusable Route Shells](references/route-partial-prefetching.md) — HIGH (one prefetch per route instead of per link; 16.3 preview, needs `partialPrefetching`)
+   - 4.7 [Use proxy.ts for Network Boundary Logic](references/route-proxy-ts.md) — MEDIUM-HIGH
 5. Server Actions & Mutations — **MEDIUM-HIGH**
    - 5.1 [Handle Server Action Errors Gracefully](references/action-error-handling.md) — MEDIUM-HIGH
    - 5.2 [Revalidate Cache After Mutations](references/action-revalidation.md) — MEDIUM (ensures fresh data after changes)
@@ -74,8 +76,10 @@ Comprehensive performance optimization guide for Next.js 16 App Router applicati
 
 1. [https://nextjs.org/docs](https://nextjs.org/docs)
 2. [https://nextjs.org/blog/next-16](https://nextjs.org/blog/next-16)
-3. [https://react.dev](https://react.dev)
-4. [https://vercel.com/blog](https://vercel.com/blog)
+3. [https://nextjs.org/blog/next-16-3-instant-navigations](https://nextjs.org/blog/next-16-3-instant-navigations)
+4. [https://nextjs.org/docs/app/guides/instant-navigation](https://nextjs.org/docs/app/guides/instant-navigation)
+5. [https://react.dev](https://react.dev)
+6. [https://vercel.com/blog](https://vercel.com/blog)
 
 ---
 
