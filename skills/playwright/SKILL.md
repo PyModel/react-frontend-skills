@@ -5,7 +5,7 @@ description: Playwright testing best practices for Next.js applications (formerl
 
 # Playwright + Next.js Testing Best Practices
 
-Comprehensive testing optimization guide for Playwright with Next.js applications. Contains 43 rules across 8 categories, prioritized by impact to guide reliable, fast, and maintainable E2E tests.
+Comprehensive testing optimization guide for Playwright with Next.js applications. Contains 44 rules across 8 categories, prioritized by impact to guide reliable, fast, and maintainable E2E tests.
 
 ## When to Apply
 
@@ -55,6 +55,7 @@ Reference these guidelines when:
 ### 3. Waiting & Assertions (HIGH)
 
 - [`wait-web-first-assertions`](references/wait-web-first-assertions.md) - Use web-first assertions
+- [`assert-aria-snapshots`](references/assert-aria-snapshots.md) - Assert accessibility structure with aria snapshots
 - [`wait-avoid-hard-waits`](references/wait-avoid-hard-waits.md) - Avoid hard waits
 - [`wait-network-idle`](references/wait-network-idle.md) - Wait for observable readiness, not network idle
 - [`wait-action-retries`](references/wait-action-retries.md) - Let actions auto-wait before interacting

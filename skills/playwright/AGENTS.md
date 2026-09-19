@@ -1,6 +1,6 @@
 # Playwright + Next.js
 
-**Version 0.1.0**  
+**Version 0.2.0**  
 Community  
 August 2026
 
@@ -41,6 +41,7 @@ Comprehensive testing best practices guide for Playwright with Next.js applicati
    - 3.4 [Wait for Observable Readiness, Not Network Idle](references/wait-network-idle.md) — HIGH (waits for all resources to load)
    - 3.5 [Use Soft Assertions for Non-Critical Checks](references/wait-soft-assertions.md) — MEDIUM (collect multiple failures without stopping test)
    - 3.6 [Use Web-First Assertions](references/wait-web-first-assertions.md) — HIGH (auto-retry eliminates timing failures)
+   - 3.7 [Assert Accessibility Structure with Aria Snapshots](references/assert-aria-snapshots.md) — MEDIUM (resilient UI structure assertions that survive styling changes)
 4. [Authentication & State](references/_sections.md#4-authentication-&-state) — **HIGH**
    - 4.1 [Handle Session Storage for Auth](references/auth-session-storage.md) — HIGH (preserves auth state that uses sessionStorage)
    - 4.2 [Reuse Authentication with Storage State](references/auth-storage-state.md) — HIGH (large reduction in test execution time)
