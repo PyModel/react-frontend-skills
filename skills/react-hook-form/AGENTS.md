@@ -1,6 +1,6 @@
 # React Hook Form
 
-**Version 0.1.0**  
+**Version 0.2.0**  
 Community  
 August 2026
 
@@ -13,7 +13,7 @@ August 2026
 
 ## Abstract
 
-Comprehensive performance optimization guide for React Hook Form applications, designed for AI agents and LLMs. Contains 41 rules across 8 categories, prioritized by impact from critical (form configuration, field subscriptions) to incremental (advanced patterns). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
+Comprehensive performance optimization guide for React Hook Form applications, designed for AI agents and LLMs. Contains 43 rules across 8 categories, prioritized by impact from critical (form configuration, field subscriptions) to incremental (advanced patterns). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
 
 ---
 
@@ -47,6 +47,7 @@ Comprehensive performance optimization guide for React Hook Form applications, d
    - 4.4 [Prefer Resolver Over Inline Validation for Complex Rules](references/valid-inline-vs-resolver.md) — HIGH (centralizes validation logic and enables type inference)
    - 4.5 [Use delayError to Debounce Rapid Error Display](references/valid-delay-error.md) — MEDIUM (reduces UI flicker during fast typing validation)
    - 4.6 [Use Schema Factory for Dynamic Validation](references/valid-dynamic-schema-factory.md) — HIGH (enables context-dependent validation without render-time schema creation)
+   - 4.7 [Validate Cross-Fields with the Form-Level validate Option](references/valid-form-level-validate.md) — MEDIUM-HIGH (cross-field rules without a schema library; RHF 7.72+)
 5. [Field Arrays](references/_sections.md#5-field-arrays) — **MEDIUM-HIGH**
    - 5.1 [Provide Complete Default Objects for Field Array Operations](references/array-complete-default-objects.md) — HIGH (prevents partial data and validation failures)
    - 5.2 [Separate Sequential Field Array Operations](references/array-separate-crud-operations.md) — MEDIUM-HIGH
@@ -64,6 +65,7 @@ Comprehensive performance optimization guide for React Hook Form applications, d
    - 7.2 [Use Controller for Material-UI Components](references/integ-mui-controller-pattern.md) — MEDIUM (maintains controlled component behavior with proper event handling)
    - 7.3 [Verify shadcn Form Component Import Source](references/integ-shadcn-form-import.md) — MEDIUM (prevents silent component mismatch bugs)
    - 7.4 [Wire shadcn Select with onValueChange Instead of Spread](references/integ-shadcn-select-wiring.md) — MEDIUM (prevents silent select binding failures with Radix-based components)
+   - 7.5 [Submit with a Typed handleSubmit Result or Action](references/integ-typed-submit-server-action.md) — MEDIUM-HIGH (typed submit results and direct Server Action wiring; RHF 7.84+)
 8. [Advanced Patterns](references/_sections.md#8-advanced-patterns) — **LOW**
    - 8.1 [Create Test Wrapper with QueryClient and AuthProvider](references/adv-testing-wrapper.md) — LOW (enables proper hook testing with required context providers)
    - 8.2 [Disable DevTools in Production and During Performance Testing](references/adv-devtools-performance.md) — LOW (eliminates DevTools overhead during profiling)

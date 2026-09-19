@@ -5,7 +5,7 @@ description: Current React Hook Form v7 guidance for useForm, useWatch, useContr
 
 # React Hook Form Best Practices
 
-Comprehensive performance optimization guide for React Hook Form applications. Contains 41 rules across 8 categories, prioritized by impact to guide form development, automated refactoring, and code generation.
+Comprehensive performance optimization guide for React Hook Form applications. Contains 43 rules across 8 categories, prioritized by impact to guide form development, automated refactoring, and code generation.
 
 ## When to Apply
 
@@ -67,6 +67,7 @@ Reference these guidelines when:
 - `valid-inline-vs-resolver` - Prefer resolver over inline validation for complex rules
 - `valid-delay-error` - Use delayError to debounce rapid error display
 - `valid-native-validation` - Consider native validation for simple forms
+- `valid-form-level-validate` - Validate cross-fields with the form-level validate option (7.72+)
 
 ### 5. Field Arrays (MEDIUM-HIGH)
 
@@ -90,6 +91,7 @@ Reference these guidelines when:
 - `integ-shadcn-select-wiring` - Wire shadcn Select with onValueChange instead of spread
 - `integ-mui-controller-pattern` - Use Controller for Material-UI components
 - `integ-value-transform` - Transform values at Controller level for type coercion
+- `integ-typed-submit-server-action` - Submit with a typed handleSubmit result or Server Action (7.84+)
 
 ### 8. Advanced Patterns (LOW)
 
