@@ -91,6 +91,45 @@ test('scan reports multi-line hits with rule ids and ignores comments', (context
   ])
 })
 
+test('scan flags Vitest 5 hard breaks without flagging legal v5 code', (context) => {
+  const root = fixture(context, {
+    'package.json': { devDependencies: { vitest: '^5.0.0' } },
+    'src/a.test.ts': [
+      "import { vi, test, expect } from 'vitest'",
+      "import { createTaskCollector } from 'vitest/suite'",
+      "import { page } from 'vitest/browser'",
+      "import { MockerRegistry } from '@vitest/mocker'",
+      '',
+      "vi.mock('./top-level')",
+      'const mocks =',
+      '  vi.hoisted(() => ({ fetch: vi.fn() }))',
+      "test('x', async () => {",
+      "  vi.mock('./nested')",
+      '  const { h } = await vi.hoisted(async () => ({ h: 1 }))',
+      "  vi.doMock('./per-test')",
+      '  vi.mocked(fn)',
+      "  // vi.mock('./commented')",
+      "  expect(boom).toThrow('')",
+      '  expect(boom).toThrowError("")',
+      '  expect(boom).toThrow()',
+      '  expect(boom).toThrow(/^$/)',
+      '})',
+      '',
+    ].join('\n'),
+  })
+  const hits = scan(root).hits.map(({ line, rule }) => `${line} ${rule}`)
+  assert.deepEqual(hits.sort(), [
+    '10 mock-vi-mock-hoisting',
+    '11 mock-vi-mock-hoisting',
+    '15 assert-specific-matchers',
+    '16 assert-specific-matchers',
+    '2 setup-vitest5-migration',
+  ])
+
+  writeFileSync(join(root, 'package.json'), JSON.stringify({ devDependencies: { vitest: '^4.1.0' } }))
+  assert.deepEqual(scan(root).hits, [], 'v5-only checks are skipped on Vitest 4')
+})
+
 test('scan gates on the lower of declared and hoisted majors and honors .gitignore', (context) => {
   const root = fixture(context, {
     'package.json': { dependencies: { tailwindcss: '^3.4.0' } },

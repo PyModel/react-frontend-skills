@@ -91,7 +91,7 @@ npx -y @pymodel/react-frontend-skills scan     # deprecated/removed API usage â†
 npx -y @pymodel/react-frontend-skills scan --skill zod --json
 ```
 
-`scan` runs its 28 checks only for packages declared in `package.json`, and only when both the declared range and the installed version are at or above the major where the old API went away (`--all` overrides every gate). Inside a git work tree it scans what git tracks, so `.gitignore`d copies and builds are skipped; comment lines never count. It exits `1` when it finds hits. Each hit names a rule ID, and the fix is in that skill's `references/<rule>.md` (or `rules/<rule>.md`).
+`scan` runs its 31 checks only for packages declared in `package.json`, and only when both the declared range and the installed version are at or above the major where the old API went away (`--all` overrides every gate). Inside a git work tree it scans what git tracks, so `.gitignore`d copies and builds are skipped; comment lines never count. It exits `1` when it finds hits. Each hit names a rule ID, and the fix is in that skill's `references/<rule>.md` (or `rules/<rule>.md`).
 
 `detect` reports `range-mismatch` when the resolved install is a different major than `package.json` declares (for example, a hoisted copy from a parent directory).
 
