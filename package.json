@@ -1,6 +1,6 @@
 {
   "name": "@pymodel/react-frontend-skills",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "18 production-grade AI agent skills for React 19, Next.js 16, TypeScript 7, testing, data, UI, and frontend architecture.",
   "license": "MIT",
   "author": "Mohamed Elkholy (PyModel)",

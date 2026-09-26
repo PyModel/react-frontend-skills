@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-09-26
+
+### Added
+
+- `scan` checks for three Vitest 5 hard breaks (31 checks, up from 28):
+  - `vitest5-removed-entrypoints`: imports from `vitest/suite`, `runners`, `coverage`, `snapshot`, `reporters`, `environments` or `mocker`.
+  - `vitest5-nested-vi-mock`: `vi.mock`, `vi.unmock` or `vi.hoisted` below module top level, which fails the whole file.
+  - `vitest5-tothrow-empty-string`: `toThrow('')`, which now matches any message.
+
+### Fixed
+
+- vercel-react-best-practices `rendering-hydration-no-flicker`: the inline-script example adds `suppressHydrationWarning`. Without it, React 19 logs an attribute mismatch. Recorded as a local patch in `UPSTREAM.md`.
+
 ## [2.2.0] - 2026-09-26
 
 ### Added
@@ -185,7 +198,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Priority-based skill organization (CRITICAL, HIGH, MEDIUM, LOW)
 - Category-based rule grouping for easy navigation
 
-[Unreleased]: https://github.com/PyModel/react-frontend-skills/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/PyModel/react-frontend-skills/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/PyModel/react-frontend-skills/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/PyModel/react-frontend-skills/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/PyModel/react-frontend-skills/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/PyModel/react-frontend-skills/compare/v2.0.0...v2.0.1

@@ -1,6 +1,6 @@
 {
   "name": "@pymodel/react-frontend-skills-mcp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Read-only MCP server for 18 production-grade React frontend agent skills.",
   "type": "module",
   "license": "MIT",
