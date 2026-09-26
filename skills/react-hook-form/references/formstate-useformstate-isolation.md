@@ -52,6 +52,9 @@ function EmailField({ register, control }: EmailFieldProps) {
   )
 }
 
+// For error text alone, the built-in <ErrorMessage control={control} name="email" /> (7.88+)
+// gives the same per-field isolation without a wrapper component (see valid-error-message-strategy)
+
 function SaveIndicator({ control }: { control: Control }) {
   const { isDirty } = useFormState({ control })
 

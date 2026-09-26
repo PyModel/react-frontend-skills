@@ -31,6 +31,9 @@ export default function Dashboard() {
 **Correct (loaded on demand):**
 
 ```typescript
+'use client' // ssr: false is not allowed in Server Components
+
+import { useState } from 'react'
 import dynamic from 'next/dynamic'
 
 const HeavyChart = dynamic(() => import('@/components/HeavyChart'), {
@@ -54,6 +57,6 @@ export default function Dashboard() {
 // Components loaded only when rendered
 ```
 
-**When to use `ssr: false`:** For components that access browser APIs (window, document) or libraries without SSR support.
+**When to use `ssr: false`:** For libraries that touch `window` or `document` when imported, or when you also want the code split out of the server bundle. It only works from a Client Component. For a component that merely reads browser APIs while rendering, React 19.3's `use(browser())` inside `<Suspense>` skips its server render without a dynamic import (see the react skill's `effect-use-browser-only`).
 
 Reference: [Dynamic Imports](https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading)

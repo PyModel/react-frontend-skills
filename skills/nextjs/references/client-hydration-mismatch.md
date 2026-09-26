@@ -48,6 +48,37 @@ export function Greeting() {
 }
 ```
 
+**Correct (React 19.3+: skip server rendering for the component):**
+
+```typescript
+'use client'
+
+import { Suspense, use, useEffect, useState } from 'react'
+import { browser } from 'react-dom'
+
+function Clock() {
+  use(browser('shows the user local time')) // server renders the fallback
+  const [time, setTime] = useState(() => new Date().toLocaleTimeString())
+
+  useEffect(() => {
+    const interval = setInterval(() => setTime(new Date().toLocaleTimeString()), 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  return <p>Current time: {time}</p>
+}
+
+export function Greeting() {
+  return (
+    <Suspense fallback={<p>Loading time...</p>}>
+      <Clock />
+    </Suspense>
+  )
+}
+```
+
+This drops the `null` state and the extra render. The effect remains only for the interval. See the react skill's `effect-use-browser-only`.
+
 **Alternative (suppressHydrationWarning for known differences):**
 
 ```typescript

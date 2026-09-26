@@ -12,6 +12,8 @@ When sharing query configuration between `useQuery`, `queryClient.query` (which 
 **Incorrect (repeated configuration, lost types):**
 
 ```typescript
+import { noop } from '@tanstack/react-query'
+
 // In component
 const { data } = useQuery({
   queryKey: ['user', userId],

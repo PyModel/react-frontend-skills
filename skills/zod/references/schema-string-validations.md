@@ -70,7 +70,7 @@ commentSchema.parse({
 ```typescript
 // Length / shape constraints are z.string() methods
 z.string().min(1)  // Non-empty (most common need)
-z.string().max(255)  // Database varchar limit
+z.string().max(255)  // Database varchar limit (Zod 4.5+ counts code points, like varchar)
 z.string().length(36)  // Exact length
 z.string().regex(/^[a-z0-9-]+$/)  // Custom pattern (slugs)
 z.string().startsWith('https://')  // Prefix check
@@ -84,10 +84,31 @@ z.email()  // Email format
 z.url()  // URL format
 z.uuid()  // UUID format
 z.cuid()  // CUID format
+z.iban()  // IBAN, electronic format only (Zod 4.6+)
+```
+
+**Zod 4.5+ behaviour to rely on:**
+
+```typescript
+// Length checks count Unicode code points, not UTF-16 units:
+z.string().max(5).parse('😀😀😀😀😀')  // ok in 4.5+ (failed in 4.4)
+// Visible characters (graphemes) still differ: '👨‍👩‍👧' is 5 code points.
+// For a visible-character limit, refine with Intl.Segmenter.
+
+// ISO datetimes require seconds:
+z.iso.datetime().safeParse('2020-01-01T06:15Z')  // fails in 4.5+
+// Accept minute precision explicitly:
+const Timestamp = z.union([z.iso.datetime(), z.iso.datetime({ precision: -1 })])
+
+// z.iban() rejects spaces and lowercase, so normalize user input first:
+const Iban = z.string()
+  .transform((s) => s.replace(/\s+/g, '').toUpperCase())
+  .pipe(z.iban())
+Iban.parse('de89 3704 0044 0532 0130 00')  // 'DE89370400440532013000'
 ```
 
 **When NOT to use this pattern:**
 - When accepting arbitrary user content for display only (sanitize on output instead)
 - When building a passthrough/proxy that shouldn't validate content
 
-Reference: [Zod API - Strings](https://zod.dev/api#strings)
+Reference: [Zod API - Strings](https://zod.dev/api#strings) · [Zod 4.5.0 release](https://github.com/colinhacks/zod/releases/tag/v4.5.0) · [Zod 4.6.0 release](https://github.com/colinhacks/zod/releases/tag/v4.6.0)

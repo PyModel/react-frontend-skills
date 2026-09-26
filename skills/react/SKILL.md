@@ -5,7 +5,7 @@ description: React 19 components and hooks.
 
 # React 19 Best Practices
 
-Comprehensive performance optimization guide for React 19 applications. Contains 43 rules across 8 categories, prioritized by impact from critical (concurrent rendering, server components) to incremental (component patterns). Covers the React 19.3 stabilizations: `<ViewTransition>`, Fragment refs, and direct Context providers in Server Components.
+Comprehensive performance optimization guide for React 19 applications. Contains 44 rules across 8 categories, prioritized by impact from critical (concurrent rendering, server components) to incremental (component patterns). Covers the React 19.3 stabilizations: `<ViewTransition>`, Fragment refs, and direct Context providers in Server Components.
 
 ## Table of Contents
 
@@ -54,6 +54,7 @@ Comprehensive performance optimization guide for React 19 applications. Contains
    - 7.3 [Avoid Object and Array Dependencies in Effects](references/effect-object-dependencies.md) — MEDIUM (prevents infinite loops, unnecessary re-runs)
    - 7.4 [Use useEffectEvent for Non-Reactive Logic](references/effect-use-effect-event.md) — MEDIUM (separates reactive from non-reactive code)
    - 7.5 [Use useSyncExternalStore for External Subscriptions](references/effect-use-sync-external-store.md) — MEDIUM (correct subscription handling, SSR compatible)
+   - 7.6 [Use use(browser()) for Client-Only Rendering](references/effect-use-browser-only.md) — MEDIUM (no mounted-flag double render, React 19.3+)
 8. [Component Patterns](references/_sections.md#8-component-patterns) — **LOW-MEDIUM**
    - 8.1 [Choose Controlled vs Uncontrolled Appropriately](references/rcomp-controlled-components.md) — LOW-MEDIUM
    - 8.2 [Prefer Composition Over Props Explosion](references/rcomp-composition.md) — LOW-MEDIUM

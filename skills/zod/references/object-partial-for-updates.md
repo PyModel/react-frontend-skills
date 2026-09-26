@@ -103,6 +103,21 @@ const deepPartialSchema = userSchema
 // { name?: string; address?: { street?: string; city?: string; country?: string } }
 ```
 
+**Rejecting explicit undefined with exactPartial() (Zod 4.5+):**
+
+`.partial()` accepts `{ title: undefined }`, so a PATCH body can't tell "leave unchanged" apart from "set to undefined". `.exactPartial()` allows a key to be missing but rejects an explicit `undefined`. That matches TypeScript's `Partial<T>` under `exactOptionalPropertyTypes`.
+
+```typescript
+const recipeSchema = z.object({ title: z.string(), servings: z.number() })
+
+recipeSchema.partial().safeParse({ title: undefined })       // success
+recipeSchema.exactPartial().safeParse({ title: undefined })  // invalid_type at title
+recipeSchema.exactPartial().safeParse({})                    // success
+
+// Mask form, same as partial():
+recipeSchema.exactPartial({ title: true })
+```
+
 **Combining with required() for create vs update:**
 
 ```typescript
@@ -124,4 +139,4 @@ const updateSchema = baseSchema.partial().omit({ id: true, createdAt: true })
 - When update logic differs significantly from create (different validations)
 - When using GraphQL with explicit input types
 
-Reference: [Zod API - partial](https://zod.dev/api#partial)
+Reference: [Zod API - partial](https://zod.dev/api#partial) · [Zod 4.5.0 release](https://github.com/colinhacks/zod/releases/tag/v4.5.0)

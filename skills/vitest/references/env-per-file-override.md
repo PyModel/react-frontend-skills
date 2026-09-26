@@ -69,7 +69,13 @@ export default defineConfig({
     // environmentMatchGlobs was removed in Vitest 4.0. Use projects instead.
     projects: [
       {
-        test: { name: 'node', include: ['src/**/*.test.ts'], environment: 'node' },
+        test: {
+          name: 'node',
+          include: ['src/**/*.test.ts'],
+          // Without this, component and hook tests also run in the node project
+          exclude: ['src/components/**', 'src/hooks/**'],
+          environment: 'node',
+        },
       },
       {
         test: {
@@ -93,9 +99,17 @@ export default defineConfig({
 })
 ```
 
+Since Vitest 5, inline projects inherit the root `test` config. Arrays are concatenated: a root `include: ['**/*.a.test.ts']` is added to every project's own `include`, and root `setupFiles` run in every project. `name` and `globalSetup` are not inherited. Keep shared arrays out of the root config, or set `extends: false` on a project that must start clean:
+
+```typescript
+projects: [
+  { extends: false, test: { name: 'e2e', include: ['tests/e2e/**/*.test.ts'], environment: 'node' } },
+]
+```
+
 **Benefits:**
 - Faster tests for pure logic
 - Correct environment for DOM tests
 - Flexible per-test-file control
 
-Reference: [Vitest Test Environment](https://vitest.dev/guide/environment)
+Reference: [Vitest Test Environment](https://vitest.dev/guide/environment) · [Vitest Projects configuration](https://vitest.dev/guide/projects#configuration)

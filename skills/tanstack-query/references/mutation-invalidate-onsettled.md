@@ -61,4 +61,6 @@ const mutation = useMutation({
 
 Return/await the invalidation Promise when the mutation should remain pending until fresh data arrives. If a failed request can partially commit on the server, make that protocol explicit (idempotency key, operation status, or reconciliation endpoint) rather than assuming every failure did or did not mutate state.
 
+Mutations that take no input (a `mutationFn` without a parameter) are called as `mutation.mutate()` since 5.102. Earlier versions required `mutate(undefined)`.
+
 Reference: [TanStack Query invalidations from mutations](https://tanstack.com/query/latest/docs/framework/react/guides/invalidations-from-mutations)

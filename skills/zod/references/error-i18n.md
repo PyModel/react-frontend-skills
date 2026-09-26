@@ -111,6 +111,8 @@ z.config({ customError: createErrorMap(userLocale) })
 // All schemas now use localized messages
 ```
 
+Since Zod 4.6, `safeParse` builds issue messages lazily, when `error` is first read. Set the locale or `customError` before parsing, and don't change `z.config` between `safeParse()` and reading `result.error`: the message comes out in whichever locale is active at read time. For the same reason, an error map must be a pure function; don't count or log inside it.
+
 **With i18n libraries (react-intl, i18next):**
 
 ```typescript

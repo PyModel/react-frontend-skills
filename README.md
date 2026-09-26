@@ -159,7 +159,7 @@ For each package that changed since the 2026-08-20 baseline, every API that its 
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
-| [react](skills/react) | 43 | React 19 concurrent rendering, Server Components, hook optimization |
+| [react](skills/react) | 44 | React 19 concurrent rendering, Server Components, hook optimization |
 | [nextjs](skills/nextjs) | 42 | Next.js 16 App Router, caching, server components, routing |
 | [typescript](skills/typescript) | 44 | TypeScript 7 migration, compiler config, type safety, async patterns |
 
@@ -176,17 +176,17 @@ For each package that changed since the 2026-08-20 baseline, every API that its 
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
-| [tanstack-query](skills/tanstack-query) | 40 | Data fetching, caching, mutations, optimistic updates |
-| [react-hook-form](skills/react-hook-form) | 43 | Form validation, performance, field arrays |
-| [zod](skills/zod) | 44 | Schema validation, type inference, error handling |
+| [tanstack-query](skills/tanstack-query) | 41 | Data fetching, caching, mutations, optimistic updates |
+| [react-hook-form](skills/react-hook-form) | 45 | Form validation, performance, field arrays |
+| [zod](skills/zod) | 46 | Schema validation, type inference, error handling |
 | [nuqs](skills/nuqs) | 42 | Type-safe URL query state for Next.js |
 
 ### Testing
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
-| [vitest](skills/vitest) | 45 | Vitest 5 setup, mocking, async testing, worker pools |
-| [playwright](skills/playwright) | 44 | End-to-end testing, selectors, authentication, CI |
+| [vitest](skills/vitest) | 46 | Vitest 5 setup, mocking, async testing, worker pools |
+| [playwright](skills/playwright) | 45 | End-to-end testing, selectors, authentication, CI |
 | [msw](skills/msw) | 48 | API mocking with Mock Service Worker |
 | [tdd](skills/tdd) | 42 | Test-driven development methodology |
 

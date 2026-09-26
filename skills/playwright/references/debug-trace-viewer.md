@@ -30,7 +30,7 @@ export default defineConfig({
 // playwright.config.ts
 export default defineConfig({
   use: {
-    // Capture trace only when test fails or retries
+    // Record a trace on the first retry of a failed test (requires retries > 0)
     trace: 'on-first-retry',
 
     // Alternative options:
@@ -40,6 +40,8 @@ export default defineConfig({
   },
 });
 ```
+
+Playwright 1.63 can also record accessibility-tree (aria) snapshots, shown in the trace viewer's "Display Aria" view. Pick which snapshots to record with the object form: `trace: { mode: 'on-first-retry', snapshots: { dom: true, aria: true, screen: true } }`. Steps can carry context into the trace and reporters: `test.step('Checkout', body, { subtitle: 'guest user', params: { sku } })`.
 
 **View traces locally:**
 

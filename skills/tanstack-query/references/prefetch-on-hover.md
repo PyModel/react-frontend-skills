@@ -25,6 +25,8 @@ function ProjectLink({ projectId }: { projectId: string }) {
 **With hover prefetch:**
 
 ```typescript
+import { noop } from '@tanstack/react-query'
+
 function ProjectLink({ projectId }: { projectId: string }) {
   const queryClient = useQueryClient()
 

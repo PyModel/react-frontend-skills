@@ -59,11 +59,21 @@ describe('UserService', () => {
 | `toBe(false)` | `toBeFalsy()` or `not.toX()` |
 | `toBe(null)` | `toBeNull()` |
 | `toBe(undefined)` | `toBeUndefined()` |
-| `toEqual([])` | `toHaveLength(0)` or `toBeEmpty()` |
+| `toEqual([])` | `toHaveLength(0)` |
 | `expect(arr.includes(x)).toBe(true)` | `toContain(x)` |
 | `expect(str.includes(x)).toBe(true)` | `toContain(x)` |
 | `expect(obj.x).toBe(val)` | `toHaveProperty('x', val)` |
-| `expect(typeof x).toBe('string')` | `expect.any(String)` |
+| `expect(typeof x).toBe('string')` | `expect(x).toBeTypeOf('string')` |
+
+**Error messages (Vitest 5):**
+
+`toThrow('')` now passes for any thrown error: an empty string is a substring of every message. Vitest 4 treated it as "message is empty". Assert what you actually mean:
+
+```typescript
+expect(() => parse('')).toThrow()                   // throws anything
+expect(() => parse('')).toThrow('Input is empty')   // message contains this
+expect(() => parse('')).toThrow(/^$/)               // message is exactly empty
+```
 
 **Benefits:**
 - Clearer test intent

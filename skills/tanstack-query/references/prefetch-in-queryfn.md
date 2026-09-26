@@ -42,6 +42,8 @@ function GraphWidget({ id }: { id: string }) {
 **Correct (prefetch in queryFn):**
 
 ```typescript
+import { noop } from '@tanstack/react-query'
+
 function Feed() {
   const queryClient = useQueryClient()
 

@@ -5,7 +5,7 @@ description: React Hook Form 7 forms and validation.
 
 # React Hook Form Best Practices
 
-Comprehensive performance optimization guide for React Hook Form applications. Contains 43 rules across 8 categories, prioritized by impact to guide form development, automated refactoring, and code generation.
+Comprehensive performance optimization guide for React Hook Form applications. Contains 45 rules across 8 categories, prioritized by impact to guide form development, automated refactoring, and code generation.
 
 ## When to Apply
 
@@ -63,7 +63,8 @@ Reference these guidelines when:
 
 - `valid-resolver-caching` - Define schema outside component for resolver caching
 - `valid-dynamic-schema-factory` - Use schema factory for dynamic validation
-- `valid-error-message-strategy` - Access errors via optional chaining or lodash get
+- `valid-error-message-strategy` - Render field errors with ErrorMessage (7.88+) or optional chaining
+- `valid-trigger-should-touch` - Mark fields touched when triggering validation (7.87+)
 - `valid-inline-vs-resolver` - Prefer resolver over inline validation for complex rules
 - `valid-delay-error` - Use delayError to debounce rapid error display
 - `valid-native-validation` - Consider native validation for simple forms
@@ -81,7 +82,7 @@ Reference these guidelines when:
 
 - `formstate-destructure-formstate` - Destructure formState properties before render
 - `formstate-useformstate-isolation` - Use useFormState for isolated state subscriptions
-- `formstate-getfieldstate-for-single-field` - Use getFieldState for single field state access
+- `formstate-getfieldstate-for-single-field` - Use getFieldState and getErrors for single-field reads
 - `formstate-subscribe-to-specific-fields` - Subscribe to specific field names in useFormState
 - `formstate-avoid-isvalid-with-onsubmit` - Align submit gating with validation mode
 
@@ -98,6 +99,7 @@ Reference these guidelines when:
 - `adv-formprovider-memo` - Memoize FormProvider children only after profiling
 - `adv-devtools-performance` - Disable DevTools in production and during performance testing
 - `adv-testing-wrapper` - Create test wrapper with QueryClient and AuthProvider
+- `adv-opaque-types` - Register value classes in OpaqueTypes (7.87+)
 
 ## How to Use
 

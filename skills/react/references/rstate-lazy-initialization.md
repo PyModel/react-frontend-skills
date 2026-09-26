@@ -35,7 +35,9 @@ function Editor() {
 **Common use cases for lazy initialization:**
 
 ```typescript
-// Reading from localStorage
+// Reading from localStorage: client-only. With SSR, the initializer also runs
+// on the server, where localStorage is undefined. Guard the component with
+// use(browser()) (see effect-use-browser-only) or use useSyncExternalStore.
 const [user, setUser] = useState(() => {
   const saved = localStorage.getItem('user')
   return saved ? JSON.parse(saved) : null

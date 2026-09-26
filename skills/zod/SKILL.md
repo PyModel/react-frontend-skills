@@ -5,7 +5,7 @@ description: Zod 4 schema validation and type inference.
 
 # Zod Best Practices
 
-Comprehensive schema validation guide for Zod 4 in TypeScript applications. Contains 44 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
+Comprehensive schema validation guide for Zod 4 in TypeScript applications. Contains 46 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
 
 ## When to Apply
 
@@ -51,6 +51,7 @@ Reference these guidelines when:
 - `parse-validate-early` - Validate at system boundaries
 - `parse-avoid-double-validation` - Avoid validating same data twice
 - `parse-never-trust-json` - Never trust JSON.parse output
+- `parse-validate-for-boolean-checks` - Use validate() for yes/no checks (Zod 4.6+)
 
 ### 3. Type Inference (HIGH)
 
@@ -101,6 +102,7 @@ Reference these guidelines when:
 - `perf-avoid-dynamic-creation` - Avoid dynamic schema creation in hot paths
 - `perf-lazy-loading` - Lazy load large schemas
 - `perf-arrays` - Optimize large array validation
+- `perf-compile-schemas` - Compile hot-path schemas with z.compile (Zod 4.5+)
 
 ## How to Use
 

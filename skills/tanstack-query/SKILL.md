@@ -9,7 +9,7 @@ metadata:
 
 # TanStack Query Best Practices
 
-Comprehensive performance optimization guide for TanStack Query v5 applications. Contains 40 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
+Comprehensive performance optimization guide for TanStack Query v5 applications. Contains 41 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
 
 ## When to Apply
 
@@ -67,6 +67,7 @@ Reference these guidelines when:
 - `prefetch-on-hover` - Prefetch on hover for perceived speed
 - `prefetch-in-queryfn` - Start follow-up prefetches when keys become known
 - `prefetch-server-components` - Prefetch in Server Components
+- `prefetch-infinite-query` - Prefetch infinite lists with queryClient.infiniteQuery (5.102+)
 - `prefetch-flatten-api` - Flatten API to reduce waterfalls
 
 ### 5. Infinite Queries (MEDIUM)

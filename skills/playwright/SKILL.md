@@ -5,7 +5,7 @@ description: Playwright end-to-end tests and flaky-test fixes.
 
 # Playwright + Next.js Testing Best Practices
 
-Comprehensive testing optimization guide for Playwright with Next.js applications. Contains 44 rules across 8 categories, prioritized by impact to guide reliable, fast, and maintainable E2E tests.
+Comprehensive testing optimization guide for Playwright with Next.js applications. Contains 45 rules across 8 categories, prioritized by impact to guide reliable, fast, and maintainable E2E tests.
 
 ## When to Apply
 
@@ -51,6 +51,7 @@ Reference these guidelines when:
 - [`loc-avoid-xpath`](references/loc-avoid-xpath.md) - Avoid XPath selectors
 - [`loc-chained-locators`](references/loc-chained-locators.md) - Chain locators for specificity
 - [`loc-placeholder-selector`](references/loc-placeholder-selector.md) - Use getByPlaceholder sparingly
+- [`loc-frame-locator`](references/loc-frame-locator.md) - Locate elements inside iframes with frameLocator
 
 ### 3. Waiting & Assertions (HIGH)
 

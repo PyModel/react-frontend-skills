@@ -7,7 +7,7 @@ tags: setup, mocks, restoreAllMocks, vi.restoreAllMocks, isolation
 
 ## Restore Mocks After Each Test
 
-Mocks created with `vi.spyOn` or `vi.fn` persist across tests unless explicitly restored. A mock in one test can affect subsequent tests, causing mysterious failures or false positives.
+Spies created with `vi.spyOn` keep replacing the real method across tests until they are restored. A spy set up in one test can then break later tests, causing mysterious failures or false positives. Restoring (`vi.restoreAllMocks()` or `restoreMocks: true`) only undoes `vi.spyOn` spies, since Vitest 4. It does not touch `vi.fn()` mocks or automocks. Their call history is already cleared before each test by Vitest 5's default `clearMocks: true`; resetting their implementations needs `mockReset()` or `vi.resetAllMocks()`.
 
 **Incorrect (mocks not restored):**
 
@@ -60,10 +60,12 @@ describe('UserService', () => {
 // vitest.config.ts
 export default defineConfig({
   test: {
-    restoreMocks: true,  // Automatically restore mocks after each test
+    restoreMocks: true,  // Restores vi.spyOn spies before each test
   },
 })
 ```
+
+`restoreMocks` is a config option only; there is no `--restoreMocks` CLI flag. It restores spies globally, so it can undo a spy another concurrent test still relies on. In suites that use `test.concurrent`, restore inside each test instead.
 
 **Mock restoration methods:**
 

@@ -52,6 +52,8 @@ useQuery({
 `notifyOnChangeProps: 'all'` opts out of tracked-property optimization; it does not enable it. To warm another query without subscribing this component, prefetch explicitly:
 
 ```typescript
+import { noop } from '@tanstack/react-query'
+
 // queryClient.query replaces the deprecated prefetchQuery (v5.102+)
 await queryClient
   .query({

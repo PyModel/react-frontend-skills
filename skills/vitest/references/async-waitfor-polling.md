@@ -59,6 +59,19 @@ await vi.waitFor(
 )
 ```
 
+**Polling a value with expect.poll:**
+
+`expect.poll` retries an assertion against a callback's result. Since Vitest 5 it fails as soon as `timeout` expires; a result that arrives later no longer rescues it. Set `timeout` to cover the slowest legitimate response. The callback receives an `AbortSignal`, so pass it on to cancel work from timed-out attempts:
+
+```typescript
+await expect
+  .poll(({ signal }) => fetch('/api/jobs/42', { signal }).then((r) => r.json()), {
+    timeout: 5000,
+    interval: 200,
+  })
+  .toMatchObject({ status: 'done' })
+```
+
 **When NOT to use this pattern:**
 - When you have full control over timing (use fake timers instead)
 - For synchronous operations
@@ -68,4 +81,4 @@ await vi.waitFor(
 - No arbitrary delays that cause flakiness
 - Clear timeout errors when conditions aren't met
 
-Reference: [Vitest vi.waitFor](https://vitest.dev/api/vi.html#vi-waitfor)
+Reference: [Vitest vi.waitFor](https://vitest.dev/api/vi.html#vi-waitfor) · [Vitest expect.poll](https://vitest.dev/api/expect#poll)

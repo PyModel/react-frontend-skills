@@ -56,6 +56,17 @@ const discountedProducts = page
 await expect(discountedProducts).toHaveCount(3);
 ```
 
+**Visible elements only (Playwright 1.63+):**
+
+Responsive layouts often render the same control twice, once per breakpoint, with one copy hidden. Use `.visible()` rather than `.first()` or the `:visible` CSS pseudo-class. Visibility is checked each time the locator is used.
+
+```typescript
+await page.getByRole('button', { name: 'Menu' }).visible().click();
+
+// The opposite: match only hidden copies
+page.getByRole('button', { name: 'Menu' }).filter({ visible: false });
+```
+
 **Combining multiple filters:**
 
 ```typescript

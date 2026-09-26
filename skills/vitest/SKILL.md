@@ -5,7 +5,7 @@ description: Vitest 5 unit tests and mocking.
 
 # Vitest Best Practices
 
-Vitest 5-compatible testing guide with 45 rules across 8 categories. Vitest 5 requires Node.js 22.12+ and Vite 6.4+; Vitest 4.1 remains on backport support.
+Vitest 5-compatible testing guide with 46 rules across 8 categories. Vitest 5 requires Node.js 22.12+ and Vite 6.4+; Vitest 4.1 remains on backport support.
 
 ## When to Apply
 
@@ -72,6 +72,7 @@ Jest-specific APIs and configuration outside documented migration differences ar
 - `perf-sharding` - Use sharding for CI parallelization
 - `perf-run-mode-ci` - Use run mode in CI environments
 - `perf-bail-fast-fail` - Use bail for fast failure in CI
+- `perf-bench-test-context` - Write Vitest 5 benchmarks with the bench fixture
 
 ### 5. Snapshot Testing (MEDIUM)
 

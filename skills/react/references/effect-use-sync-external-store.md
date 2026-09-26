@@ -61,12 +61,16 @@ function NetworkStatus() {
 **For browser storage:**
 
 ```typescript
+// Module scope: a stable subscribe function. An inline arrow would be a new
+// function every render, and React resubscribes whenever it changes.
+function subscribeToStorage(callback: () => void) {
+  window.addEventListener('storage', callback)
+  return () => window.removeEventListener('storage', callback)
+}
+
 function useLocalStorage(key: string) {
   return useSyncExternalStore(
-    (callback) => {
-      window.addEventListener('storage', callback)
-      return () => window.removeEventListener('storage', callback)
-    },
+    subscribeToStorage,
     () => localStorage.getItem(key),
     () => null  // SSR fallback
   )

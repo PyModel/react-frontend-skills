@@ -73,4 +73,5 @@ function Button({ showTheme }: { showTheme: boolean }) {
 **Notes:**
 - `use()` can read a Promise or Context conditionally, unlike conventional Hooks.
 - Do not create a fresh uncached Promise during each Client Component render; React warns for unsupported uncached promises and retries can restart the work.
+- Always pass the Promise to `use()`, even when you know it has already resolved. Don't skip `use()` by reading `promise.status` or `promise.value`, or a "done" flag in your cache. Since React 19.3, React warns in development when a component suspended through `use()` and later finished rendering without calling it. Conditional `use()` is fine when the condition is not "has this promise settled".
 - Promise creation/serialization for Client Components is framework-dependent. Prefer a Server Component or a Suspense-compatible data library documented by the framework.

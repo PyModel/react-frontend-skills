@@ -81,6 +81,14 @@ const userSchema = z.object({
 })
 ```
 
+For numeric enums, Zod 4.6+ `.options` lists only the values. Earlier versions also included the reverse-mapping keys:
+
+```typescript
+enum Priority { Low, Medium, High }
+
+z.enum(Priority).options  // 4.6+: [0, 1, 2]   (4.4: ['Low', 'Medium', 'High', 0, 1, 2])
+```
+
 **For single literal values (discriminated unions):**
 
 ```typescript
