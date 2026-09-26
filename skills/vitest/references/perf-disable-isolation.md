@@ -49,15 +49,19 @@ export default defineConfig({
     projects: [
       {
         // Unit tests - safe to share environment
-        name: 'unit',
-        include: ['src/**/*.test.ts'],
-        isolate: false,
+        test: {
+          name: 'unit',
+          include: ['src/**/*.test.ts'],
+          isolate: false,
+        },
       },
       {
         // Integration tests - need isolation
-        name: 'integration',
-        include: ['tests/integration/**/*.test.ts'],
-        isolate: true,
+        test: {
+          name: 'integration',
+          include: ['tests/integration/**/*.test.ts'],
+          isolate: true,
+        },
       },
     ],
   },

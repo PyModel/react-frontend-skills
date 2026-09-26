@@ -7,7 +7,7 @@ tags: mock, clearAllMocks, mock-state, test-isolation
 
 ## Clear Mock State Between Tests
 
-Mocks track call history (how many times called, with what arguments). Without clearing between tests, assertions about call counts include calls from previous tests.
+Mocks track call history (how many times called, with what arguments). Without clearing between tests, assertions about call counts include calls from previous tests. Vitest 5 sets `clearMocks: true` by default, so history is cleared before every test; the leak below happens on Vitest 4 and earlier, or when a config sets `clearMocks: false`.
 
 **Incorrect (mock state leaks):**
 
@@ -26,7 +26,7 @@ describe('NotificationService', () => {
 
   it('should log on failure', () => {
     notificationService.sendFailing('World')
-    // FAILS - logger.log has 2 calls (1 from previous test + 1 from this test)
+    // FAILS with clearMocks: false (or Vitest <= 4) - logger.log has 2 calls
     expect(logger.log).toHaveBeenCalledOnce()
   })
 })
@@ -65,7 +65,7 @@ describe('NotificationService', () => {
 |--------|-------------|----------------------|-------------------|
 | `vi.clearAllMocks()` | Yes | No | No |
 | `vi.resetAllMocks()` | Yes | Yes | No |
-| `vi.restoreAllMocks()` | Yes | Yes | Yes |
+| `vi.restoreAllMocks()` | No | No | Yes (`vi.spyOn` spies only) |
 
 **Configuration option:**
 
@@ -73,7 +73,7 @@ describe('NotificationService', () => {
 // vitest.config.ts
 export default defineConfig({
   test: {
-    clearMocks: true, // Automatically clear mock state between tests
+    clearMocks: true, // Default since Vitest 5; set explicitly only for Vitest <= 4
   },
 })
 ```

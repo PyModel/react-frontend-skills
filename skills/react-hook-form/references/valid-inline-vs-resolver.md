@@ -40,7 +40,7 @@ const checkoutSchema = z.object({
   billingStreet: z.string().optional(),
 }).refine(
   (data) => data.billingAddressSame || data.billingStreet,
-  { message: 'Street required', path: ['billingStreet'] }
+  { error: 'Street required', path: ['billingStreet'] }
 )
 
 type CheckoutFormData = z.infer<typeof checkoutSchema>

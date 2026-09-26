@@ -51,7 +51,7 @@ const passwordSchema = z.object({
   confirmPassword: z.string(),
 }).refine(
   (data) => data.password === data.confirmPassword,
-  { message: 'Passwords do not match', path: ['confirmPassword'] }
+  { error: 'Passwords do not match', path: ['confirmPassword'] }
 )
 
 const formSchema = z.object({
@@ -116,7 +116,7 @@ const schema = z.object({
     const exists = await checkEmailExists(data.email)
     return !exists
   },
-  { message: 'Email already registered', path: ['email'] }
+  { error: 'Email already registered', path: ['email'] }
 )
 ```
 

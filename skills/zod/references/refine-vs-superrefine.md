@@ -23,7 +23,7 @@ const passwordSchema = z.string().refine(
     if (!/[0-9]/.test(password)) return false
     return true
   },
-  { message: 'Password does not meet requirements' }
+  { error: 'Password does not meet requirements' }
 )
 
 passwordSchema.parse('weak')
@@ -80,7 +80,7 @@ passwordSchema.safeParse('weak')
 // Simple boolean condition with one error message
 const adultSchema = z.number().refine(
   (age) => age >= 18,
-  { message: 'Must be 18 or older' }
+  { error: 'Must be 18 or older' }
 )
 
 // Cross-field validation with single outcome
@@ -89,7 +89,7 @@ const formSchema = z.object({
   confirmPassword: z.string(),
 }).refine(
   (data) => data.password === data.confirmPassword,
-  { message: 'Passwords must match', path: ['confirmPassword'] }
+  { error: 'Passwords must match', path: ['confirmPassword'] }
 )
 
 // Async validation
@@ -98,7 +98,7 @@ const emailSchema = z.email().refine(
     const exists = await checkEmailExists(email)
     return !exists
   },
-  { message: 'Email already registered' }
+  { error: 'Email already registered' }
 )
 ```
 

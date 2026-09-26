@@ -7,7 +7,7 @@ tags: query, queryOptions, typescript, prefetching
 
 ## Use queryOptions for Type-Safe Sharing
 
-When sharing query configuration between `useQuery`, `prefetchQuery`, and `getQueryData`, inline objects lose type inference. The `queryOptions` helper preserves types across all usage sites.
+When sharing query configuration between `useQuery`, `queryClient.query` (which replaces the deprecated `prefetchQuery`/`fetchQuery`/`ensureQueryData` since v5.102), and `getQueryData`, inline objects lose type inference. The `queryOptions` helper preserves types across all usage sites.
 
 **Incorrect (repeated configuration, lost types):**
 
@@ -19,10 +19,12 @@ const { data } = useQuery({
 })
 
 // In prefetch - duplicated, no type link
-await queryClient.prefetchQuery({
-  queryKey: ['user', userId],
-  queryFn: () => fetchUser(userId),
-})
+await queryClient
+  .query({
+    queryKey: ['user', userId],
+    queryFn: () => fetchUser(userId),
+  })
+  .catch(noop)
 
 // getQueryData returns unknown
 const user = queryClient.getQueryData(['user', userId])
@@ -43,7 +45,7 @@ const userQueryOptions = (userId: string) =>
 const { data } = useQuery(userQueryOptions(userId))
 
 // In prefetch - same options, same types
-await queryClient.prefetchQuery(userQueryOptions(userId))
+await queryClient.query(userQueryOptions(userId)).catch(noop)
 
 // getQueryData is now typed!
 const user = queryClient.getQueryData(userQueryOptions(userId).queryKey)
@@ -68,7 +70,7 @@ export const userQueries = {
 
 // Usage
 const { data } = useQuery(userQueries.detail(userId))
-await queryClient.prefetchQuery(userQueries.list({ role: 'admin' }))
+await queryClient.query(userQueries.list({ role: 'admin' })).catch(noop)
 ```
 
 Reference: [TanStack Query - TypeScript](https://tanstack.com/query/v5/docs/react/typescript)

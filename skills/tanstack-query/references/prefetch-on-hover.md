@@ -29,11 +29,15 @@ function ProjectLink({ projectId }: { projectId: string }) {
   const queryClient = useQueryClient()
 
   const prefetch = () => {
-    queryClient.prefetchQuery({
-      queryKey: ['project', projectId],
-      queryFn: () => fetchProject(projectId),
-      staleTime: 60_000, // Don't refetch if we have recent data
-    })
+    // queryClient.query replaces the deprecated prefetchQuery (v5.102+);
+    // .catch(noop) keeps prefetch best-effort
+    void queryClient
+      .query({
+        queryKey: ['project', projectId],
+        queryFn: () => fetchProject(projectId),
+        staleTime: 60_000, // Don't refetch if we have recent data
+      })
+      .catch(noop)
   }
 
   return (
@@ -53,9 +57,9 @@ function ProjectLink({ projectId }: { projectId: string }) {
 
 ```typescript
 const prefetch = () => {
-  queryClient.prefetchQuery(projectQueries.detail(projectId))
-  queryClient.prefetchQuery(projectQueries.members(projectId))
-  queryClient.prefetchQuery(projectQueries.activity(projectId))
+  void queryClient.query(projectQueries.detail(projectId)).catch(noop)
+  void queryClient.query(projectQueries.members(projectId)).catch(noop)
+  void queryClient.query(projectQueries.activity(projectId)).catch(noop)
 }
 ```
 
@@ -78,7 +82,7 @@ function ProjectLink({ projectId }: { projectId: string }) {
     <Link
       href={`/projects/${projectId}`}
       onMouseEnter={() =>
-        queryClient.prefetchQuery(projectQueries.detail(projectId))
+        void queryClient.query(projectQueries.detail(projectId)).catch(noop)
       }
     >
       View Project

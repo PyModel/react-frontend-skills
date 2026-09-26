@@ -36,6 +36,8 @@ npx @tailwindcss/cli -i input.css -o output.css
 }
 ```
 
+`@tailwindcss/cli` installs a binary named `tailwindcss`, so npm scripts keep the same command; only `npx tailwindcss` (which resolves the `tailwindcss` package, not the CLI) breaks.
+
 **Note:** If using Vite or PostCSS integration, you typically don't need the CLI at all.
 
 Reference: [Tailwind CSS Installation](https://tailwindcss.com/docs/installation)

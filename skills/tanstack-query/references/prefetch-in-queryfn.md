@@ -54,10 +54,13 @@ function Feed() {
       feed
         .filter(item => item.type === 'GRAPH')
         .forEach(item => {
-          void queryClient.prefetchQuery({
-            queryKey: ['graph', item.id],
-            queryFn: () => getGraphData(item.id),
-          })
+          // queryClient.query replaces the deprecated prefetchQuery (v5.102+)
+          void queryClient
+            .query({
+              queryKey: ['graph', item.id],
+              queryFn: () => getGraphData(item.id),
+            })
+            .catch(noop) // best-effort: never fail the feed query
         })
 
       return feed
@@ -81,10 +84,12 @@ The graph requests still begin only after `getFeed()` resolves; the optimization
 When a route already knows the key, prefetch before rendering instead of coupling the side effect to another query function:
 
 ```typescript
-await queryClient.prefetchQuery({
-  queryKey: ['graph', graphId],
-  queryFn: () => getGraphData(graphId),
-})
+await queryClient
+  .query({
+    queryKey: ['graph', graphId],
+    queryFn: () => getGraphData(graphId),
+  })
+  .catch(noop)
 ```
 
 Reference: [TanStack Query prefetching](https://tanstack.com/query/latest/docs/framework/react/guides/prefetching)

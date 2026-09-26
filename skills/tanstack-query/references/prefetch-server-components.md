@@ -30,19 +30,23 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
 
 ```typescript
 // app/projects/[id]/page.tsx
-import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
+import { dehydrate, HydrationBoundary, noop, QueryClient } from '@tanstack/react-query'
 
-export default async function ProjectPage({ params }: { params: { id: string } }) {
+export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery({
-    queryKey: ['project', params.id],
-    queryFn: () => fetchProject(params.id),
-  })
+  // queryClient.query replaces the deprecated prefetchQuery (v5.102+)
+  await queryClient
+    .query({
+      queryKey: ['project', id],
+      queryFn: () => fetchProject(id),
+    })
+    .catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <ProjectDetails projectId={params.id} />
+      <ProjectDetails projectId={id} />
     </HydrationBoundary>
   )
 }
@@ -64,19 +68,20 @@ export function ProjectDetails({ projectId }: { projectId: string }) {
 **Prefetch multiple queries:**
 
 ```typescript
-export default async function ProjectPage({ params }: { params: { id: string } }) {
+export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const queryClient = new QueryClient()
 
   // Parallel prefetching
   await Promise.all([
-    queryClient.prefetchQuery(projectQueries.detail(params.id)),
-    queryClient.prefetchQuery(projectQueries.members(params.id)),
-    queryClient.prefetchQuery(projectQueries.tasks(params.id)),
+    queryClient.query(projectQueries.detail(id)).catch(noop),
+    queryClient.query(projectQueries.members(id)).catch(noop),
+    queryClient.query(projectQueries.tasks(id)).catch(noop),
   ])
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <ProjectDetails projectId={params.id} />
+      <ProjectDetails projectId={id} />
     </HydrationBoundary>
   )
 }

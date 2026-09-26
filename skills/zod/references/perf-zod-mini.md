@@ -59,7 +59,7 @@ const result = z.safeParse(userSchema, data)
 
 ```typescript
 // Standard Zod
-z.string().min(5).max(100).email()
+z.email().min(5).max(100)
 z.number().int().positive()
 z.array(z.string()).min(1)
 schema.parse(data)

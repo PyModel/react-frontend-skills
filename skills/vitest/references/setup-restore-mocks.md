@@ -68,10 +68,10 @@ export default defineConfig({
 **Mock restoration methods:**
 
 ```typescript
-// Restore all mocks to original implementation
+// Restore original implementations of vi.spyOn spies (keeps call history)
 vi.restoreAllMocks()
 
-// Reset mock state but keep implementation
+// Clear call history and reset each mock's implementation
 vi.resetAllMocks()
 
 // Clear mock call history only

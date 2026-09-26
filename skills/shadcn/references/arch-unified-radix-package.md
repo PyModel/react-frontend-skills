@@ -41,4 +41,4 @@ npm uninstall @radix-ui/react-dialog
 
 - The unified package is a re-export of the same primitives — behavior, ARIA attributes, and composition APIs (`asChild`) are unchanged.
 - Do not blindly remove `@radix-ui/react-*` packages until no checked-in file imports them: `grep -r "@radix-ui" components/` first.
-- Base UI-based components (the current default) import from `base-ui`/`@base-ui-components/react` instead; keep the two primitive sources clearly separated per component.
+- Base UI-based components (the current default) import from `@base-ui/react` (formerly `@base-ui-components/react`) instead; keep the two primitive sources clearly separated per component.

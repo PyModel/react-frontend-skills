@@ -33,12 +33,11 @@ import { useCheckout } from '../hooks/useCheckout';  // Same feature = relative 
 ```json
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@/shared/*": ["src/shared/*"],
-      "@/features/*": ["src/features/*"],
-      "@/app/*": ["src/app/*"]
+      "@/*": ["./src/*"],
+      "@/shared/*": ["./src/shared/*"],
+      "@/features/*": ["./src/features/*"],
+      "@/app/*": ["./src/app/*"]
     }
   }
 }

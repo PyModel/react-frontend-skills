@@ -14,7 +14,7 @@ MSW v2 does not automatically parse request bodies based on Content-Type. You mu
 ```typescript
 // MSW v1 pattern - body was auto-parsed
 http.post('/api/user', ({ request }) => {
-  const body = request.body  // undefined in v2!
+  const body = request.body  // a ReadableStream in v2, not parsed data
   return HttpResponse.json({ id: '1', ...body })
 })
 ```

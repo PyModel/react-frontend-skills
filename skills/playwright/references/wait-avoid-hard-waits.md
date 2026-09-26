@@ -60,10 +60,8 @@ await expect(page.getByTestId('loading-spinner')).toBeHidden();
 await page.waitForResponse('/api/users');
 
 // Wait for navigation to complete
-await Promise.all([
-  page.waitForNavigation(),
-  page.getByRole('link', { name: 'Profile' }).click(),
-]);
+await page.getByRole('link', { name: 'Profile' }).click();
+await page.waitForURL('**/profile');
 
 // Wait for element state
 await page.getByRole('button', { name: 'Submit' }).waitFor({ state: 'visible' });

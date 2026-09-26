@@ -23,7 +23,7 @@ const userSchema = z.object({
     const exists = await db.users.findByEmail(data.email)
     return !exists
   },
-  { message: 'Email already registered' }
+  { error: 'Email already registered' }
 )
 
 // This throws an error!
@@ -45,7 +45,7 @@ const userSchema = z.object({
     const exists = await db.users.findByEmail(data.email)
     return !exists
   },
-  { message: 'Email already registered' }
+  { error: 'Email already registered' }
 )
 
 // Use parseAsync for async refinements

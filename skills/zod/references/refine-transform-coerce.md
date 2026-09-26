@@ -45,7 +45,7 @@ import { z } from 'zod'
 // VALIDATION: Use refine - returns boolean, data unchanged
 const positiveNumber = z.number().refine(
   (n) => n > 0,
-  { message: 'Must be positive' }
+  { error: 'Must be positive' }
 )
 
 positiveNumber.parse(5)  // 5
