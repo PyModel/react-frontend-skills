@@ -1,6 +1,6 @@
 ---
 name: feature-arch
-description: React feature-based architecture guidelines for scalable applications (formerly feature-architecture). This skill should be used when writing, reviewing, or refactoring React code to ensure proper feature organization. Triggers on tasks involving project structure, feature organization, module boundaries, cross-feature imports, data fetching patterns, or component composition.
+description: Feature-based React folder structure and module boundaries.
 ---
 
 # Feature-Based Architecture Best Practices
@@ -100,10 +100,7 @@ Reference these guidelines when:
 
 ## How to Use
 
-Read individual reference files for detailed explanations and code examples:
-
-- [Section definitions](references/_sections.md) - Category structure and impact levels
-- Individual rules: `references/{prefix}-{slug}.md`
+Read `references/<rule-id>.md` for each rule above that matches the task: why it matters, then incorrect vs. correct code.
 
 The layering and boundary rules align with Feature-Sliced Design (FSD), the most widely adopted React architecture standard; see [feature-sliced.design](https://feature-sliced.design/) for the full methodology.
 
@@ -111,7 +108,3 @@ The layering and boundary rules align with Feature-Sliced Design (FSD), the most
 
 - For data fetching, see `tanstack-query` skill
 - For React component patterns, see `react` skill
-
-## Full Compiled Document
-
-For the complete guide with all rules expanded: `AGENTS.md`

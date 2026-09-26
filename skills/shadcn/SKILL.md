@@ -1,6 +1,6 @@
 ---
 name: shadcn
-description: Current shadcn/ui component guidance for projects generated with Radix UI or Base UI, including primitive-specific composition, Tailwind CSS v4 theming, accessibility, forms, tables, and state patterns. Inspect the checked-in component implementation before applying Radix asChild or Base UI render APIs.
+description: shadcn/ui components on Radix or Base UI.
 ---
 
 # shadcn/ui Community Best Practices
@@ -101,14 +101,10 @@ Reference these guidelines when:
 
 ## How to Use
 
-Read individual reference files for detailed explanations and code examples:
+Run in the project root first:
 
-## Full Compiled Document
+```bash
+npx -y @pymodel/react-frontend-skills detect  # installed vs. targeted versions
+```
 
-For a single-file reference containing all rules, see [AGENTS.md](AGENTS.md).
-
-## Reference Files
-
-| File | Description |
-|------|-------------|
-| [AGENTS.md](AGENTS.md) | Complete compiled guide with all rules |
+Read `references/<rule-id>.md` for each rule above that matches the task: why it matters, then incorrect vs. correct code.

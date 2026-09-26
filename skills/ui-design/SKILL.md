@@ -1,6 +1,6 @@
 ---
 name: ui-design
-description: UI/UX and frontend design best practices guidelines (formerly frontend-design). This skill should be used when writing, reviewing, or designing frontend code to ensure accessibility, performance, and usability. Triggers on tasks involving HTML structure, CSS styling, responsive layouts, form design, animations, or accessibility improvements.
+description: Accessible, responsive frontend UI and UX design.
 ---
 
 # UI/UX Best Practices Frontend Design
@@ -99,11 +99,4 @@ Reference these guidelines when:
 
 ## How to Use
 
-Read individual reference files for detailed explanations and code examples:
-
-- [Section definitions](references/_sections.md) - Category structure and impact levels
-- Example: [access-semantic-html](references/access-semantic-html.md)
-
-## Full Compiled Document
-
-For the complete guide with all rules expanded: [AGENTS.md](AGENTS.md)
+Read `references/<rule-id>.md` for each rule above that matches the task: why it matters, then incorrect vs. correct code.

@@ -1,6 +1,6 @@
 ---
 name: tailwind
-description: Tailwind CSS v4 performance optimization and best practices guidelines (formerly tailwindcss-v4-style). This skill should be used when writing, reviewing, or refactoring Tailwind CSS v4 code to ensure optimal build performance, minimal CSS output, and correct usage of v4 features. Triggers on tasks involving Tailwind configuration, @theme directive, utility classes, responsive design, dark mode, container queries, or CSS generation optimization.
+description: Tailwind CSS v4 styling and configuration.
 ---
 
 # Tailwind Labs Tailwind CSS v4 Best Practices
@@ -99,14 +99,11 @@ Reference these guidelines when:
 
 ## How to Use
 
-Read individual reference files for detailed explanations and code examples:
+Run in the project root first:
 
-## Full Compiled Document
+```bash
+npx -y @pymodel/react-frontend-skills detect                 # installed vs. targeted versions
+npx -y @pymodel/react-frontend-skills scan --skill tailwind  # deprecated APIs → rule IDs
+```
 
-For a complete guide with all rules expanded, see [AGENTS.md](AGENTS.md).
-
-## Reference Files
-
-| File | Description |
-|------|-------------|
-| [AGENTS.md](AGENTS.md) | Complete compiled guide with all rules |
+Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.

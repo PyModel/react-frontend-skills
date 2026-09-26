@@ -1,6 +1,6 @@
 ---
 name: react-hook-form
-description: Current React Hook Form v7 guidance for useForm, useWatch, useController, useFieldArray, validation, subscriptions, and UI-library integration. React Server Actions and useActionState are covered by the react skill.
+description: React Hook Form 7 forms and validation.
 ---
 
 # React Hook Form Best Practices
@@ -101,17 +101,17 @@ Reference these guidelines when:
 
 ## How to Use
 
-Read individual reference files for detailed explanations and code examples:
+Run in the project root first:
 
-- [Section definitions](references/_sections.md) - Category structure and impact levels
-- Reference files: `references/{prefix}-{slug}.md`
+```bash
+npx -y @pymodel/react-frontend-skills detect                        # installed vs. targeted versions
+npx -y @pymodel/react-frontend-skills scan --skill react-hook-form  # deprecated APIs → rule IDs
+```
+
+Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
 
 ## Related Skills
 
 - For schema validation with Zod resolver, see `zod` skill
 - For React 19 server actions, see `react` skill
 - For UI/UX form design, see `ui-design` skill
-
-## Full Compiled Document
-
-For the complete guide with all rules expanded: `AGENTS.md`

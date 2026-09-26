@@ -1,6 +1,6 @@
 ---
 name: nextjs
-description: Current Next.js 16 App Router guidance for caching, Cache Components, Server Components, routing, instant navigations, prefetching, Server Actions, and next.config.js. Use for Next.js 16.x code. Generic React 19 patterns are covered by the react skill.
+description: Next.js 16 App Router caching and routing.
 ---
 
 # Next.js Community Next.js 16 App Router Best Practices
@@ -99,17 +99,17 @@ Reference these guidelines when:
 
 ## How to Use
 
-Read individual reference files for detailed explanations and code examples:
+Run in the project root first:
 
-- [build-dynamic-imports](references/build-dynamic-imports.md) - Example rule file
-- [cache-use-cache-directive](references/cache-use-cache-directive.md) - Example rule file
+```bash
+npx -y @pymodel/react-frontend-skills detect               # installed vs. targeted versions
+npx -y @pymodel/react-frontend-skills scan --skill nextjs  # deprecated APIs → rule IDs
+```
+
+Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
 
 ## Related Skills
 
 - For React 19 fundamentals, see `react` skill
 - For data fetching patterns, see `tanstack-query` skill
 - For client-side forms, see `react-hook-form` skill
-
-## Full Compiled Document
-
-For the complete guide with all rules expanded: `AGENTS.md`

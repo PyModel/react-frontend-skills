@@ -1,6 +1,6 @@
 ---
 name: vitest
-description: Current Vitest 5 guidance for setup, async tests, vi mocks, snapshots, worker pools, environments, assertions, and test performance. TDD methodology is covered by tdd and network mocking by msw.
+description: Vitest 5 unit tests and mocking.
 ---
 
 # Vitest Best Practices
@@ -36,7 +36,7 @@ Jest-specific APIs and configuration outside documented migration differences ar
 
 ### 1. Async Patterns (CRITICAL)
 
-- `async-await-assertions` - Await async assertions to prevent false positives
+- `async-await-assertions` - Await async assertions (Vitest 5 fails unawaited ones)
 - `async-return-promises` - Return promises from test functions
 - `async-fake-timers` - Use fake timers for time-dependent code
 - `async-waitfor-polling` - Use vi.waitFor for async conditions
@@ -62,7 +62,7 @@ Jest-specific APIs and configuration outside documented migration differences ar
 - `mock-msw-network` - Use MSW for network request mocking
 - `mock-avoid-overmocking` - Avoid over-mocking
 - `mock-type-safety` - Maintain type safety in mocks
-- `mock-clear-between-tests` - Clear mock state between tests
+- `mock-clear-between-tests` - Clear mock state between tests (default in Vitest 5)
 
 ### 4. Performance (HIGH)
 
@@ -105,17 +105,17 @@ Jest-specific APIs and configuration outside documented migration differences ar
 
 ## How to Use
 
-Read individual reference files for detailed explanations and code examples:
+Run in the project root first:
 
-- [async-await-assertions](references/async-await-assertions.md) - Example rule file
-- [mock-vi-mock-hoisting](references/mock-vi-mock-hoisting.md) - Example rule file
+```bash
+npx -y @pymodel/react-frontend-skills detect               # installed vs. targeted versions
+npx -y @pymodel/react-frontend-skills scan --skill vitest  # deprecated APIs → rule IDs
+```
+
+Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
 
 ## Related Skills
 
 - For TDD methodology, see `tdd` skill
 - For API mocking with MSW, see `msw` skill
 - For TypeScript testing patterns, see `typescript` skill
-
-## Full Compiled Document
-
-For the complete guide with all rules expanded: `AGENTS.md`

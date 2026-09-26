@@ -1,6 +1,6 @@
 ---
 name: playwright
-description: Playwright testing best practices for Next.js applications (formerly test-playwright). This skill should be used when writing, reviewing, or debugging E2E tests with Playwright. Triggers on tasks involving test selectors, flaky tests, authentication state, API mocking, hydration testing, parallel execution, CI configuration, or debugging test failures.
+description: Playwright end-to-end tests and flaky-test fixes.
 ---
 
 # Playwright + Next.js Testing Best Practices
@@ -103,14 +103,11 @@ Reference these guidelines when:
 
 ## How to Use
 
-Read individual reference files for detailed explanations and code examples:
+Run in the project root first:
 
-- [Section definitions](references/_sections.md) - Category structure and impact levels
+```bash
+npx -y @pymodel/react-frontend-skills detect                   # installed vs. targeted versions
+npx -y @pymodel/react-frontend-skills scan --skill playwright  # deprecated APIs → rule IDs
+```
 
-## Reference Files
-
-| File | Description |
-|------|-------------|
-| [AGENTS.md](AGENTS.md) | Complete compiled guide with all rules |
-| [references/_sections.md](references/_sections.md) | Category definitions and ordering |
-| [metadata.json](metadata.json) | Version and reference information |
+Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.

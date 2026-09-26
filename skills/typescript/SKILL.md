@@ -1,6 +1,6 @@
 ---
 name: typescript
-description: Current TypeScript guidance, including TypeScript 7 migration, tsconfig design, type errors, declaration performance, async patterns, module organization, and runtime type safety. Use for .ts, .tsx, and .d.ts work; framework-specific patterns and testing are covered by their dedicated skills.
+description: TypeScript types, tsconfig and TypeScript 7 migration.
 ---
 
 # TypeScript Best Practices
@@ -83,6 +83,17 @@ Reference these guidelines when:
    - 8.1 [Use Branded Types for Type-Safe IDs](references/advanced-branded-types.md) — LOW (prevents mixing incompatible ID types)
    - 8.2 [Use satisfies for Type Validation with Inference](references/advanced-satisfies-operator.md) — LOW (prevents property access errors, enables reliable autocomplete)
    - 8.3 [Use Template Literal Types for String Patterns](references/advanced-template-literal-types.md) — LOW (prevents string format errors at compile time)
+
+## How to Use
+
+Run in the project root first:
+
+```bash
+npx -y @pymodel/react-frontend-skills detect                   # installed vs. targeted versions
+npx -y @pymodel/react-frontend-skills scan --skill typescript  # deprecated APIs → rule IDs
+```
+
+Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
 
 ## References
 

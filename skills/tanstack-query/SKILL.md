@@ -1,6 +1,6 @@
 ---
 name: tanstack-query
-description: Current TanStack Query v5 guidance for queries, mutations, caching, prefetching, Suspense, and render optimization. Use with useQuery, useMutation, queryClient, queryOptions, skipToken, mutation scopes, or cache invalidation. API mocking is covered by the msw skill.
+description: TanStack Query v5 data fetching and caching.
 license: MIT
 metadata:
   author: community
@@ -101,21 +101,16 @@ Reference these guidelines when:
 
 ## How to Use
 
-Read individual reference files for detailed explanations and code examples:
+Run in the project root first:
 
-- Reference files: `references/{prefix}-{slug}.md`
+```bash
+npx -y @pymodel/react-frontend-skills detect                       # installed vs. targeted versions
+npx -y @pymodel/react-frontend-skills scan --skill tanstack-query  # deprecated APIs → rule IDs
+```
 
-Each reference file contains:
-- Brief explanation of why it matters
-- Incorrect code example with explanation
-- Correct code example with explanation
-- Additional context and references
+Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
 
 ## Related Skills
 
 - For mocking API responses in tests, see `msw` skill
 - For React 19 data fetching patterns, see `react` skill
-
-## Full Compiled Document
-
-For the complete guide with all rules expanded: `AGENTS.md`

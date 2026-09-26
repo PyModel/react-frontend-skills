@@ -1,6 +1,6 @@
 ---
 name: zod
-description: Zod 4 schema validation best practices for type safety, parsing, and error handling. Use when defining schemas, validating string formats, calling safeParse, formatting Zod errors, or inferring input/output types. React Hook Form integration is covered by the react-hook-form skill.
+description: Zod 4 schema validation and type inference.
 ---
 
 # Zod Best Practices
@@ -104,14 +104,14 @@ Reference these guidelines when:
 
 ## How to Use
 
-Read individual reference files for detailed explanations and code examples:
+Run in the project root first:
 
-- [Section definitions](references/_sections.md) - Category structure and impact levels
-- Individual rules: `references/{prefix}-{slug}.md`
+```bash
+npx -y @pymodel/react-frontend-skills detect            # installed vs. targeted versions
+npx -y @pymodel/react-frontend-skills scan --skill zod  # deprecated APIs → rule IDs
+```
 
-## Full Compiled Document
-
-For the complete guide with all rules expanded: `AGENTS.md`
+Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
 
 ## Related Skills
 

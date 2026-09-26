@@ -1,6 +1,6 @@
 ---
 name: msw
-description: Current MSW v2 guidance for request handlers, Node/browser setup, HTTP and GraphQL mocking, test isolation, timing, and debugging. General test framework patterns are covered by vitest and methodology by tdd.
+description: MSW 2 API mocking for tests.
 ---
 
 # MSW Best Practices
@@ -106,16 +106,16 @@ Reference these guidelines when:
 
 ## How to Use
 
-Read individual reference files for detailed explanations and code examples:
+Run in the project root first:
 
-- [Section definitions](references/_sections.md) - Category structure and impact levels
-- Individual rules: `references/{prefix}-{slug}.md`
+```bash
+npx -y @pymodel/react-frontend-skills detect            # installed vs. targeted versions
+npx -y @pymodel/react-frontend-skills scan --skill msw  # deprecated APIs → rule IDs
+```
+
+Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
 
 ## Related Skills
 
 - For consuming mocked APIs, see `tanstack-query` skill
 - For test framework patterns, see `vitest`; for methodology, see `tdd`
-
-## Full Compiled Document
-
-For the complete guide with all rules expanded: `AGENTS.md`

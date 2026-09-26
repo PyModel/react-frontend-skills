@@ -1,6 +1,6 @@
 ---
 name: nuqs
-description: nuqs (type-safe URL query state) best practices for Next.js applications. This skill should be used when writing, reviewing, or refactoring code that uses nuqs for URL state management. Triggers on tasks involving useQueryState, useQueryStates, search params, URL state, query parameters, nuqs parsers, or Next.js routing with state.
+description: nuqs type-safe URL search-param state.
 ---
 
 # Community nuqs Best Practices for Next.js
@@ -100,14 +100,11 @@ Reference these guidelines when:
 
 ## How to Use
 
-Read individual reference files for detailed explanations and code examples:
+Run in the project root first:
 
-- [Section definitions](references/_sections.md) - Category structure and impact levels
+```bash
+npx -y @pymodel/react-frontend-skills detect             # installed vs. targeted versions
+npx -y @pymodel/react-frontend-skills scan --skill nuqs  # deprecated APIs → rule IDs
+```
 
-## Reference Files
-
-| File | Description |
-|------|-------------|
-| [AGENTS.md](AGENTS.md) | Complete compiled guide with all rules |
-| [references/_sections.md](references/_sections.md) | Category definitions and ordering |
-| [metadata.json](metadata.json) | Version and reference information |
+Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.

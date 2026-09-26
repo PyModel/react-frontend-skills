@@ -1,6 +1,6 @@
 ---
 name: react
-description: Current React 19.3 guidance for concurrent rendering, Server Components, Actions, effects, React Compiler, View Transitions, state, and memoization. Use for React components and hooks. Next.js-specific routing/caching belongs to the nextjs skill; React Hook Form integration belongs to react-hook-form.
+description: React 19 components and hooks.
 ---
 
 # React 19 Best Practices
@@ -60,6 +60,16 @@ Comprehensive performance optimization guide for React 19 applications. Contains
    - 8.3 [Use Key to Reset Component State](references/rcomp-key-reset.md) — LOW-MEDIUM
    - 8.4 [Use Render Props for Inversion of Control](references/rcomp-render-props.md) — LOW-MEDIUM
    - 8.5 [Attach DOM Behavior to Siblings with Fragment Refs](references/rcomp-fragment-refs.md) — LOW-MEDIUM (ref access to child DOM without wrapper elements; stable in 19.3)
+
+## How to Use
+
+Run in the project root first:
+
+```bash
+npx -y @pymodel/react-frontend-skills detect  # installed vs. targeted versions
+```
+
+Read `references/<rule-id>.md` for each rule above that matches the task: why it matters, then incorrect vs. correct code.
 
 ## References
 
