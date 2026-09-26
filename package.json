@@ -26,7 +26,11 @@
     "frontend",
     "skills"
   ],
+  "bin": {
+    "react-frontend-skills": "bin/react-frontend-skills.mjs"
+  },
   "files": [
+    "bin",
     "skills",
     "README.md",
     "LICENSE",
@@ -34,5 +38,11 @@
   ],
   "publishConfig": {
     "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/cli.test.mjs && node bin/react-frontend-skills.mjs lint"
   }
 }
