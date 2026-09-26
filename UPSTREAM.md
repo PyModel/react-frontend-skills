@@ -21,6 +21,7 @@ Keep these when syncing. Drop a row once upstream ships the same fix.
 | `vercel-react-best-practices/rules/js-min-max-loop.md` | Spread fails at engine-specific argument limits, not at a fixed array length | Accuracy |
 | `vercel-react-best-practices/rules/rendering-usetransition-loading.md` | Example ignores stale responses; transitions do not cancel or order requests | Correctness |
 | `vercel-react-best-practices/rules/server-after-nonblocking.md` | Awaits the async work inside `after()` | Fire-and-forget work can be dropped |
+| `vercel-react-best-practices/rules/rendering-hydration-no-flicker.md` | `suppressHydrationWarning` on the element the inline script changes | React 19 logs an attribute mismatch without it (reproduced on 19.3.0) |
 | `vercel-react-best-practices/rules/server-auth-actions.md` | Zod 4 top-level `z.uuid()` / `z.email()` | Matches the `zod` skill |
 | `vercel-composition-patterns/rules/architecture-avoid-boolean-props.md` | Scoped to mutually exclusive mode flags; independent booleans such as `disabled` stay | Accuracy |
 
