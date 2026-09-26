@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-09-26
+
+### Added
+
+- Eight rules for the September 2026 releases:
+  - zod: `perf-compile-schemas` (`z.compile`, `z.withParser`) and `parse-validate-for-boolean-checks` (`.validate()`).
+  - vitest: `perf-bench-test-context`, the Vitest 5 `bench` fixture.
+  - react: `effect-use-browser-only`, React 19.3 `use(browser())`.
+  - playwright: `loc-frame-locator`.
+  - react-hook-form: `valid-trigger-should-touch` and `adv-opaque-types`.
+  - tanstack-query: `prefetch-infinite-query` (`queryClient.infiniteQuery`).
+
+### Changed
+
+- Zod 4.5/4.6: `.exactPartial()`, `z.iban()`, ISO datetimes that require seconds, code-point string lengths, lazily built error messages, numeric-enum `.options`.
+- Vitest 5:
+  - `vi.mock` only at top level.
+  - Inline projects inherit the root config.
+  - Reports under `.vitest/`.
+  - Removed entry points; `vite` is a peer dependency.
+  - No config lookup in parent directories.
+  - `toThrow('')` matches any message.
+  - `expect.poll` fails when its timeout expires.
+- React 19.3: the development warning for skipping `use()`, and transitions that commit independently. Next.js hydration and `next/dynamic` rules point to `use(browser())`.
+- Playwright 1.63: test locks for tests that share a resource, `locator.visible()`, aria snapshots in traces, step subtitles and params.
+- React Hook Form: built-in `<ErrorMessage>` (7.88) and `getErrors()` (7.86) replace the lodash `get` pattern.
+- TanStack Query: `mutate()` without variables (5.102).
+
+### Fixed
+
+- `perf-sharding`:
+  - The coverage merge lacked `--reporter=blob`.
+  - Nothing uploaded the shard blobs.
+  - It missed the `.vitest` hidden-directory flag.
+- `setup-restore-mocks`: the intro claimed restoring resets `vi.fn()` mocks.
+- `env-per-file-override`: the node project also ran component and hook tests.
+- `assert-specific-matchers`: suggested `toBeEmpty()`, which is not a Vitest matcher, and `expect.any(String)` as a plain matcher.
+- The `getFieldState` example did not compile.
+- TanStack snippets used `noop` without importing it.
+- `build-dynamic-imports` used `ssr: false` without `'use client'`.
+- The `useTransition` example claimed synchronous filtering was interruptible.
+- `useSyncExternalStore` resubscribed on every render.
+- Comments on Playwright workers and `trace: 'on-first-retry'` were misleading.
+- `LICENSE` names PyModel; the 2.1.0 tarball shipped the pre-rebrand notice.
+
 ## [2.1.0] - 2026-09-26
 
 ### Added
@@ -140,7 +185,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Priority-based skill organization (CRITICAL, HIGH, MEDIUM, LOW)
 - Category-based rule grouping for easy navigation
 
-[Unreleased]: https://github.com/PyModel/react-frontend-skills/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/PyModel/react-frontend-skills/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/PyModel/react-frontend-skills/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/PyModel/react-frontend-skills/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/PyModel/react-frontend-skills/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/PyModel/react-frontend-skills/releases/tag/v2.0.0
