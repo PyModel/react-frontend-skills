@@ -23,13 +23,11 @@
 
 ---
 
-Tired of your agent being dumb, especially with React? This skill pack is the solution. It will make your agent even dumber!!!!!!!!! haha, I mean: try it first, then judge. <3 If it works out for you, drop a star.
-
 ## What is this?
 
 React Frontend Skills is a collection of 18 AI agent skills for the React ecosystem. Drop them into your coding assistant and it starts applying real patterns for performance, UI, testing, data, and architecture instead of whatever it remembered from 2023.
 
-Each skill is a portable `SKILL.md` folder, usually with detailed `references/` or `rules/` and often an `AGENTS.md` index. The layout follows the open agent-skills convention, so it works across major AI coding agents.
+Each skill is a portable `SKILL.md` folder that indexes detailed `references/` or `rules/` files, loaded only when a task needs them. The layout follows the open agent-skills convention, so it works across major AI coding agents. A zero-dependency [companion CLI](#companion-cli) handles the deterministic steps: version detection and deprecated-API scans.
 
 Coverage: React 19 and Next.js 16 performance, Tailwind CSS v4 and shadcn/ui, testing with Vitest, Playwright and MSW, data handling with TanStack Query, Zod, React Hook Form and nuqs, plus feature-based architecture.
 
@@ -83,6 +81,20 @@ The separate [`@pymodel/react-frontend-skills-mcp`](https://www.npmjs.com/packag
 
 See [`mcp/README.md`](mcp/README.md) for the tool catalog and development details.
 
+## Companion CLI
+
+Rules that a machine can check live in code, not prose. Agents run these in the project they are editing:
+
+```bash
+npx -y @pymodel/react-frontend-skills detect   # installed versions vs. each skill's target major
+npx -y @pymodel/react-frontend-skills scan     # deprecated/removed API usage → skill/rule to read
+npx -y @pymodel/react-frontend-skills scan --skill zod --json
+```
+
+`scan` runs its 28 checks only for packages declared in `package.json`, and only when both the declared range and the installed version are at or above the major where the old API went away (`--all` overrides every gate). Inside a git work tree it scans what git tracks, so `.gitignore`d copies and builds are skipped; comment lines never count. It exits `1` when it finds hits. Each hit names a rule ID, and the fix is in that skill's `references/<rule>.md` (or `rules/<rule>.md`).
+
+`detect` reports `range-mismatch` when the resolved install is a different major than `package.json` declares (for example, a hoisted copy from a parent directory).
+
 ## Install per agent
 
 Target a single agent with `-a <agent>`. Use `-s '*'` for all skills and `-g` for a global install.
@@ -97,9 +109,9 @@ Target a single agent with `-a <agent>`. Use `-s '*'` for all skills and `-g` fo
 | Kiro CLI | `npx skills add PyModel/react-frontend-skills -a kiro-cli -s '*' -y` |
 
 <details>
-<summary><strong>Pythinker and any other AGENTS.md-aware agent (manual)</strong></summary>
+<summary><strong>Pythinker and other agents (manual install)</strong></summary>
 
-Every skill ships a standard `SKILL.md`, and many also include an `AGENTS.md` index. Agents that read local instruction files can consume those directly, no CLI required:
+Every skill ships a standard `SKILL.md` that indexes its rule files. Agents that read local instruction files can consume those directly, no CLI required:
 
 ```bash
 # Clone once
@@ -110,14 +122,14 @@ cp -r react-frontend-skills/skills/react   ./.agent/skills/
 cp -r react-frontend-skills/skills/nextjs  ./.agent/skills/
 ```
 
-Then reference `skills/<name>/SKILL.md` from your agent context, plus `AGENTS.md` where present. This is the path for Pythinker and custom in-house agents.
+Then reference `skills/<name>/SKILL.md` from your agent context. This is the path for Pythinker and custom in-house agents.
 
 </details>
 
 <details>
-<summary><strong>Full list of 77 supported agents</strong></summary>
+<summary><strong>Other supported agents</strong></summary>
 
-The `skills` CLI 1.5.23 supports 77 agents, among them Claude Code, Codex, Cursor, OpenCode, Pi, Kiro CLI, GitHub Copilot, Gemini CLI, Windsurf, Cline, Roo, Goose, Kilo, Droid, Antigravity, Trae, Warp, Zed, Continue, and Qwen Code. Run `npx skills add PyModel/react-frontend-skills` with no agent flag and it detects yours.
+The `skills` CLI supports dozens of agents beyond the table above, among them GitHub Copilot, Gemini CLI, Windsurf, Cline, Roo, Goose, Kilo, Droid, Antigravity, Trae, Warp, Zed, Continue, and Qwen Code. Run `npx skills add PyModel/react-frontend-skills` with no agent flag and it detects yours.
 
 </details>
 
@@ -125,30 +137,30 @@ The `skills` CLI 1.5.23 supports 77 agents, among them Claude Code, Codex, Curso
 
 ### Audited version baseline
 
-This repository contains guidance, not runtime dependencies. The last maintenance pass was checked on 2026-08-20 against these package and documentation lines:
+This repository contains guidance, not runtime dependencies. Last re-audited on 2026-09-26 against these releases:
 
 | Area | Audited line |
 | --- | --- |
-| React | 19.2 (`react` 19.2.8) |
-| Next.js | 16.3 (`next` 16.3.1) |
+| React | 19.3 (`react` 19.3.0) |
+| Next.js | 16.3 (`next` 16.3.6) |
 | TypeScript | 7.0 (`typescript` 7.0.2) |
 | Tailwind CSS | 4.3 (`tailwindcss` 4.3.3) |
-| Vitest | 4.1 (`vitest` 4.1.11) |
-| Playwright | 1.62 (`@playwright/test` 1.62.1) |
+| Vitest | 5.0 (`vitest` 5.0.2) |
+| Playwright | 1.63 (`@playwright/test` 1.63.0) |
 | MSW | 2.15 (`msw` 2.15.0) |
-| TanStack Query | 5.x (`@tanstack/react-query` 5.101.4) |
-| React Hook Form | 7.x (`react-hook-form` 7.85.0) |
-| Zod | 4.4 (`zod` 4.4.3) |
-| nuqs | 2.10 (`nuqs` 2.10.0) |
+| TanStack Query | 5.x (`@tanstack/react-query` 5.104.0) |
+| React Hook Form | 7.x (`react-hook-form` 7.89.0) |
+| Zod | 4.6 (`zod` 4.6.5) |
+| nuqs | 2.10 (`nuqs` 2.10.1) |
 
-If your project pins a different version, trust that version's official docs over this baseline.
+For each package that changed since the 2026-08-20 baseline, every API that its release notes and migration guides list as deprecated, removed, renamed or given a new default was searched for across the rule files, and each matching section was read. Rules were not re-read line by line. New features the rules don't cover yet are not part of the audit. If your project pins a different version, trust that version's official docs over this baseline.
 
 ### Core framework
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
-| [react](skills/react) | 40 | React 19 concurrent rendering, Server Components, hook optimization |
-| [nextjs](skills/nextjs) | 40 | Next.js 16 App Router, caching, server components, routing |
+| [react](skills/react) | 43 | React 19 concurrent rendering, Server Components, hook optimization |
+| [nextjs](skills/nextjs) | 42 | Next.js 16 App Router, caching, server components, routing |
 | [typescript](skills/typescript) | 44 | TypeScript 7 migration, compiler config, type safety, async patterns |
 
 ### UI and styling
@@ -156,26 +168,26 @@ If your project pins a different version, trust that version's official docs ove
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
 | [tailwind](skills/tailwind) | 42 | Tailwind CSS v4 optimization, utility patterns, theming |
-| [shadcn](skills/shadcn) | 42 | shadcn/ui with Radix or Base UI primitives, accessibility |
+| [shadcn](skills/shadcn) | 44 | shadcn/ui with Radix or Base UI primitives, accessibility |
 | [ui-design](skills/ui-design) | 42 | UI and UX practices, accessibility, responsive design |
-| [web-design-guidelines](skills/web-design-guidelines) | dynamic | Fetches the current upstream web interface guidelines |
+| [web-design-guidelines](skills/web-design-guidelines) | pinned | Reviews UI code against Vercel's Web Interface Guidelines, fetched from a pinned upstream commit |
 
 ### Data and state
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
 | [tanstack-query](skills/tanstack-query) | 40 | Data fetching, caching, mutations, optimistic updates |
-| [react-hook-form](skills/react-hook-form) | 41 | Form validation, performance, field arrays |
-| [zod](skills/zod) | 43 | Schema validation, type inference, error handling |
+| [react-hook-form](skills/react-hook-form) | 43 | Form validation, performance, field arrays |
+| [zod](skills/zod) | 44 | Schema validation, type inference, error handling |
 | [nuqs](skills/nuqs) | 42 | Type-safe URL query state for Next.js |
 
 ### Testing
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
-| [vitest](skills/vitest) | 44 | Vitest 4 setup, mocking, async testing, worker pools |
-| [playwright](skills/playwright) | 43 | End-to-end testing, selectors, authentication, CI |
-| [msw](skills/msw) | 45 | API mocking with Mock Service Worker |
+| [vitest](skills/vitest) | 45 | Vitest 5 setup, mocking, async testing, worker pools |
+| [playwright](skills/playwright) | 44 | End-to-end testing, selectors, authentication, CI |
+| [msw](skills/msw) | 48 | API mocking with Mock Service Worker |
 | [tdd](skills/tdd) | 42 | Test-driven development methodology |
 
 ### Architecture and practices
@@ -183,8 +195,8 @@ If your project pins a different version, trust that version's official docs ove
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
 | [feature-arch](skills/feature-arch) | 42 | Feature-based architecture, module organization |
-| [vercel-composition-patterns](skills/vercel-composition-patterns) | 7 | React composition patterns |
-| [vercel-react-best-practices](skills/vercel-react-best-practices) | 57 | React performance optimization |
+| [vercel-composition-patterns](skills/vercel-composition-patterns) | 8 | React composition patterns |
+| [vercel-react-best-practices](skills/vercel-react-best-practices) | 70 | React performance optimization |
 
 ## Why
 
@@ -209,6 +221,8 @@ Each rule spells out the correct pattern with code, the anti-pattern to avoid, t
 
 ```text
 react-frontend-skills/
+├── .github/workflows/         # CI: npm test + MCP check on Node 20 and 24
+├── bin/                       # Companion CLI (detect, scan, lint)
 ├── mcp/                       # Publishable read-only MCP server
 ├── skills/
 │   ├── react/                # React 19 patterns
@@ -229,12 +243,14 @@ react-frontend-skills/
 │   ├── vercel-composition-patterns/
 │   ├── vercel-react-best-practices/
 │   └── web-design-guidelines/
+├── test/                      # CLI tests
+├── UPSTREAM.md                # Vercel-sourced skills: local patches, sync steps
 ├── README.md
 ├── LICENSE
 └── CHANGELOG.md
 ```
 
-Every skill folder contains `SKILL.md`. Most include a `references/` or `rules/` directory, many include an `AGENTS.md` index, and some include `metadata.json`. `SKILL.md` links the files that belong to that skill.
+Every skill folder contains `SKILL.md`, which indexes that skill's `references/` or `rules/` files. `npm test` runs `react-frontend-skills lint`, which fails on unindexed rule files, broken links, stale rule counts, and descriptions over the pack-wide resident budget (280 tokens, 120 words, 15 list items across all skills).
 
 ## Usage
 
@@ -258,10 +274,11 @@ cat skills/nextjs/references/cache-use-cache-directive.md
 Contributions are welcome.
 
 1. Fork the repo
-2. Add a skill folder under `skills/your-skill/` with `SKILL.md` and any supporting `references/`, `rules/`, or metadata it needs
-3. Open a pull request
+2. Add a skill folder under `skills/your-skill/` with `SKILL.md` and its `references/` or `rules/` files
+3. Run `npm test`. CI runs it on every pull request
+4. Open a pull request
 
-Improving an existing skill counts just as much. New rules, corrections, version bumps: open a PR.
+Improving an existing skill counts just as much. New rules, corrections, version bumps: open a PR. For the three Vercel-sourced skills, follow [UPSTREAM.md](UPSTREAM.md) so upstream syncs keep this repo's patches.
 
 ## License
 
