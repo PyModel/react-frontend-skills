@@ -7,15 +7,18 @@ const sourceSkills = resolve(packageRoot, '..', 'skills')
 const generatedData = resolve(packageRoot, 'data')
 const packagedSkills = resolve(generatedData, 'skills')
 
-async function assertSkillsDirectory(directory) {
+async function assertSkillsDirectory(directory, expectedNames) {
   const entries = await readdir(directory, { withFileTypes: true })
   const skillNames = entries
     .filter((entry) => entry.isDirectory() && !entry.name.startsWith('.'))
     .map((entry) => entry.name)
     .sort()
 
-  if (skillNames.length !== 18) {
-    throw new Error(`Expected 18 skill directories in ${directory}, found ${skillNames.length}`)
+  if (skillNames.length === 0) {
+    throw new Error(`No skill directories found in ${directory}`)
+  }
+  if (expectedNames && skillNames.join('\n') !== expectedNames.join('\n')) {
+    throw new Error(`Packaged skills in ${directory} do not match the source skills`)
   }
 
   await Promise.all(
@@ -27,16 +30,17 @@ async function assertSkillsDirectory(directory) {
       }
     })
   )
+  return skillNames
 }
 
 async function prepare() {
-  await assertSkillsDirectory(sourceSkills)
+  const skillNames = await assertSkillsDirectory(sourceSkills)
   await rm(packagedSkills, { recursive: true, force: true })
   await cp(sourceSkills, packagedSkills, {
     recursive: true,
     filter: (source) => !source.endsWith('.DS_Store'),
   })
-  await assertSkillsDirectory(packagedSkills)
+  await assertSkillsDirectory(packagedSkills, skillNames)
 }
 
 async function clean() {

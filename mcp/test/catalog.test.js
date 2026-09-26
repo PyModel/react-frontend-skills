@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { readdirSync } from 'node:fs'
 import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -6,10 +7,16 @@ import test from 'node:test'
 import { loadCatalog } from '../src/catalog.js'
 
 const catalog = await loadCatalog()
+const skillsOnDisk = readdirSync(catalog.skillsDirectory, { withFileTypes: true }).filter(
+  (entry) => entry.isDirectory() && !entry.name.startsWith('.')
+)
+const markdownOnDisk = readdirSync(catalog.skillsDirectory, { recursive: true }).filter(
+  (path) => path.endsWith('.md') && !path.split(/[\\/]/).some((part) => part.startsWith('.'))
+)
 
 test('loads every skill and Markdown file from the repository', () => {
-  assert.equal(catalog.skills.length, 18)
-  assert.equal(catalog.files.length, 738)
+  assert.equal(catalog.skills.length, skillsOnDisk.length)
+  assert.equal(catalog.files.length, markdownOnDisk.length)
   assert.equal(new Set(catalog.files.map((file) => file.id)).size, catalog.files.length)
 
   const nextjs = catalog.getSkill('nextjs')

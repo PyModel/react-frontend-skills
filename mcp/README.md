@@ -67,7 +67,7 @@ The configured directory must exist and contain skill folders with `SKILL.md` fi
 
 ## Packaging
 
-`prepack` copies the repository's canonical `skills/` tree into `data/skills`. `postpack` removes that generated directory so duplicated skill content is not committed. Packaging fails unless all 18 skill directories and their `SKILL.md` files are present.
+`prepack` copies the repository's canonical `skills/` tree into `data/skills`. `postpack` removes that generated directory so duplicated skill content is not committed. Packaging fails unless the packaged skill directories match the source `skills/` tree and each has a `SKILL.md`.
 
 ## Requirements
 

@@ -39,11 +39,11 @@ test('advertises the complete read-only tool surface', async (context) => {
 })
 
 test('serves skill discovery, search, and complete content through tools', async (context) => {
-  const { client } = await connectInMemory(context)
+  const { client, catalog } = await connectInMemory(context)
 
   const listResult = await client.callTool({ name: 'list_skills', arguments: {} })
   const listedSkills = JSON.parse(listResult.content[0].text)
-  assert.equal(listedSkills.length, 18)
+  assert.equal(listedSkills.length, catalog.skills.length)
   assert.ok(listedSkills.some((skill) => skill.name === 'react'))
 
   const searchResult = await client.callTool({
@@ -131,7 +131,7 @@ test('lists and reads every Markdown file as an MCP resource', async (context) =
   assert.match(readResult.contents[0].text, /Configure Fetch Cache Options Explicitly/)
 
   const catalogResult = await client.readResource({ uri: 'react-skills://catalog' })
-  assert.equal(JSON.parse(catalogResult.contents[0].text).length, 18)
+  assert.equal(JSON.parse(catalogResult.contents[0].text).length, catalog.skills.length)
 })
 
 test(

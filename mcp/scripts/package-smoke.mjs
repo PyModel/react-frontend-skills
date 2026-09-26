@@ -6,6 +6,7 @@ import { promisify } from 'node:util'
 import { fileURLToPath } from 'node:url'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
+import { loadCatalog } from '../src/catalog.js'
 
 const execute = promisify(execFile)
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -22,6 +23,7 @@ async function pathExists(path) {
 }
 
 async function main() {
+  const source = await loadCatalog({ skillsDir: resolve(packageRoot, '..', 'skills') })
   const installationRoot = await mkdtemp(joinTempPath())
   let tarballPath
   let client
@@ -67,13 +69,16 @@ async function main() {
 
     const skillsResult = await client.callTool({ name: 'list_skills', arguments: {} })
     const skills = JSON.parse(skillsResult.content[0].text)
-    if (skills.length !== 18) {
-      throw new Error(`Expected 18 skills, received ${skills.length}`)
+    if (skills.length !== source.skills.length) {
+      throw new Error(`Expected ${source.skills.length} skills, received ${skills.length}`)
     }
 
+    // One resource per Markdown file plus the JSON catalog resource.
     const resources = await client.listResources()
-    if (resources.resources.length !== 739) {
-      throw new Error(`Expected 739 resources, received ${resources.resources.length}`)
+    if (resources.resources.length !== source.files.length + 1) {
+      throw new Error(
+        `Expected ${source.files.length + 1} resources, received ${resources.resources.length}`
+      )
     }
 
     process.stdout.write('installed tarball MCP smoke: PASS\n')
