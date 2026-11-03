@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-11-03
+
 ### Breaking
 
-- Both packages require Node.js 22 or newer (`engines` `>=22`, was `>=20`); Node 20 is end-of-life. CI no longer runs Node 20.
+- Both packages require Node.js 22 or newer (`engines` `>=22`, was `>=20`); Node 20 is end-of-life. The MCP package is released as 2.0.0 for the same reason. CI no longer runs Node 20.
 
 ### Added
 
@@ -235,7 +237,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Priority-based skill organization (CRITICAL, HIGH, MEDIUM, LOW)
 - Category-based rule grouping for easy navigation
 
-[Unreleased]: https://github.com/PyModel/react-frontend-skills/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/PyModel/react-frontend-skills/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/PyModel/react-frontend-skills/compare/v2.3.0...v3.0.0
 [2.3.0]: https://github.com/PyModel/react-frontend-skills/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/PyModel/react-frontend-skills/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/PyModel/react-frontend-skills/compare/v2.0.1...v2.1.0
