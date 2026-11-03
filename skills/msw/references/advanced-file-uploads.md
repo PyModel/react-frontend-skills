@@ -21,7 +21,8 @@ http.post('/api/upload', () => {
 **Correct (parsing FormData):**
 
 ```typescript
-import { http, HttpResponse, delay } from 'msw'
+import { http, HttpResponse } from 'msw/http'
+import { delay } from 'msw/utils/delay'
 
 export const handlers = [
   // Single file upload

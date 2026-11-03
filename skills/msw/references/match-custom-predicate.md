@@ -23,7 +23,7 @@ http.get('/api/data', () => {
 **Correct (predicate-based matching):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 export const handlers = [
   // Match based on header presence

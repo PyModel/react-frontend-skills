@@ -70,3 +70,14 @@ test('invalid frontmatter fails during catalog loading', async (context) => {
 
   await assert.rejects(loadCatalog({ skillsDir: fixtureRoot }), /Invalid frontmatter/)
 })
+
+test('CRLF frontmatter still yields the skill description', async (context) => {
+  const fixtureRoot = await mkdtemp(join(tmpdir(), 'react-skills-crlf-'))
+  context.after(() => rm(fixtureRoot, { recursive: true, force: true }))
+
+  await mkdir(join(fixtureRoot, 'demo'))
+  await writeFile(join(fixtureRoot, 'demo', 'SKILL.md'), '---\r\nname: demo\r\ndescription: Demo skill.\r\n---\r\n# Demo\r\n')
+
+  const crlf = await loadCatalog({ skillsDir: fixtureRoot })
+  assert.equal(crlf.getSkill('demo').description, 'Demo skill.')
+})

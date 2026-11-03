@@ -5,7 +5,7 @@ description: Playwright end-to-end tests and flaky-test fixes.
 
 # Playwright + Next.js Testing Best Practices
 
-Comprehensive testing optimization guide for Playwright with Next.js applications. Contains 45 rules across 8 categories, prioritized by impact to guide reliable, fast, and maintainable E2E tests.
+Comprehensive testing optimization guide for Playwright with Next.js applications. Contains 45 rules across 8 categories, prioritized by impact to guide reliable, fast, and maintainable E2E tests. Current: Playwright 1.64 (1.64.1).
 
 ## When to Apply
 

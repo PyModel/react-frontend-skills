@@ -1,13 +1,15 @@
 ---
-title: Use Operation Name for GraphQL Matching
+title: Define GraphQL Operations on a graphql.link()
 impact: MEDIUM
-impactDescription: Enables precise operation targeting; prevents query/mutation conflicts
-tags: graphql, operation, query, mutation, matching
+impactDescription: graphql.query/mutation/operation no longer exist in MSW 3; links scope operations to an endpoint
+tags: graphql, link, operation, query, mutation, matching, v3
 ---
 
-## Use Operation Name for GraphQL Matching
+## Define GraphQL Operations on a graphql.link()
 
-Match GraphQL operations by their operation name, not by URL. All GraphQL requests typically go to the same endpoint (`/graphql`), so operation name is the discriminator.
+MSW 3 GraphQL mocking is link-first. Create a link for the endpoint with `graphql.link(url)` and define handlers on it by operation name. Every GraphQL request goes to the same URL, so the operation name is the discriminator, and the link keeps same-named operations on different APIs apart.
+
+On MSW 2.x: `import { graphql, HttpResponse } from 'msw'`, then `graphql.query('GetUser', resolver)` (also `graphql.mutation`, `graphql.operation`); 3.0 removed these.
 
 **Incorrect (URL-based matching for GraphQL):**
 
@@ -18,14 +20,29 @@ http.post('/graphql', () => {
 })
 ```
 
-**Correct (operation-based matching):**
+**Incorrect (2.x namespace methods, removed in MSW 3):**
 
 ```typescript
 import { graphql, HttpResponse } from 'msw'
 
+// 3.x: 'msw' no longer exports graphql, and graphql.query() was removed
+graphql.query('GetUser', () => {
+  return HttpResponse.json({ data: { user: { name: 'John' } } })
+})
+```
+
+**Correct (link + operation-based matching):**
+
+```typescript
+import { HttpResponse } from 'msw/http'
+import { graphql } from 'msw/graphql'
+
+// Relative or absolute URL; wildcards and RegExp work too
+const api = graphql.link('https://api.example.com/graphql')
+
 export const handlers = [
   // Match query by operation name
-  graphql.query('GetUser', () => {
+  api.query('GetUser', () => {
     return HttpResponse.json({
       data: {
         user: {
@@ -38,7 +55,7 @@ export const handlers = [
   }),
 
   // Match mutation by operation name
-  graphql.mutation('CreateUser', async ({ variables }) => {
+  api.mutation('CreateUser', async ({ variables }) => {
     return HttpResponse.json({
       data: {
         createUser: {
@@ -51,7 +68,7 @@ export const handlers = [
   }),
 
   // Separate handlers for different queries
-  graphql.query('GetUsers', () => {
+  api.query('GetUsers', () => {
     return HttpResponse.json({
       data: {
         users: [
@@ -67,7 +84,7 @@ export const handlers = [
 **Access operation variables:**
 
 ```typescript
-graphql.query('GetUser', ({ variables }) => {
+api.query('GetUser', ({ variables }) => {
   // variables matches your GraphQL query variables
   return HttpResponse.json({
     data: {
@@ -84,18 +101,29 @@ graphql.query('GetUser', ({ variables }) => {
 // variables: { id: "123" }
 ```
 
-**Custom GraphQL endpoint:**
+**Multiple GraphQL APIs:**
 
 ```typescript
-// If your GraphQL endpoint isn't /graphql
-graphql.link('https://api.example.com/gql').query('GetUser', () => {
-  return HttpResponse.json({
-    data: { user: { name: 'John' } },
-  })
-})
+const github = graphql.link('https://api.github.com/graphql')
+const stripe = graphql.link('https://api.stripe.com/graphql')
+
+export const handlers = [
+  // Same operation name, different endpoints, different mocks
+  github.query('GetPayment', () =>
+    HttpResponse.json({ data: { payment: { id: '1' } } }),
+  ),
+  stripe.query('GetPayment', () =>
+    HttpResponse.json({ errors: [{ message: 'Cannot process payment' }] }),
+  ),
+]
 ```
+
+**Notes:**
+
+- The link also has `.operation(resolver)` (any operation, including anonymous ones) and `.subscription()` (see [graphql-subscriptions](graphql-subscriptions.md)).
+- The operation name can be a `TypedDocumentNode` from GraphQL Code Generator; MSW infers the query and variable types from it.
 
 **When NOT to use this pattern:**
 - REST APIs should use `http.*` handlers, not GraphQL handlers
 
-Reference: [MSW GraphQL API](https://mswjs.io/docs/api/graphql)
+Reference: [MSW graphql API](https://mswjs.io/api/graphql)

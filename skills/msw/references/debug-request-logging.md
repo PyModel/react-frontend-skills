@@ -23,7 +23,7 @@ http.post('/api/user', async ({ request }) => {
 **Correct (detailed request logging):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 // Debug middleware - add as first handler
 const debugHandler = http.all('*', async ({ request }) => {
@@ -73,10 +73,8 @@ export const handlers = [
 **Response logging:**
 
 ```typescript
-// Log responses using lifecycle events
-server.events.on('request:end', async ({ request, response }) => {
-  if (!response) return
-
+// Log mocked responses using lifecycle events
+server.events.on('response:mocked', async ({ request, response }) => {
   const clone = response.clone()
   const contentType = response.headers.get('Content-Type')
 
@@ -101,7 +99,7 @@ export const worker = setupWorker(...handlers)
 // Enable detailed logging in development
 if (process.env.NODE_ENV === 'development') {
   worker.start({
-    onUnhandledRequest: 'warn',
+    onUnhandledFrame: 'warn', // MSW 2.x: onUnhandledRequest: 'warn'
   })
 }
 ```
@@ -110,4 +108,4 @@ if (process.env.NODE_ENV === 'development') {
 - Remove debug logging before committing/production
 - CI should use minimal logging for cleaner output
 
-Reference: [MSW Lifecycle Events](https://mswjs.io/docs/api/life-cycle-events)
+Reference: [MSW Lifecycle Events](https://mswjs.io/api/life-cycle-events)

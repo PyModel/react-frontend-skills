@@ -5,7 +5,8 @@ import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { detect, lint, scan } from '../bin/react-frontend-skills.mjs'
+import { CHECKS } from '../bin/checks.mjs'
+import { detect, lint, maskComments, rangeMajor, scan } from '../bin/react-frontend-skills.mjs'
 
 const cli = join(dirname(fileURLToPath(import.meta.url)), '..', 'bin', 'react-frontend-skills.mjs')
 
@@ -66,7 +67,7 @@ test('detect prefers the installed version and flags major mismatches', (context
 
 test('scan skips checks for packages the project does not declare', (context) => {
   const root = fixture(context, { 'package.json': {}, 'src/a.ts': 'export const x = 1\n' })
-  assert.deepEqual(scan(root), { checks: 0, skipped: 0, filesScanned: 0, hits: [] })
+  assert.deepEqual(scan(root), { checks: 0, skipped: 0, unknown: 0, filesScanned: 0, hits: [] })
 })
 
 test('scan reports multi-line hits with rule ids and ignores comments', (context) => {
@@ -167,6 +168,179 @@ test('scan gates checks on the installed major, npm aliases, and project flags',
   writeFileSync(join(root, 'next.config.ts'), 'export default { cacheComponents: true }\n')
   assert.ok(scan(root).hits.some((hit) => hit.rule === 'cache-segment-config'))
   assert.ok(scan(root, { all: true }).hits.some((hit) => hit.rule === 'schema-use-enums'))
+})
+
+test('lint accepts CRLF frontmatter', (context) => {
+  const root = fixture(context, { 'skills/demo/SKILL.md': '---\r\nname: demo\r\ndescription: Demo skill.\r\n---\r\n# Demo\r\n' })
+  assert.deepEqual(lint(join(root, 'skills')).errors, [])
+})
+
+test('only ranges that pin one major decide the major', () => {
+  const cases = {
+    '19': 19, '^19.1.0': 19, '~19.1': 19, '19.x': 19, '=19.0.0': 19, 'v19.0.0': 19, '16.0.0-canary.3': 16,
+    'npm:typescript@^7.0.2': 7, 'npm:@scope/pkg@~6.1.0': 6,
+    '>=18': undefined, '^18 || ^19': undefined, '*': undefined, latest: undefined,
+    'workspace:*': undefined, 'catalog:': undefined, 'npm:@typescript/typescript6': undefined, 'npm:typescript': undefined,
+  }
+  for (const [range, expected] of Object.entries(cases)) assert.equal(rangeMajor(range), expected, range)
+})
+
+test('detect trusts the install for open ranges and falls back to package-lock.json', (context) => {
+  const root = fixture(context, {
+    'package.json': { dependencies: { react: '>=18', zod: 'latest', msw: 'catalog:' } },
+    'node_modules/react/package.json': { version: '19.1.0' },
+    'package-lock.json': { packages: { 'node_modules/zod': { version: '4.6.7' } } },
+  })
+  const status = Object.fromEntries(detect(root).map((row) => [row.skill, [row.installed, row.status]]))
+  assert.deepEqual(status.react, ['19.1.0', 'ok'])
+  assert.deepEqual(status.zod, ['4.6.7', 'ok'])
+  assert.deepEqual(status.msw, [null, 'unknown-version'])
+  const result = scan(root)
+  assert.ok(result.unknown > 0, 'msw checks need a known version')
+  assert.equal(result.skipped, 0, 'unknown versions are not reported as predating checks')
+})
+
+test('scan reports the line of the match, not of preceding blank lines', (context) => {
+  const root = fixture(context, {
+    'package.json': { dependencies: { next: '16.4.0' } },
+    'next.config.ts': '// cacheComponents: false\nexport default { cacheComponents: true }\n',
+    'app/page.tsx': "import x from 'x'\n\n\n\nexport const dynamic = 'force-dynamic'\n",
+  })
+  assert.deepEqual(scan(root).hits.map((hit) => `${hit.file}:${hit.line}`), ['app/page.tsx:5'])
+  writeFileSync(join(root, 'next.config.ts'), '// cacheComponents: true\nexport default {}\n')
+  assert.deepEqual(scan(root).hits, [], 'a commented-out flag does not enable the check')
+})
+
+test('comment masking keeps strings, offsets and markup rules', () => {
+  const js = "fetch('https://api.example.com') // z.nativeEnum(R)\nconst s = \"/* not a comment */\"\n/* a\nb */ x"
+  const masked = maskComments(js, 'a.ts')
+  assert.equal(masked.length, js.length)
+  assert.match(masked, /fetch\('https:\/\/api\.example\.com'\) +\n/)
+  assert.match(masked, /"\/\* not a comment \*\/"/)
+  assert.match(masked, /^ +\n +x$/m)
+  assert.equal(maskComments("<p>Don't</p> // keep\nz.nativeEnum(R) // drop", 'a.tsx').split('\n')[1].trimEnd(), 'z.nativeEnum(R)')
+  assert.equal(maskComments('a { background: url(https://x.dev/a.png) }', 'a.css'), 'a { background: url(https://x.dev/a.png) }')
+  assert.equal(maskComments('<!-- bg-opacity-50 --><b>', 'a.html'), '                      <b>')
+})
+
+test('scan ignores trailing and block comments and finds code after a URL', (context) => {
+  const root = fixture(context, {
+    'package.json': { dependencies: { zod: '^4.1.0' } },
+    'src/a.ts': [
+      "import { z } from 'zod'",
+      'const a = 1 // z.nativeEnum(R)',
+      '/*',
+      'z.nativeEnum(R)',
+      '*/',
+      "const u = 'https://x.dev'; z.nativeEnum(R)",
+      '',
+    ].join('\n'),
+  })
+  assert.deepEqual(scan(root).hits.map((hit) => hit.line), [6])
+})
+
+test('check patterns match the removed API and leave current code alone', () => {
+  const pattern = (id) => {
+    const check = CHECKS.find((candidate) => candidate.id === id)
+    assert.ok(check, id)
+    return new RegExp(check.pattern.source, `${check.pattern.flags}m`)
+  }
+  const cases = [
+    ['tw4-leading-important-modifier', 'cn("p-2", "!flex")', true],
+    ['tw4-leading-important-modifier', 'clsx("a", cond && "!mt-0 b")', true],
+    ['tw4-leading-important-modifier', 'cn("a", !open && "b")', false],
+    ['tw4-leading-important-modifier', 'cn("flex!")', false],
+    ['tw4-opacity-utilities-removed', 'class="border-opacity-50 ring-opacity-25"', true],
+    ['tw4-opacity-utilities-removed', 'class="divide-opacity-50"', true],
+    ['tw4-opacity-utilities-removed', 'class="placeholder-opacity-50"', true],
+    ['tw4-opacity-utilities-removed', 'class="bg-black/50"', false],
+    ['zod4-string-format-methods', 'z.string().min(1, "a (b)").email()', true],
+    ['zod4-string-format-methods', 'z.string({ error: "x" }).email()', true],
+    ['zod4-string-format-methods', 'z.email()', false],
+    ['next16-middleware-file', "export { middleware } from './x'", true],
+    ['next16-middleware-file', 'export default middleware', true],
+    ['next16-middleware-file', 'export { handler as middleware }', true],
+    ['next16-revalidatetag-single-arg', 'revalidateTag(getTag(x))', true],
+    ['next16-revalidatetag-single-arg', "revalidateTag(getTag(x), 'max')", false],
+    ['vitest5-nested-vi-mock', '  vi.hoisted<T>(() => 1)', true],
+    ['msw3-graphql-root-import', "import { graphql, HttpResponse } from 'msw'", true],
+    ['msw3-graphql-root-import', "import { graphql } from 'msw/graphql'", false],
+    ['msw3-graphql-root-import', "import { http, HttpResponse } from 'msw'", false],
+    ['msw3-on-unhandled-request-renamed', "server.listen({ onUnhandledRequest: 'error' })", true],
+    ['msw3-on-unhandled-request-renamed', "server.listen({ onUnhandledFrame: 'error' })", false],
+    ['msw3-graphql-link-first', "graphql.query('GetUser', resolver)", true],
+    ['msw3-graphql-link-first', "api.query('GetUser', resolver)", false],
+    ['msw3-connection-event-renamed', "server.events.on('connection', listener)", true],
+    ['msw3-connection-event-renamed', "server.events.on('websocket:connection', listener)", false],
+  ]
+  for (const [id, input, expected] of cases) assert.equal(pattern(id).test(input), expected, `${id}: ${input}`)
+})
+
+test('scan runs MSW 3 checks only on MSW 3', (context) => {
+  const root = fixture(context, {
+    'package.json': { devDependencies: { msw: '^3.0.0' } },
+    'src/mocks.ts': "import { setupServer } from 'msw/node'\nimport { graphql } from 'msw'\nsetupServer().listen({ onUnhandledRequest: 'error' })\n",
+  })
+  assert.deepEqual(scan(root).hits.map((hit) => `${hit.line} ${hit.rule}`).sort(), [
+    '2 setup-v3-handler-entrypoints',
+    '3 setup-unhandled-requests',
+  ])
+  writeFileSync(join(root, 'package.json'), JSON.stringify({ devDependencies: { msw: '^2.15.0' } }))
+  assert.deepEqual(scan(root).hits, [])
+})
+
+test('comment masking terminates on unclosed openers and masks only their line', () => {
+  for (const [text, file] of [[' /* x', 'a.ts'], ['\n/* unclosed', 'a.css'], ['xx<!-- x', 'a.html'], ['/*', 'a.ts']]) {
+    assert.equal(maskComments(text, file).length, text.length, `${file}: ${JSON.stringify(text)}`)
+  }
+  assert.equal(maskComments('const sep = /[/*]/\nconst x = z.nativeEnum(R)', 'a.ts').split('\n')[1], 'const x = z.nativeEnum(R)')
+  assert.equal(maskComments('Put pages in app/*\n\n<div className="!flex" />', 'a.mdx').split('\n')[2], '<div className="!flex" />')
+})
+
+test('line comments count in tsconfig, scss and html scripts; mid-line // in css stays text', () => {
+  assert.equal(maskComments('{\n  // "baseUrl": "."\n}', 'tsconfig.json').includes('baseUrl'), false)
+  assert.equal(maskComments('// @tailwind base;', 'a.scss').trim(), '')
+  assert.equal(maskComments('<script>\n// bg-opacity-50\n</script>', 'a.html').includes('opacity'), false)
+  assert.equal(maskComments('// @tailwind base;', 'a.css').trim(), '', 'a line-start // is still a comment')
+})
+
+test('scan keeps root dotfiles in git repos and ignores oversized config files', (context) => {
+  const root = fixture(context, {
+    'package.json': { dependencies: { tailwindcss: '^4.1.0' } },
+    '.postcssrc.json': '{ "plugins": { "@tailwindcss/postcss": {}, "autoprefixer": {} } }',
+  })
+  spawnSync('git', ['init', '-q'], { cwd: root })
+  assert.deepEqual(scan(root).hits.map((hit) => hit.file), ['.postcssrc.json'])
+
+  const next = fixture(context, {
+    'package.json': { dependencies: { next: '16.4.0' } },
+    'next.config.ts': `export default { cacheComponents: true }\n${' '.repeat(600 * 1024)}`,
+    'app/page.tsx': "export const dynamic = 'force-dynamic'\n",
+  })
+  assert.deepEqual(scan(next).hits, [], 'a config over MAX_FILE_BYTES is not read')
+})
+
+test('an ancestor package-lock.json counts only when it lists the project as a workspace', (context) => {
+  const root = fixture(context, {
+    'package-lock.json': { packages: { '': {}, 'node_modules/react': { version: '18.3.1' } } },
+    'app/package.json': { dependencies: { react: 'latest' } },
+  })
+  assert.equal(detect(join(root, 'app'))[0].status, 'unknown-version')
+  writeFileSync(
+    join(root, 'package-lock.json'),
+    JSON.stringify({ packages: { '': { workspaces: ['app'] }, app: {}, 'node_modules/react': { version: '19.3.1' } } })
+  )
+  assert.deepEqual([detect(join(root, 'app'))[0].installed, detect(join(root, 'app'))[0].status], ['19.3.1', 'ok'])
+})
+
+test('brace-list patterns stay fast on unclosed braces', () => {
+  for (const check of CHECKS) {
+    const input = 'import {graphql export {middleware import {rest '.repeat(10000)
+    const pattern = new RegExp(check.pattern.source, [...new Set(`${check.pattern.flags}gm`)].join(''))
+    const started = performance.now()
+    for (const _ of input.matchAll(pattern)) void _
+    assert.ok(performance.now() - started < 1000, `${check.id} took ${Math.round(performance.now() - started)}ms`)
+  }
 })
 
 test('cli exits 2 on usage errors and 0 on help', () => {

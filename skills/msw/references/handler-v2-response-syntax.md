@@ -1,18 +1,20 @@
 ---
-title: Use MSW v2 Response Syntax
+title: Use HttpResponse Syntax, Not v1 res(ctx)
 impact: CRITICAL
-impactDescription: v1 syntax breaks in v2; causes complete handler failure
-tags: handler, response, v2, HttpResponse, migration
+impactDescription: v1 syntax breaks in v2 and v3; causes complete handler failure
+tags: handler, response, v2, v3, HttpResponse, migration
 ---
 
-## Use MSW v2 Response Syntax
+## Use HttpResponse Syntax, Not v1 res(ctx)
 
-MSW v2 replaces the composition-based `res(ctx.json())` syntax with native `Response` and `HttpResponse`. Using v1 syntax in v2 causes handlers to fail silently.
+MSW v2 replaced the composition-based `res(ctx.json())` syntax with native `Response` and `HttpResponse`, and v3 keeps it. Using v1 syntax causes handlers to fail silently.
+
+On MSW 2.x: same handler code, imported as `import { http, HttpResponse, delay } from 'msw'`.
 
 **Incorrect (v1 composition syntax):**
 
 ```typescript
-// MSW v1 syntax - does not work in v2
+// MSW v1 syntax - does not work in v2 or v3
 import { rest } from 'msw'
 
 export const handlers = [
@@ -26,11 +28,12 @@ export const handlers = [
 ]
 ```
 
-**Correct (v2 HttpResponse syntax):**
+**Correct (HttpResponse syntax, v3 imports):**
 
 ```typescript
-// MSW v2 syntax
-import { http, HttpResponse, delay } from 'msw'
+// MSW v3 syntax
+import { http, HttpResponse } from 'msw/http'
+import { delay } from 'msw/utils/delay'
 
 export const handlers = [
   http.get('/api/user', async () => {
@@ -43,10 +46,11 @@ export const handlers = [
 ]
 ```
 
-**Common v2 response patterns:**
+**Common response patterns:**
 
 ```typescript
-import { http, HttpResponse, delay } from 'msw'
+import { http, HttpResponse } from 'msw/http'
+import { delay } from 'msw/utils/delay'
 
 export const handlers = [
   // JSON response
@@ -91,4 +95,4 @@ export const handlers = [
 **When NOT to use this pattern:**
 - Projects still on MSW v1 should use the v1 syntax until migration
 
-Reference: [MSW v2 Migration Guide](https://mswjs.io/docs/migrations/1.x-to-2.x/)
+Reference: [MSW v2 Migration Guide](https://mswjs.io/docs/migrations/1.x-to-2.x/), [MSW v3 Migration Guide](https://mswjs.io/docs/migrations/2.x-to-3.x)

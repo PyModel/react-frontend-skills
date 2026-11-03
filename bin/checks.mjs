@@ -12,7 +12,7 @@ export const PACKAGES = [
   { skill: 'tanstack-query', packages: ['@tanstack/react-query'], target: 5 },
   { skill: 'react-hook-form', packages: ['react-hook-form'], target: 7 },
   { skill: 'nuqs', packages: ['nuqs'], target: 2 },
-  { skill: 'msw', packages: ['msw'], target: 2 },
+  { skill: 'msw', packages: ['msw'], target: 3 },
   { skill: 'vitest', packages: ['vitest'], target: 5 },
   { skill: 'playwright', packages: ['@playwright/test'], target: 1 },
 ]
@@ -31,6 +31,8 @@ const POSTCSS_CONFIG = /(?:^|\/)(?:postcss\.config\.[cm]?[jt]s|\.postcssrc(?:\.j
 const VITEST_CONFIG = /(?:^|\/)(?:vitest|vite)\.config\.[cm]?[jt]s$|(?:^|\/)vitest\.workspace\.(?:[cm]?[jt]s|json)$/
 const TSCONFIG = /(?:^|\/)[jt]sconfig[^/]*\.json$/
 
+// Brace lists use `\{(?=[^}]{0,2000}\})(?=[^}]*\bName\b)[^}]*\}`: the bounded lookahead fails fast
+// on an unclosed `{`, where `\{[^}]*\bName\b[^}]*\}` backtracks for seconds on a 500 KB file.
 // `packages`: the check runs only when package.json declares one of them.
 // `since`: minimum major of that package where the old API is gone or deprecated.
 // `requires`: the file must also match this (usually the library import) to limit false positives.
@@ -54,7 +56,8 @@ export const CHECKS = [
     packages: ['next'],
     since: 16,
     files: MIDDLEWARE,
-    pattern: /export\s+(?:default\s+)?(?:async\s+)?function\s+middleware\b|export\s+const\s+middleware\b/,
+    // The file name is the deprecation, so any default or `middleware` export marks it.
+    pattern: /export\s+default\b|export\s+(?:async\s+)?function\s+middleware\b|export\s+const\s+middleware\b|export\s*\{(?=[^}]{0,2000}\})(?=[^}]*\bmiddleware\b)[^}]*\}/,
     message: "Next.js 16 deprecates middleware.ts: rename the file to proxy.ts and the export `middleware` to `proxy` (keep middleware.ts only if the Edge runtime is required).",
   },
   {
@@ -64,7 +67,7 @@ export const CHECKS = [
     packages: ['next'],
     since: 16,
     files: JS,
-    pattern: /\brevalidateTag\(\s*(?:'[^'\n]*'|"[^"\n]*"|`[^`]*`|[\w$.]+)\s*\)/,
+    pattern: /\brevalidateTag\(\s*(?:'[^'\n]*'|"[^"\n]*"|`[^`]*`|[\w$.]+(?:\([^()]*\))?)\s*\)/,
     requires: /['"]next\/cache['"]/,
     message: "Single-argument revalidateTag(tag) is deprecated in Next.js 16 (TypeScript error): pass a cacheLife profile, e.g. revalidateTag(tag, 'max'), or use updateTag(tag) in a Server Action.",
   },
@@ -96,7 +99,7 @@ export const CHECKS = [
     rule: 'setup-import-server',
     packages: ['nuqs'],
     files: JS,
-    pattern: /import\s*\{[^}]*\bcreateSearchParamsCache\b[^}]*\}\s*from\s*['"]nuqs['"]/,
+    pattern: /import\s*\{(?=[^}]{0,2000}\})(?=[^}]*\bcreateSearchParamsCache\b)[^}]*\}\s*from\s*['"]nuqs['"]/,
     message: "Import createSearchParamsCache (server utilities) from 'nuqs/server', not 'nuqs' (the main entry carries 'use client').",
   },
   {
@@ -117,8 +120,8 @@ export const CHECKS = [
     packages: ['msw'],
     since: 2,
     files: JS,
-    pattern: /import\s*\{[^}]*\brest\b[^}]*\}\s*from\s*['"]msw['"]|\bres\(\s*ctx\.|\(\s*req\s*,\s*res\s*,\s*ctx\s*\)/,
-    requires: /['"]msw['"]/,
+    pattern: /import\s*\{(?=[^}]{0,2000}\})(?=[^}]*\brest\b)[^}]*\}\s*from\s*['"]msw['"]|\bres\(\s*ctx\.|\(\s*req\s*,\s*res\s*,\s*ctx\s*\)/,
+    requires: /['"]msw(?:\/[\w/-]+)?['"]/,
     message: "MSW v1 syntax (rest.*, (req, res, ctx), res(ctx.json())) does not work in v2: use http.* with a single destructured ({ request, params, cookies }) argument and return HttpResponse.json().",
   },
   {
@@ -128,8 +131,53 @@ export const CHECKS = [
     packages: ['msw'],
     since: 2,
     files: JS,
-    pattern: /import\s*\{[^}]*\b(?:setupServer|setupWorker)\b[^}]*\}\s*from\s*['"]msw['"]/,
+    pattern: /import\s*\{(?=[^}]{0,2000}\})(?=[^}]*\b(?:setupServer|setupWorker)\b)[^}]*\}\s*from\s*['"]msw['"]/,
     message: "MSW v2 splits entrypoints: import setupServer from 'msw/node' and setupWorker from 'msw/browser', not from 'msw'.",
+  },
+  {
+    id: 'msw3-graphql-root-import',
+    skill: 'msw',
+    rule: 'setup-v3-handler-entrypoints',
+    packages: ['msw'],
+    since: 3,
+    files: JS,
+    // Only graphql left the root in 3.0.3; http, HttpResponse, ws, sse and the utils are still
+    // re-exported there, so flagging them would report working code.
+    pattern: /import\s*\{(?=[^}]{0,2000}\})(?=[^}]*\bgraphql\b)[^}]*\}\s*from\s*['"]msw['"]/,
+    message: "MSW 3 no longer exports graphql from 'msw': import it from 'msw/graphql' and define operations on graphql.link(url). Prefer the subpaths (msw/http, msw/ws, msw/sse, msw/utils/*) for the rest too.",
+  },
+  {
+    id: 'msw3-on-unhandled-request-renamed',
+    skill: 'msw',
+    rule: 'setup-unhandled-requests',
+    packages: ['msw'],
+    since: 3,
+    files: JS,
+    pattern: /\bonUnhandledRequest\b/,
+    requires: /['"]msw\/(?:node|browser|native)['"]/,
+    message: "MSW 3 renames onUnhandledRequest to onUnhandledFrame; a custom callback receives ({ frame, defaults }) instead of (request, print).",
+  },
+  {
+    id: 'msw3-graphql-link-first',
+    skill: 'msw',
+    rule: 'graphql-operation-handlers',
+    packages: ['msw'],
+    since: 3,
+    files: JS,
+    pattern: /\bgraphql\.(?:query|mutation|operation)\(/,
+    requires: /['"]msw(?:\/graphql)?['"]/,
+    message: "MSW 3 removes graphql.query/mutation/operation: create a link with graphql.link(url) and call .query()/.mutation() on it.",
+  },
+  {
+    id: 'msw3-connection-event-renamed',
+    skill: 'msw',
+    rule: 'debug-lifecycle-events',
+    packages: ['msw'],
+    since: 3,
+    files: JS,
+    pattern: /\.events\.on\(\s*['"]connection['"]/,
+    requires: /['"]msw(?:\/[\w/-]+)?['"]/,
+    message: "MSW 3 renames the 'connection' life-cycle event to 'websocket:connection'.",
   },
   {
     id: 'tw4-tailwind-directives',
@@ -148,8 +196,8 @@ export const CHECKS = [
     packages: ['tailwindcss'],
     since: 4,
     files: MARKUP_OR_STYLES,
-    pattern: /(?:^|[^\w-])(?:bg|text)-opacity-\d+\b/,
-    message: "Tailwind v4 removes bg-opacity-*/text-opacity-*: use the slash modifier (bg-blue-500/50, text-black/75).",
+    pattern: /(?:^|[^\w-])(?:bg|text|border|divide|ring|placeholder)-opacity-\d+\b/,
+    message: "Tailwind v4 removes the *-opacity-* utilities (bg, text, border, divide, ring, placeholder): use the slash modifier (bg-blue-500/50, text-black/75).",
   },
   {
     id: 'tw4-leading-important-modifier',
@@ -158,7 +206,9 @@ export const CHECKS = [
     packages: ['tailwindcss'],
     since: 4,
     files: MARKUP,
-    pattern: /\bclass(?:Name)?\s*=\s*(?:\{[^}"'`]*)?["'`](?:[^"'`]*\s)?!-?[a-z][\w:-]*/,
+    // Second branch: class helpers. Whole string literals are consumed as units, so the
+    // captured quote always opens a string and `!open && "x"` outside a string never matches.
+    pattern: /\bclass(?:Name)?\s*=\s*(?:\{[^}"'`]*)?["'`](?:[^"'`]*\s)?!-?[a-z][\w:-]*|\b(?:cn|clsx|cva|twMerge|twJoin|classNames|classnames)\((?:[^()"'`]|\([^()]*\)|"[^"\n]*"|'[^'\n]*'|`[^`]*`)*?(["'`])(?:(?:(?!\1)[^\n])*?\s)?!-?[a-z][\w:-]*/,
     message: "Tailwind v4 moves the important modifier to the end: !flex -> flex!, !hover:bg-x -> hover:bg-x!.",
   },
   {
@@ -209,7 +259,7 @@ export const CHECKS = [
     packages: ['zod'],
     since: 4,
     files: JS,
-    pattern: /\bz\.string\(\)(?:\s*\.\w+\([^()]*\))*\s*\.(?:email|url|uuid|cuid)\(/,
+    pattern: /\bz\.string\((?:[^()]|\([^()]*\))*\)(?:\s*\.\w+\((?:[^()]|\([^()]*\))*\))*\s*\.(?:email|url|uuid|cuid)\(/,
     requires: /from\s*['"]zod(?:\/v4|\/mini)?['"]|require\(\s*['"]zod['"]\s*\)/,
     message: "Zod 4: string formats are top-level schemas; replace z.string().email()/.url()/.uuid()/.cuid() with z.email()/z.url()/z.uuid()/z.cuid().",
   },
@@ -296,7 +346,7 @@ export const CHECKS = [
     since: 5,
     files: JS,
     // Indented = nested; the lookbehind skips a top-level `const x =` continued on the next line.
-    pattern: /(?<![=(][ \t]*\r?\n)^[ \t]+(?:(?:const|let|var)\s[^=\n]*=\s*)?(?:await\s+)?vi\.(?:mock|unmock|hoisted)\(/,
+    pattern: /(?<![=(][ \t]*\r?\n)^[ \t]+(?:(?:const|let|var)\s[^=\n]*=\s*)?(?:await\s+)?vi\.(?:mock|unmock|hoisted)(?:<[^\n]*?>)?\(/,
     message: "Vitest 5: vi.mock, vi.unmock and vi.hoisted must be top-level statements; a nested call fails the whole file. Move it to module scope, or use vi.doMock plus a dynamic import() for a per-test mock.",
   },
   {
@@ -335,7 +385,7 @@ export const CHECKS = [
     rule: 'integ-shadcn-form-import',
     packages: ['react-hook-form'],
     files: JS,
-    pattern: /import\s*\{[^}]*\bForm\b[^}]*\}\s*from\s*['"]react-hook-form['"]/,
+    pattern: /import\s*\{(?=[^}]{0,2000}\})(?=[^}]*\bForm\b)[^}]*\}\s*from\s*['"]react-hook-form['"]/,
     requires: /['"][^'"]*components\/ui\/form['"]/,
     message: "Import Form from the shadcn wrapper ('@/components/ui/form'), not from 'react-hook-form'.",
   },

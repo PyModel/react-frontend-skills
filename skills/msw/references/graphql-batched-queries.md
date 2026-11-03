@@ -9,15 +9,17 @@ tags: graphql, batching, apollo, performance, advanced
 
 Create a custom handler for batched GraphQL queries when using Apollo Client's batch link or similar. Batched requests send multiple operations in a single HTTP request.
 
+On MSW 2.x: `import { graphql, http, HttpResponse, getResponse, bypass } from 'msw'` and `graphql.query('GetUser', resolver)` instead of `api.query`.
+
 **Incorrect (individual handlers don't match batches):**
 
 ```typescript
 // These won't match a batched request containing both queries
-graphql.query('GetUser', () => {
+api.query('GetUser', () => {
   return HttpResponse.json({ data: { user: { name: 'John' } } })
 })
 
-graphql.query('GetPosts', () => {
+api.query('GetPosts', () => {
   return HttpResponse.json({ data: { posts: [] } })
 })
 
@@ -27,7 +29,9 @@ graphql.query('GetPosts', () => {
 **Correct (batch handler with individual resolution):**
 
 ```typescript
-import { http, HttpResponse, getResponse, bypass } from 'msw'
+import { http, HttpResponse } from 'msw/http'
+import { bypass } from 'msw/utils/bypass'
+import { getResponse, type RequestHandler } from 'msw'
 
 export function batchedGraphQLQuery(url: string, handlers: RequestHandler[]) {
   return http.post(url, async ({ request }) => {
@@ -65,16 +69,19 @@ export function batchedGraphQLQuery(url: string, handlers: RequestHandler[]) {
 
 ```typescript
 // Usage
-import { graphql, HttpResponse } from 'msw'
+import { HttpResponse } from 'msw/http'
+import { graphql } from 'msw/graphql'
+
+const api = graphql.link('/graphql')
 import { batchedGraphQLQuery } from './batchedGraphQLQuery'
 
 const graphqlHandlers = [
-  graphql.query('GetUser', () => {
+  api.query('GetUser', () => {
     return HttpResponse.json({
       data: { user: { id: '1', name: 'John' } },
     })
   }),
-  graphql.query('GetPosts', () => {
+  api.query('GetPosts', () => {
     return HttpResponse.json({
       data: { posts: [{ id: '1', title: 'Post 1' }] },
     })

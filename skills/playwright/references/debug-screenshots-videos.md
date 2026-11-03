@@ -82,4 +82,13 @@ export default defineConfig({
 
 Artifact sizes vary substantially by viewport, duration, assets, and trace settings. Capture screenshots on failure, retain video selectively, and use `trace: 'on-first-retry'` or another deliberate policy. Measure CI artifact volume and apply retention limits rather than relying on fixed size estimates.
 
+**WebP snapshots (Playwright 1.64+):** `toHaveScreenshot` accepts a `.png` or `.webp` snapshot name (both lossless). To make unnamed screenshot assertions use WebP, set the default type:
+
+```typescript
+// playwright.config.ts
+export default defineConfig({
+  expect: { toHaveScreenshot: { type: 'webp' } },
+});
+```
+
 Reference: [Playwright Screenshots](https://playwright.dev/docs/screenshots)

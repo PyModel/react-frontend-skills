@@ -58,7 +58,7 @@ export function createMockUser(overrides: Partial<User> = {}): User {
 
 ```typescript
 // mocks/handlers/user.ts
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 import { createMockUser } from '../factories/user'
 
 export const userHandlers = [
@@ -79,8 +79,8 @@ export const userHandlers = [
 
 ```typescript
 // mocks/utils/withAuth.ts
-import { HttpResponse } from 'msw'
-import type { HttpResponseResolver } from 'msw'
+import { HttpResponse } from 'msw/http'
+import type { HttpResponseResolver } from 'msw/http'
 
 export function withAuth(resolver: HttpResponseResolver): HttpResponseResolver {
   return ({ request, ...rest }) => {

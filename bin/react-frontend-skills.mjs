@@ -15,8 +15,11 @@ const SKIPPED_DIRECTORIES = new Set([
   'coverage', 'storybook-static', 'playwright-report', 'test-results',
 ])
 const MAX_FILE_BYTES = 512 * 1024
-// Migration notes in comments name the old API on purpose; a hit there is noise.
-const COMMENT_LINE = /^\s*(?:\/\/|\/\*|\*|<!--)/
+// Comment syntax per file type. Elsewhere a `//` only counts at the start of a line (as before
+// masking existed), since CSS `url(https://…)` and Markdown prose use it as text.
+const LINE_COMMENT_FILES = /\.(?:[cm]?[jt]sx?|vue|svelte|astro|html|scss|sass|less|json)$/
+const BLOCK_COMMENT_FILES = /\.(?:[cm]?[jt]sx?|vue|svelte|astro|html|css|scss|sass|less|pcss|postcss|json)$/
+const HTML_COMMENT_FILES = /\.(?:html|vue|svelte|astro|mdx)$/
 const MAX_REPORTED_HITS = 200
 // Every installed skill's name + description rides in the agent's system prompt on every
 // message, so the budgets cap the whole pack, not each skill (tokens ≈ chars / 4).
@@ -92,10 +95,47 @@ function installedVersion(projectDir, name) {
   }
 }
 
-function major(version) {
-  // npm aliases ("npm:typescript@^7.0.2") carry the version after the last "@".
-  const spec = version?.startsWith('npm:') ? version.slice(version.lastIndexOf('@') + 1) : version
-  const match = /(\d+)(?:\.\d+)?/.exec(spec ?? '')
+// Without node_modules (pnpm or PnP before install, CI caches), npm's lockfile still records
+// the resolved version. ponytail: pnpm-lock.yaml and yarn.lock are not read; add a parser
+// when a user reports `unknown-version` on one of them.
+function lockedVersion(projectDir, name) {
+  const project = resolve(projectDir)
+  for (let dir = project; ; dir = dirname(dir)) {
+    let lock
+    try {
+      lock = readJson(join(dir, 'package-lock.json'))
+    } catch {
+      // Same rule as installedVersion: a malformed ancestor file must not abort detection.
+    }
+    const nested = relative(dir, project).split(sep).join('/')
+    // An ancestor lockfile speaks for the project only when it lists it as a workspace.
+    const covers = nested === '' || lock?.packages?.[nested] !== undefined
+    const version = covers
+      ? (lock?.packages?.[`${nested ? `${nested}/` : ''}node_modules/${name}`]?.version ??
+        lock?.packages?.[`node_modules/${name}`]?.version)
+      : undefined
+    if (version) return version
+    if (dirname(dir) === dir) return undefined
+  }
+}
+
+function installedMajor(version) {
+  const match = /^v?(\d+)\./.exec(version ?? '')
+  return match ? Number(match[1]) : undefined
+}
+
+// Only a range that pins one major ("19", "^19.1", "~19.1.0", "19.x", "=19.0.0") says which
+// major is meant. Open ranges (">=18", "^18 || ^19", "*"), tags, workspace:, catalog: and
+// versionless aliases do not, so they defer to the installed version.
+export function rangeMajor(range) {
+  let spec = range?.trim()
+  if (spec?.startsWith('npm:')) {
+    // "npm:typescript@^7.0.2" carries the range after the last "@"; index 4 is a scope marker.
+    const at = spec.lastIndexOf('@')
+    if (at <= 4) return undefined
+    spec = spec.slice(at + 1)
+  }
+  const match = /^(?:[\^~]|=)?v?(\d+)(?:\.(?:\d+|[xX*])){0,2}(?:-[\w.-]+)?$/.exec(spec ?? '')
   return match ? Number(match[1]) : undefined
 }
 
@@ -105,8 +145,8 @@ function resolvePackage(projectDir, manifest, packages) {
   const name = packages.find((candidate) => declaredRange(manifest, candidate))
   if (!name) return undefined
   const range = declaredRange(manifest, name)
-  const installed = installedVersion(projectDir, name)
-  const majors = [major(installed), major(range)].filter((value) => value !== undefined)
+  const installed = installedVersion(projectDir, name) ?? lockedVersion(projectDir, name)
+  const majors = [installedMajor(installed), rangeMajor(range)].filter((value) => value !== undefined)
   return {
     name,
     range,
@@ -145,7 +185,8 @@ export function detect(projectDir) {
 // An empty list (the project sits in a parent repo's ignored tree) falls back to walking the disk.
 function gitFiles(root) {
   try {
-    const output = execFileSync('git', ['ls-files', '-z', '--cached', '--others', '--exclude-standard'], {
+    // The project is untrusted: never let its git config run an fsmonitor hook.
+    const output = execFileSync('git', ['-c', 'core.fsmonitor=false', 'ls-files', '-z', '--cached', '--others', '--exclude-standard'], {
       cwd: root,
       encoding: 'utf8',
       maxBuffer: 256 * 1024 * 1024,
@@ -153,7 +194,8 @@ function gitFiles(root) {
     })
     const files = output
       .split('\0')
-      .filter((file) => file && !file.split('/').some((part) => SKIPPED_DIRECTORIES.has(part)))
+      // Dot-directories are skipped like the disk walk does; dotfiles (.postcssrc.json) stay.
+      .filter((file) => file && !file.split('/').slice(0, -1).some((part) => SKIPPED_DIRECTORIES.has(part) || part.startsWith('.')))
       .map((file) => ({ path: join(root, file), file }))
       .filter(({ path }) => existsSync(path))
     return files.length ? files : undefined
@@ -174,34 +216,91 @@ function* projectFiles(dir, root) {
   }
 }
 
+// Blank out comments, keeping offsets and newlines, so migration notes that name an old API
+// are not reported. Quotes are tracked so "https://…" survives; '…' and "…" end at a newline,
+// so a stray apostrophe in JSX text affects only its own line.
+// An unclosed /* or <!-- (a JS syntax error, or a regex literal like /[/*]/) masks only the
+// rest of its line, so a stray opener can never hide the remainder of the file.
+// ponytail: regex literals are not parsed; a `//` or `/*` inside one hides the rest of its line.
+export function maskComments(text, file) {
+  const lineComments = LINE_COMMENT_FILES.test(file)
+  const blockComments = BLOCK_COMMENT_FILES.test(file)
+  const htmlComments = HTML_COMMENT_FILES.test(file)
+  const lineEnd = (from) => {
+    const newline = text.indexOf('\n', from)
+    return newline === -1 ? text.length : newline
+  }
+  const closeAfter = (closer, from) => {
+    const close = text.indexOf(closer, from)
+    return close === -1 ? lineEnd(from) : close + closer.length
+  }
+  const atLineStart = (at) => /^[ \t]*$/.test(text.slice(text.lastIndexOf('\n', at - 1) + 1, at))
+  const out = text.split('')
+  let quote
+  for (let index = 0; index < text.length; index++) {
+    const char = text[index]
+    if (quote) {
+      if (char === '\\') index++
+      else if (char === quote || (char === '\n' && quote !== '`')) quote = undefined
+      continue
+    }
+    if (char === '\\') {
+      index++
+      continue
+    }
+    if (char === '"' || char === "'" || char === '`') {
+      quote = char
+      continue
+    }
+    let end
+    if (char === '/' && text[index + 1] === '*' && (blockComments || atLineStart(index))) {
+      end = blockComments ? closeAfter('*/', index + 2) : lineEnd(index)
+    } else if (char === '/' && text[index + 1] === '/' && (lineComments || atLineStart(index))) end = lineEnd(index)
+    else if (htmlComments && text.startsWith('<!--', index)) end = closeAfter('-->', index + 4)
+    else continue
+    for (let at = index; at < end; at++) if (out[at] !== '\n') out[at] = ' '
+    index = end - 1
+  }
+  return out.join('')
+}
+
+function projectFileMatches({ files, pattern }, root, rootFiles) {
+  return rootFiles.some((file) => {
+    if (!files.test(file)) return false
+    const path = join(root, file)
+    const stats = statSync(path)
+    return stats.isFile() && stats.size <= MAX_FILE_BYTES && pattern.test(maskComments(readFileSync(path, 'utf8'), file))
+  })
+}
+
 // Gate each check on the project: its package is declared, the installed major is at least
 // the check's `since`, and any `onlyIf` project file matches. `all` bypasses every gate.
 function selectChecks(root, { skill, all }) {
   const manifest = all ? undefined : projectManifest(root)
   const rootFiles = readdirSync(root)
   let skipped = 0
+  let unknown = 0
   const checks = CHECKS.filter((check) => {
     if (skill && check.skill !== skill) return false
     if (all) return true
     const found = resolvePackage(root, manifest, check.packages)
     if (!found) return false
-    if (check.since !== undefined && !(found.major >= check.since)) {
+    if (check.since !== undefined && found.major === undefined) {
+      unknown++
+      return false
+    }
+    if (check.since !== undefined && found.major < check.since) {
       skipped++
       return false
     }
-    return (
-      !check.onlyIf ||
-      rootFiles.some(
-        (file) => check.onlyIf.files.test(file) && check.onlyIf.pattern.test(readFileSync(join(root, file), 'utf8'))
-      )
-    )
+    return !check.onlyIf || projectFileMatches(check.onlyIf, root, rootFiles)
   })
-  return { checks, skipped }
+  return { checks, skipped, unknown }
 }
 
 export function scan(projectDir, { skill, all = false } = {}) {
   const root = resolve(projectDir)
-  const { checks, skipped } = selectChecks(root, { skill, all })
+  const { checks, skipped, unknown } = selectChecks(root, { skill, all })
   const hits = []
   let filesScanned = 0
   const files = checks.length ? (gitFiles(root) ?? projectFiles(root, root)) : []
@@ -213,14 +312,19 @@ export function scan(projectDir, { skill, all = false } = {}) {
     if (!stats.isFile() || stats.size > MAX_FILE_BYTES) continue
     filesScanned++
     const text = readFileSync(path, 'utf8')
+    const code = maskComments(text, file)
     for (const check of applicable) {
-      if (check.requires && !check.requires.test(text)) continue
-      // Match the whole file so multi-line imports and calls are caught; report the start line.
+      if (check.requires && !check.requires.test(code)) continue
+      // Match the whole file so multi-line imports and calls are caught; report the line of the
+      // first non-blank character, since a leading \s* in a pattern can start on earlier lines.
       const pattern = new RegExp(check.pattern.source, [...new Set(`${check.pattern.flags}gm`)].join(''))
-      for (const match of text.matchAll(pattern)) {
-        const lineStart = text.lastIndexOf('\n', match.index - 1) + 1
-        if (COMMENT_LINE.test(text.slice(lineStart, match.index + 1))) continue
-        const line = text.slice(0, match.index).split('\n').length
+      // Matches arrive in order, so count newlines incrementally instead of re-splitting the file.
+      let line = 1
+      let counted = 0
+      for (const match of code.matchAll(pattern)) {
+        const start = match.index + Math.max(0, match[0].search(/\S/))
+        for (let at = code.indexOf('\n', counted); at !== -1 && at < start; at = code.indexOf('\n', at + 1)) line++
+        counted = start
         const key = `${file}:${line}:${check.id}`
         if (seen.has(key)) continue
         seen.add(key)
@@ -234,7 +338,7 @@ export function scan(projectDir, { skill, all = false } = {}) {
       }
     }
   }
-  return { checks: checks.length, skipped, filesScanned, hits }
+  return { checks: checks.length, skipped, unknown, filesScanned, hits }
 }
 
 function frontmatter(text) {
@@ -259,7 +363,8 @@ export function lint(skillsDir = SKILLS_DIR) {
       at('missing SKILL.md')
       continue
     }
-    const text = readFileSync(join(dir, 'SKILL.md'), 'utf8')
+    // Normalize CRLF (Windows checkouts with autocrlf) so frontmatter fences still match.
+    const text = readFileSync(join(dir, 'SKILL.md'), 'utf8').replace(/\r\n?/g, '\n')
     const meta = frontmatter(text)
     if (meta === undefined) {
       at('SKILL.md has no closed frontmatter')
@@ -354,7 +459,7 @@ function main(argv) {
     else {
       printTable(rows, ['skill', 'package', 'installed', 'range', 'target', 'status'])
       if (rows.some((row) => row.status === 'older-major')) {
-        console.log('\nolder-major: the skill targets a newer major; apply its migration rules only if upgrading.')
+        console.log('\nolder-major: the skill targets a newer major. Write code for the installed major (follow the skill\'s notes for that version) and apply migration rules only if upgrading.')
       }
       if (rows.some((row) => row.status === 'range-mismatch')) {
         console.log('range-mismatch: the resolved install is a different major than package.json declares; reinstall first.')
@@ -382,6 +487,12 @@ function main(argv) {
       )
       if (result.skipped) {
         console.log(`${result.skipped} check(s) skipped: installed major predates them (see detect; --all runs them)`)
+      }
+      if (result.unknown) {
+        console.log(
+          `${result.unknown} check(s) skipped: version unknown (tag, workspace or catalog range and no install; ` +
+            'install dependencies, or --all runs them)'
+        )
       }
     }
     return result.hits.length ? 1 : 0

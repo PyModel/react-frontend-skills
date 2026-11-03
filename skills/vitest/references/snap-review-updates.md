@@ -43,14 +43,14 @@ git diff --cached **/*.test.ts
 git add -A && git commit -m "Update user serialization to include email field"
 ```
 
-**Interactive snapshot update:**
+**Interactive snapshot review (Vitest 5.1+):**
 
 ```bash
-# Watch mode allows reviewing each update
+# When snapshots fail in watch mode:
 vitest --watch
 
-# Press 'u' to update all snapshots
-# Or use 'i' for interactive update (one at a time)
+# Press 'u' to update all of them at once (no review)
+# Press 'i' to review the failed snapshots one at a time and accept each change individually
 ```
 
 **CI protection:**

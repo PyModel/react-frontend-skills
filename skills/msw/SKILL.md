@@ -1,11 +1,33 @@
 ---
 name: msw
-description: MSW 2 API mocking for tests.
+description: MSW 3 API mocking for tests.
 ---
 
 # MSW Best Practices
 
-Comprehensive API mocking guide for MSW v2 applications (current: MSW 2.15), designed for AI agents and LLMs. Contains 48 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
+Comprehensive API mocking guide for MSW v3 applications (current: MSW 3.0), designed for AI agents and LLMs. Contains 51 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
+
+## Check the Version First
+
+Before writing any code, read the `msw` version in `package.json` (or run `npx -y @pymodel/react-frontend-skills detect`).
+
+- **3.x:** follow the rules as written.
+- **2.x:** write 2.x code using the left column below. Do not migrate the project to 3.x unless the user asks. Rule code samples use 3.x; translate them with this table and each rule's "On MSW 2.x" line.
+
+| Area | MSW 2.x | MSW 3.x |
+|------|---------|---------|
+| Handler imports | `import { http, HttpResponse, graphql, ws, sse, delay, bypass, passthrough } from 'msw'` | `'msw/http'` (`http`, `HttpResponse`), `'msw/graphql'`, `'msw/ws'`, `'msw/sse'`, `'msw/utils/delay'`, `'msw/utils/bypass'`, `'msw/utils/passthrough'` |
+| Unhandled option | `onUnhandledRequest: 'error'` | `onUnhandledFrame: 'error'` |
+| Unhandled callback | `onUnhandledRequest(request, print) { print.warning() }` | `onUnhandledFrame({ frame, defaults }) { defaults.warn() }`; request at `frame.data.request` when `frame.protocol === 'http'` |
+| GraphQL handlers | `graphql.query('GetUser', resolver)` (also `.mutation`, `.operation`) | `graphql.link(url).query('GetUser', resolver)` |
+| GraphQL subscriptions | not available | `graphql.link(url).subscription(name, ({ subscription }) => subscription.publish(...))` |
+| WebSocket lifecycle event | `server.events.on('connection', listener)` | `server.events.on('websocket:connection', listener)` |
+| Stop the worker | `worker.stop()` (sync) | `await worker.stop()` |
+| Resolve a request manually | `handleRequest(request, requestId, handlers, options, emitter)` from `'msw'` | `getResponse(handlers, request)` from `'msw'` |
+| Vite worker serving | `npx msw init public/ --save` | `msw()` plugin from `'msw/vite'` (optional) |
+| Node.js | 18+ | 22+ (`engines: >=22.12.0`) |
+
+`setupServer` (`'msw/node'`), `setupWorker` (`'msw/browser'`), `HttpResponse` usage, `ws.link(url).addEventListener('connection', …)` and `server.use()`/`resetHandlers()` are the same in both.
 
 ## When to Apply
 
@@ -14,6 +36,7 @@ Reference these guidelines when:
 - Writing or organizing request handlers
 - Configuring test environments with MSW
 - Mocking REST or GraphQL APIs
+- Migrating from MSW 2.x to 3.x
 - Debugging handler matching issues
 - Testing error states and edge cases
 
@@ -35,11 +58,13 @@ Reference these guidelines when:
 ### 1. Setup & Initialization (CRITICAL)
 
 - `setup-server-node-entrypoint` - Use correct entrypoint for Node.js (msw/node)
+- `setup-v3-handler-entrypoints` - Import handlers and utilities from msw/http, msw/graphql, msw/ws, msw/sse, msw/utils/*
 - `setup-lifecycle-hooks` - Configure server lifecycle in test setup
 - `setup-worker-script-commit` - Commit worker script to version control
-- `setup-node-version` - Require Node.js 18+ for MSW v2
-- `setup-unhandled-requests` - Configure unhandled request behavior
-- `setup-typescript-config` - Configure TypeScript for MSW v2
+- `setup-vite-plugin` - Serve the worker and enable mocking with the msw/vite plugin
+- `setup-node-version` - Require Node.js 22+ for MSW v3
+- `setup-unhandled-requests` - Configure unhandled request behavior with onUnhandledFrame
+- `setup-typescript-config` - Configure TypeScript for MSW v3
 
 ### 2. Handler Architecture (CRITICAL)
 
@@ -47,7 +72,7 @@ Reference these guidelines when:
 - `handler-domain-grouping` - Group handlers by domain
 - `handler-absolute-urls` - Use absolute URLs in handlers
 - `handler-shared-resolvers` - Extract shared response logic into resolvers
-- `handler-v2-response-syntax` - Use MSW v2 response syntax
+- `handler-v2-response-syntax` - Use HttpResponse syntax, not v1 res(ctx)
 - `handler-request-body-parsing` - Explicitly parse request bodies
 - `handler-resolver-argument` - Destructure resolver arguments correctly
 - `handler-reusability-environments` - Share handlers across environments
@@ -81,11 +106,12 @@ Reference these guidelines when:
 
 ### 6. GraphQL Mocking (MEDIUM)
 
-- `graphql-operation-handlers` - Use operation name for GraphQL matching
+- `graphql-operation-handlers` - Define operations on a graphql.link() by operation name
 - `graphql-error-responses` - Return GraphQL errors in correct format
 - `graphql-batched-queries` - Handle batched GraphQL queries
 - `graphql-variables-access` - Access GraphQL variables correctly
 - `graphql-schema-first` - Resolve operations against a GraphQL schema
+- `graphql-subscriptions` - Mock GraphQL subscriptions with link.subscription()
 
 ### 7. Advanced Patterns (MEDIUM)
 

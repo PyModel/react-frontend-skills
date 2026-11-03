@@ -31,7 +31,7 @@ export const handlers = [
 
 ```typescript
 // mocks/handlers/user.ts
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 export const userHandlers = [
   http.get('/api/user', () => {
@@ -49,7 +49,7 @@ export const userHandlers = [
 
 ```typescript
 // mocks/handlers/auth.ts
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 export const authHandlers = [
   http.post('/api/login', async ({ request }) => {

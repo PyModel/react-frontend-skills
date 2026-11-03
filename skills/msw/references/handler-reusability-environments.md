@@ -28,7 +28,7 @@ export const testHandlers = [
 
 ```typescript
 // mocks/handlers.ts - single source of truth
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 export const handlers = [
   http.get('/api/user', () => {

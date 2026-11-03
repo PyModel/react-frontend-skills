@@ -5,7 +5,7 @@ description: Tailwind CSS v4 styling and configuration.
 
 # Tailwind Labs Tailwind CSS v4 Best Practices
 
-Comprehensive performance optimization guide for Tailwind CSS v4 applications, maintained by Tailwind Labs. Contains 42 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
+Comprehensive performance optimization guide for Tailwind CSS v4 applications, maintained by Tailwind Labs. Contains 43 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation. Current: Tailwind CSS 4.3.4.
 
 ## When to Apply
 
@@ -35,6 +35,7 @@ Reference these guidelines when:
 
 - [`build-vite-plugin`](references/build-vite-plugin.md) - Use Vite Plugin Over PostCSS
 - [`build-css-import`](references/build-css-import.md) - Use CSS Import Over @tailwind Directives
+- [`build-turbopack-loader`](references/build-turbopack-loader.md) - Use the Turbopack Loader in Next.js
 - [`build-content-detection`](references/build-content-detection.md) - Leverage Automatic Content Detection
 - [`build-node-version`](references/build-node-version.md) - Use Node.js 20+ for the upgrade tool
 - [`build-postcss-simplify`](references/build-postcss-simplify.md) - Remove Redundant PostCSS Plugins

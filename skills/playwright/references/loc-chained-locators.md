@@ -67,6 +67,20 @@ await page.getByRole('button', { name: 'Menu' }).visible().click();
 page.getByRole('button', { name: 'Menu' }).filter({ visible: false });
 ```
 
+**Scope an existing locator with `.within()` (Playwright 1.64+):**
+
+`locator.within(parent)` combines two locators you already have, reading as "this button, within that dialog". Relative locators such as `.nth()` or `.first()` resolve inside each parent separately.
+
+```typescript
+const saveButton = page.getByRole('button', { name: 'Save' });
+const dialog = page.getByTestId('settings-dialog');
+await saveButton.within(dialog).click();
+
+// nth(2) is the third cell of every row, not the third cell on the page
+const thirdColumn = page.getByRole('cell').nth(2).within(page.getByRole('row'));
+await expect(thirdColumn).toHaveText(['Apple', 'Banana', 'Cherry']);
+```
+
 **Combining multiple filters:**
 
 ```typescript

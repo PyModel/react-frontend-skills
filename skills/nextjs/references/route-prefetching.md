@@ -68,4 +68,4 @@ export function ProductCard({ product }) {
 
 **Note:** In production, prefetching only loads the shared layout and static portions of the route.
 
-**Next.js 16.3 preview changes this model:** with `partialPrefetching: true`, Next.js prefetches one reusable shell per route (fetched once, cached across links) instead of per link, and `prefetch={true}` becomes an opt-in for deeper per-link prefetching. Slow navigations become dev errors under `cacheComponents: true` — see [route-partial-prefetching](route-partial-prefetching.md) and [route-instant-navigations](route-instant-navigations.md).
+**Next.js 16.3+ changes this model (stable in 16.4, default in 17):** with `partialPrefetching: true`, Next.js prefetches one reusable shell per route (fetched once, cached across links) instead of per link, and `prefetch={true}` becomes an opt-in for deeper per-link prefetching. Slow navigations become dev errors under `cacheComponents: true` — see [route-partial-prefetching](route-partial-prefetching.md) and [route-instant-navigations](route-instant-navigations.md).

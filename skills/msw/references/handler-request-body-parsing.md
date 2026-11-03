@@ -1,20 +1,20 @@
 ---
 title: Explicitly Parse Request Bodies
 impact: CRITICAL
-impactDescription: v2 no longer auto-parses bodies; missing parsing returns undefined
+impactDescription: v2+ no longer auto-parses bodies; missing parsing returns undefined
 tags: handler, request, body, parsing, json
 ---
 
 ## Explicitly Parse Request Bodies
 
-MSW v2 does not automatically parse request bodies based on Content-Type. You must explicitly call `.json()`, `.text()`, `.formData()`, or `.arrayBuffer()` on the request object.
+MSW v2 and v3 do not automatically parse request bodies based on Content-Type. You must explicitly call `.json()`, `.text()`, `.formData()`, or `.arrayBuffer()` on the request object.
 
 **Incorrect (assuming auto-parsed body):**
 
 ```typescript
 // MSW v1 pattern - body was auto-parsed
 http.post('/api/user', ({ request }) => {
-  const body = request.body  // a ReadableStream in v2, not parsed data
+  const body = request.body  // a ReadableStream in v2/v3, not parsed data
   return HttpResponse.json({ id: '1', ...body })
 })
 ```
@@ -22,7 +22,7 @@ http.post('/api/user', ({ request }) => {
 **Correct (explicit body parsing):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 export const handlers = [
   // JSON body

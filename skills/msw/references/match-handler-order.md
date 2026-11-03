@@ -28,7 +28,7 @@ export const handlers = [
 **Correct (specific before general):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 export const handlers = [
   // Most specific handlers first

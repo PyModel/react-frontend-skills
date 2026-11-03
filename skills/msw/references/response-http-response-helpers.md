@@ -29,7 +29,7 @@ http.get('/api/user', () => {
 **Correct (HttpResponse static methods):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 export const handlers = [
   // JSON - sets Content-Type: application/json automatically

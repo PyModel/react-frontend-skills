@@ -1,5 +1,5 @@
 import { cp, readdir, rm, stat } from 'node:fs/promises'
-import { dirname, resolve } from 'node:path'
+import { basename, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -38,7 +38,8 @@ async function prepare() {
   await rm(packagedSkills, { recursive: true, force: true })
   await cp(sourceSkills, packagedSkills, {
     recursive: true,
-    filter: (source) => !source.endsWith('.DS_Store'),
+    // Skip dot entries (.DS_Store, tool state such as .claude/): the catalog never serves them.
+    filter: (source) => source === sourceSkills || !basename(source).startsWith('.'),
   })
   await assertSkillsDirectory(packagedSkills, skillNames)
 }

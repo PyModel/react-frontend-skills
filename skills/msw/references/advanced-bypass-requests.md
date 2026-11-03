@@ -9,6 +9,8 @@ tags: advanced, bypass, passthrough, real-api, proxy
 
 Use `bypass()` to mark requests that should skip MSW interception and hit the real server. This enables hybrid scenarios where some APIs are mocked and others are real.
 
+On MSW 2.x: `import { http, HttpResponse, bypass, passthrough } from 'msw'`.
+
 **Incorrect (request creates infinite loop):**
 
 ```typescript
@@ -23,7 +25,8 @@ http.get('/api/user', async () => {
 **Correct (bypass MSW interception):**
 
 ```typescript
-import { http, HttpResponse, bypass } from 'msw'
+import { http, HttpResponse } from 'msw/http'
+import { bypass } from 'msw/utils/bypass'
 
 export const handlers = [
   // Proxy to real API and modify response
@@ -56,7 +59,8 @@ export const handlers = [
 **Using passthrough() for unconditional passthrough:**
 
 ```typescript
-import { http, passthrough } from 'msw'
+import { http } from 'msw/http'
+import { passthrough } from 'msw/utils/passthrough'
 
 export const handlers = [
   // Always pass through to real API

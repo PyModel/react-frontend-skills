@@ -1,36 +1,17 @@
 ---
-title: Require Node.js 18+ for MSW v2
+title: Require Node.js 22+ for MSW v3
 impact: CRITICAL
-impactDescription: MSW v2 requires Node 18+; older versions cause complete failure
+impactDescription: MSW v3 drops Node 18 and 20; older versions are unsupported
 tags: setup, node, version, requirements, compatibility
 ---
 
-## Require Node.js 18+ for MSW v2
+## Require Node.js 22+ for MSW v3
 
-MSW v2 sets Node.js 18.0.0 as the minimum supported version. Older versions lack native `fetch` and other required APIs, causing complete mocking failure.
+MSW 3 sets Node.js 22 as the minimum supported version (the package's `engines` field is `>=22.12.0`) and tests against Node 22, 24 and 26. Node 18 and 20 are no longer supported.
+
+On MSW 2.x: the minimum is Node.js 18 (`"engines": { "node": ">=18.0.0" }`).
 
 **Incorrect (using unsupported Node version):**
-
-```json
-// package.json
-{
-  "engines": {
-    "node": ">=14.0.0"
-  }
-}
-```
-
-```bash
-# Node 16 - MSW v2 fails silently or throws cryptic errors
-$ node -v
-v16.20.0
-
-$ npm test
-# ReferenceError: fetch is not defined
-# or: Cannot read properties of undefined
-```
-
-**Correct (enforce Node 18+ requirement):**
 
 ```json
 // package.json
@@ -41,9 +22,29 @@ $ npm test
 }
 ```
 
+```bash
+# Node 20 - below MSW 3's supported range
+$ node -v
+v20.18.0
+
+$ npm install msw@3
+# npm warn EBADENGINE Unsupported engine { required: { node: '>=22.12.0' } }
+```
+
+**Correct (enforce Node 22+ requirement):**
+
+```json
+// package.json
+{
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}
+```
+
 ```yaml
 # .nvmrc
-18
+22
 ```
 
 ```yaml
@@ -53,20 +54,20 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        node-version: [22, 24]
 ```
 
 **Verify installation:**
 
 ```bash
 # Check Node version
-node -v  # Should be v18.x.x or higher
+node -v  # Should be v22.12.0 or higher
 
 # Check MSW version
-npm ls msw  # Should be v2.x.x
+npm ls msw  # Should be v3.x.x
 ```
 
 **When NOT to use this pattern:**
-- If stuck on Node 16, use MSW v1.x instead (with different API patterns)
+- If stuck on Node 18 or 20, stay on MSW 2.x (see the version table in SKILL.md)
 
-Reference: [MSW v2 Migration - Requirements](https://mswjs.io/docs/migrations/1.x-to-2.x/)
+Reference: [MSW 2.x → 3.x Migration - Node.js version](https://mswjs.io/docs/migrations/2.x-to-3.x#node-js-version)

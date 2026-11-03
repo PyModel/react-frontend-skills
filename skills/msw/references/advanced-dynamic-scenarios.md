@@ -21,7 +21,7 @@ http.get('/api/user', () => {
 **Correct (dynamic scenario switching):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 // Scenario state
 type Scenario = 'default' | 'premium' | 'expired' | 'error'
