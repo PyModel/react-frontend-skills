@@ -357,6 +357,13 @@ test('comment masking handles regex literals, template expressions and CSS url()
   assert.equal(masked('`a ${x // z.nativeEnum(R)\n} b` // drop').includes('nativeEnum'), false)
   assert.equal(masked('`${ {a: 1}.a } // keep`'), '`${ {a: 1}.a } // keep`')
   assert.equal(masked('a { b: url(http://x.dev/a.png) } // drop', 'a.scss').trimEnd(), 'a { b: url(http://x.dev/a.png) }')
+  // A slash after JSX or template braces is markup, not a regex, so the comment after it still masks.
+  assert.equal(masked('<Foo a={b} /> {/*\n  z.nativeEnum(R)\n*/}\nconst ok = 1', 'a.tsx').includes('nativeEnum'), false)
+  assert.equal(masked('return <Foo {...props} /> // z.nativeEnum(R)', 'a.jsx').includes('nativeEnum'), false)
+  assert.equal(masked('<p>{done}/{total} {/* z.nativeEnum(R) */}</p>', 'a.tsx').includes('nativeEnum'), false)
+  assert.equal(masked('<span>{{a}}/{{b}} <!-- z.nativeEnum --></span>', 'a.vue').includes('nativeEnum'), false)
+  assert.equal(masked('<style>\n.a { background: url(/bg.png); } /* legacy\n  .b { @apply !flex }\n*/\n</style>', 'a.vue').includes('!flex'), false)
+  assert.equal(masked('x = /a/* 2 // z.nativeEnum(R)').includes('nativeEnum'), false)
   for (const text of ['/', 'x = /', '`${', '`${ /[ ', 'url(', 'a { b: url(http:// }']) {
     for (const file of ['a.ts', 'a.scss']) assert.equal(masked(text, file).length, text.length, `${file}: ${text}`)
   }

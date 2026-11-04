@@ -21,9 +21,11 @@ const LINE_COMMENT_FILES = /\.(?:[cm]?[jt]sx?|vue|svelte|astro|html|scss|sass|le
 const BLOCK_COMMENT_FILES = /\.(?:[cm]?[jt]sx?|vue|svelte|astro|html|css|scss|sass|less|pcss|postcss|json)$/
 const HTML_COMMENT_FILES = /\.(?:html|vue|svelte|astro|mdx)$/
 const SCRIPT_FILES = /\.(?:[cm]?[jt]sx?|vue|svelte|astro|html|mdx)$/
-const STYLE_FILES = /\.(?:css|scss|sass|less|pcss|postcss)$/
+// Files that can hold CSS, so an unquoted url(/path) is skipped as text.
+const URL_FILES = /\.(?:css|scss|sass|less|pcss|postcss|html|vue|svelte|astro)$/
 // A `/` after one of these (or at the start of the text) opens a regex literal, not a division.
-const REGEX_PRECEDERS = new Set(['(', ',', '=', ':', '[', '!', '&', '|', '?', '{', '}', ';', '+', '-', '*', '%', '~', '^'])
+// `}` and `)` are left out: JSX `{b} />`, `{a}/{b}` and Vue `{{a}}/{{b}}` put a slash there.
+const REGEX_PRECEDERS = new Set(['(', ',', '=', ':', '[', '!', '&', '|', '?', '{', ';', '+', '-', '*', '%', '~', '^'])
 const MAX_REPORTED_HITS = 200
 // Every installed skill's name + description rides in the agent's system prompt on every
 // message, so the budgets cap the whole pack, not each skill (tokens ≈ chars / 4).
@@ -260,15 +262,16 @@ export function maskComments(text, file) {
     return at === 0 || text[at - 1] === '\n'
   }
   const script = SCRIPT_FILES.test(file)
-  const style = STYLE_FILES.test(file)
-  // End of a one-line regex literal opened at `from`, or -1 when the line ends first.
+  const urls = URL_FILES.test(file)
+  // End of a one-line regex literal opened at `from`, or -1 when the line ends first or the
+  // closing slash would start a `//` or `/*` comment (then it was never a regex).
   const regexEnd = (from) => {
     let inClass = false
     for (let at = from + 1; at < text.length && text[at] !== '\n'; at++) {
       if (text[at] === '\\') at++
       else if (text[at] === '[') inClass = true
       else if (text[at] === ']') inClass = false
-      else if (text[at] === '/' && !inClass) return at
+      else if (text[at] === '/' && !inClass) return text[at + 1] === '/' || text[at + 1] === '*' ? -1 : at
     }
     return -1
   }
@@ -318,7 +321,7 @@ export function maskComments(text, file) {
       }
       plainUntil = lineEnd(index)
     }
-    if (index >= plainUntil && style && /^url\([ \t]*[^'"\s)]/.test(text.slice(index, index + 6))) {
+    if (index >= plainUntil && urls && !/[\w-]/.test(text[index - 1] ?? '') && /^url\([ \t]*[^'"\s)]/.test(text.slice(index, index + 6))) {
       const end = lineEnd(index)
       const close = find(')', index)
       if (close !== -1 && close < end) {
