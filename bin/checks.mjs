@@ -208,7 +208,7 @@ export const CHECKS = [
     files: MARKUP,
     // Second branch: class helpers. Whole string literals are consumed as units, so the
     // captured quote always opens a string and `!open && "x"` outside a string never matches.
-    pattern: /\bclass(?:Name)?\s*=\s*(?:\{[^}"'`]*)?["'`](?:[^"'`]*\s)?!-?[a-z][\w:-]*|\b(?:cn|clsx|cva|twMerge|twJoin|classNames|classnames)\((?:[^()"'`]|\([^()]*\)|"[^"\n]*"|'[^'\n]*'|`[^`]*`)*?(["'`])(?:(?:(?!\1)[^\n])*?\s)?!-?[a-z][\w:-]*/,
+    pattern: /\bclass(?:Name)?\s*=\s*(?:\{[^}"'`]*)?["'`](?:[^"'`]*\s)?!-?[a-z][\w:-]*|\b(?:cn|clsx|cva|twMerge|twJoin|classNames|classnames)\((?:[^()"'`]|\((?:[^()]|\([^()]*\))*\)|"[^"\n]*"|'[^'\n]*'|`[^`]*`)*?(["'`])(?:(?:(?!\1)[^\n])*?\s)?!-?[a-z][\w:-]*/,
     message: "Tailwind v4 moves the important modifier to the end: !flex -> flex!, !hover:bg-x -> hover:bg-x!.",
   },
   {

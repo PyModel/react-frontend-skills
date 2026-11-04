@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process'
-import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { mkdtemp, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, resolve } from 'node:path'
 import { promisify } from 'node:util'
@@ -30,20 +30,16 @@ async function pathExists(path) {
 async function main() {
   const source = await loadCatalog({ skillsDir: resolve(packageRoot, '..', 'skills') })
   const installationRoot = await mkdtemp(joinTempPath())
-  const { name, version } = JSON.parse(await readFile(resolve(packageRoot, 'package.json'), 'utf8'))
-  // npm pack's deterministic file name; removed on exit only if this run created it.
-  const expectedTarball = resolve(packageRoot, `${name.replace(/^@/, '').replace('/', '-')}-${version}.tgz`)
-  const preexisting = await pathExists(expectedTarball)
-  let tarballPath
   let client
 
   try {
-    const { stdout } = await npm(['pack', '--json', '--silent'], { cwd: packageRoot })
+    // Pack into the temp dir, so a tarball already sitting in the package root is never touched.
+    const { stdout } = await npm(['pack', '--json', '--silent', '--pack-destination', installationRoot], { cwd: packageRoot })
     // npm 10/11 print an array of results; npm 12 prints an object keyed by package name.
     const packResult = JSON.parse(stdout)
     const [packed] = Array.isArray(packResult) ? packResult : Object.values(packResult)
     if (!packed?.filename) throw new Error(`Unexpected npm pack --json output: ${stdout.slice(0, 200)}`)
-    tarballPath = resolve(packageRoot, packed.filename)
+    const tarballPath = resolve(installationRoot, packed.filename)
     const dotfiles = packed.files.map((file) => file.path).filter((path) => /(^|\/)\./.test(path))
     if (dotfiles.length) throw new Error(`Tarball ships dotfiles: ${dotfiles.join(', ')}`)
 
@@ -92,9 +88,6 @@ async function main() {
     process.stdout.write('installed tarball MCP smoke: PASS\n')
   } finally {
     await client?.close().catch(() => undefined)
-    // Also covers a pack whose output could not be parsed; never deletes a tarball that was there before.
-    if (tarballPath) await rm(tarballPath, { force: true })
-    if (!preexisting) await rm(expectedTarball, { force: true })
     await rm(installationRoot, { recursive: true, force: true })
     await rm(generatedData, { recursive: true, force: true })
   }

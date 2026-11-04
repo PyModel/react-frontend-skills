@@ -74,6 +74,7 @@ export default defineConfig({
     name: test-artifacts
     path: |
       test-results/**/*.png
+      test-results/**/*.webp
       test-results/**/*.webm
     retention-days: 7
 ```

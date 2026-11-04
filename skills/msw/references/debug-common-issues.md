@@ -45,7 +45,7 @@ export const handlers = [
 ## Common Issues Quick Reference
 
 **Issue: "fetch is not defined"**
-- Fix: Upgrade Node.js to 22+ for MSW 3 (18+ for MSW 2)
+- Fix: Upgrade Node.js to 22.12+ for MSW 3 (18+ for MSW 2)
 
 **Issue: Body parsing hangs with fake timers**
 ```typescript

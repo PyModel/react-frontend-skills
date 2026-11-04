@@ -7,7 +7,7 @@ tags: setup, typescript, configuration, types, compiler
 
 ## Configure TypeScript for MSW v3
 
-MSW v3 requires TypeScript 5.9+ (optional peer dependency `typescript: >=5.9.x`) for proper type inference. Its subpath entrypoints (`msw/http`, `msw/graphql`, …) resolve only through package `exports`, so `moduleResolution` must be `bundler`, `node16` or `nodenext`.
+MSW v3 requires TypeScript 5.9+ (optional peer dependency `typescript: >=5.9.x`) for proper type inference. Its subpath entrypoints (`msw/http`, `msw/graphql`, …) resolve only through package `exports`, so `moduleResolution` must be `bundler` (with `module: "ESNext"` or `"preserve"`), or `node16`/`nodenext` with the matching `module` value (`node16` with `node16`, `nodenext` with `nodenext`).
 
 On MSW 2.x: TypeScript 4.8+ and `import { http, HttpResponse } from 'msw'`.
 

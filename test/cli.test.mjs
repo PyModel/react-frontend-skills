@@ -250,6 +250,7 @@ test('check patterns match the removed API and leave current code alone', () => 
     ['tw4-leading-important-modifier', 'clsx("a", cond && "!mt-0 b")', true],
     ['tw4-leading-important-modifier', 'cn("a", !open && "b")', false],
     ['tw4-leading-important-modifier', 'cn("flex!")', false],
+    ['tw4-leading-important-modifier', "cn(getBase(foo(bar)), '!flex')", true],
     ['tw4-opacity-utilities-removed', 'class="border-opacity-50 ring-opacity-25"', true],
     ['tw4-opacity-utilities-removed', 'class="divide-opacity-50"', true],
     ['tw4-opacity-utilities-removed', 'class="placeholder-opacity-50"', true],
@@ -331,6 +332,56 @@ test('an ancestor package-lock.json counts only when it lists the project as a w
     JSON.stringify({ packages: { '': { workspaces: ['app'] }, app: {}, 'node_modules/react': { version: '19.3.1' } } })
   )
   assert.deepEqual([detect(join(root, 'app'))[0].installed, detect(join(root, 'app'))[0].status], ['19.3.1', 'ok'])
+})
+
+test('npm 6 lockfiles resolve versions from the root dependencies tree', (context) => {
+  const root = fixture(context, {
+    'package.json': { dependencies: { zod: 'latest' } },
+    'package-lock.json': { lockfileVersion: 1, dependencies: { zod: { version: '4.6.7' } } },
+  })
+  assert.deepEqual([detect(root)[0].installed, detect(root)[0].status], ['4.6.7', 'ok'])
+})
+
+test('checks ruled out by a project config flag are not counted as unknown', (context) => {
+  const files = { 'package.json': { dependencies: { next: 'latest' } } }
+  const without = scan(fixture(context, files)).unknown
+  const withFlag = scan(fixture(context, { ...files, 'next.config.ts': 'export default { cacheComponents: true }' })).unknown
+  assert.equal(withFlag - without, 1, 'only the config-enabled check adds to the unknown count')
+})
+
+test('comment masking handles regex literals, template expressions and CSS url()', () => {
+  const masked = (text, file = 'a.ts') => maskComments(text, file)
+  assert.equal(masked('const r = /[//]/; z.nativeEnum(R)'), 'const r = /[//]/; z.nativeEnum(R)')
+  assert.equal(masked('const half = a / 2 // z.nativeEnum(R)').trimEnd(), 'const half = a / 2')
+  assert.equal(masked("x = 'a' / 2 // drop").trimEnd(), "x = 'a' / 2")
+  assert.equal(masked('`a ${x // z.nativeEnum(R)\n} b` // drop').includes('nativeEnum'), false)
+  assert.equal(masked('`${ {a: 1}.a } // keep`'), '`${ {a: 1}.a } // keep`')
+  assert.equal(masked('a { b: url(http://x.dev/a.png) } // drop', 'a.scss').trimEnd(), 'a { b: url(http://x.dev/a.png) }')
+  // A slash after JSX or template braces is markup, not a regex, so the comment after it still masks.
+  assert.equal(masked('<Foo a={b} /> {/*\n  z.nativeEnum(R)\n*/}\nconst ok = 1', 'a.tsx').includes('nativeEnum'), false)
+  assert.equal(masked('return <Foo {...props} /> // z.nativeEnum(R)', 'a.jsx').includes('nativeEnum'), false)
+  assert.equal(masked('<p>{done}/{total} {/* z.nativeEnum(R) */}</p>', 'a.tsx').includes('nativeEnum'), false)
+  assert.equal(masked('<span>{{a}}/{{b}} <!-- z.nativeEnum --></span>', 'a.vue').includes('nativeEnum'), false)
+  assert.equal(masked('<style>\n.a { background: url(/bg.png); } /* legacy\n  .b { @apply !flex }\n*/\n</style>', 'a.vue').includes('!flex'), false)
+  assert.equal(masked('x = /a/* 2 // z.nativeEnum(R)').includes('nativeEnum'), false)
+  assert.equal(masked('return /[/*]/\nz.nativeEnum(R)\n// */').split('\n')[1], 'z.nativeEnum(R)')
+  assert.equal(masked('const total = sum.return / 2 // drop').trimEnd(), 'const total = sum.return / 2')
+  for (const text of ['/', 'x = /', '`${', '`${ /[ ', 'url(', 'a { b: url(http:// }']) {
+    for (const file of ['a.ts', 'a.scss']) assert.equal(masked(text, file).length, text.length, `${file}: ${text}`)
+  }
+})
+
+test('comment masking stays linear on hostile input', () => {
+  const inputs = [
+    ['x /*\n', 'a.ts'], ['<!--\n', 'a.html'], ['= /[', 'a.ts'], ['url(a\n', 'a.scss'],
+    ['url(a) ', 'a.scss'], ['a//', 'a.css'], ['a/*', 'a.md'], ['${', 'a.ts'],
+  ]
+  for (const [unit, file] of inputs) {
+    const text = unit.repeat(Math.ceil(400_000 / unit.length))
+    const started = performance.now()
+    maskComments(text, file)
+    assert.ok(performance.now() - started < 1000, `${file} ${JSON.stringify(unit)} took ${Math.round(performance.now() - started)}ms`)
+  }
 })
 
 test('brace-list patterns stay fast on unclosed braces', () => {
