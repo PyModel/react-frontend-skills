@@ -9,11 +9,13 @@ tags: graphql, errors, format, validation, response
 
 Return GraphQL errors in the standard `errors` array format. GraphQL errors are different from HTTP errors - they use status 200 with an `errors` field in the response body.
 
+On MSW 2.x: `import { graphql, HttpResponse } from 'msw'` and `graphql.query('GetUser', resolver)` instead of `api.query`.
+
 **Incorrect (HTTP-style error response):**
 
 ```typescript
 // GraphQL clients won't recognize this as a GraphQL error
-graphql.query('GetUser', () => {
+api.query('GetUser', () => {
   return HttpResponse.json(
     { error: 'User not found' },
     { status: 404 }
@@ -24,11 +26,14 @@ graphql.query('GetUser', () => {
 **Correct (GraphQL error format):**
 
 ```typescript
-import { graphql, HttpResponse } from 'msw'
+import { HttpResponse } from 'msw/http'
+import { graphql } from 'msw/graphql'
+
+const api = graphql.link('/graphql')
 
 export const handlers = [
   // Single error
-  graphql.query('GetUser', () => {
+  api.query('GetUser', () => {
     return HttpResponse.json({
       data: null,
       errors: [
@@ -43,7 +48,7 @@ export const handlers = [
   }),
 
   // Validation errors with paths
-  graphql.mutation('CreateUser', () => {
+  api.mutation('CreateUser', () => {
     return HttpResponse.json({
       data: null,
       errors: [
@@ -68,7 +73,7 @@ export const handlers = [
   }),
 
   // Partial success with errors
-  graphql.query('GetUsers', () => {
+  api.query('GetUsers', () => {
     return HttpResponse.json({
       data: {
         users: [
@@ -88,7 +93,7 @@ export const handlers = [
   }),
 
   // Authentication error
-  graphql.query('GetPrivateData', () => {
+  api.query('GetPrivateData', () => {
     return HttpResponse.json({
       data: null,
       errors: [
@@ -108,7 +113,7 @@ export const handlers = [
 
 ```typescript
 // For complete request failures, use HTTP error
-graphql.query('GetUser', () => {
+api.query('GetUser', () => {
   return HttpResponse.error()  // Network failure
 })
 ```

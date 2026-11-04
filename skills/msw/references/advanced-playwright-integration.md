@@ -56,7 +56,7 @@ export const test = testBase.extend<Fixtures>({
 **Correct (override handlers from the test itself):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 import { test } from './playwright.setup.js'
 
 test('displays the user dashboard', async ({ network, page }) => {

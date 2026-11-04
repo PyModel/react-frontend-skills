@@ -52,6 +52,6 @@ afterAll(() => server.close())
 ```
 
 **When NOT to use this pattern:**
-- Browser-based tests use `worker.start()` and `worker.stop()` instead
+- Browser-based tests use `await worker.start()` and `await worker.stop()` instead (on MSW 2.x `worker.stop()` is synchronous)
 
 Reference: [MSW Quick Start - Test Setup](https://mswjs.io/docs/quick-start)

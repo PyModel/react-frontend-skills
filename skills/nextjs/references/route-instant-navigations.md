@@ -7,9 +7,9 @@ tags: route, navigation, instant, suspense, use-cache, cache-components, instant
 
 ## Make Navigations Instant with Stream, Cache, or Block
 
-> **Next.js 16.3 (preview, `next@preview`).** Requires `cacheComponents: true` in `next.config.ts`. Both the feature flags (`cacheComponents`, `partialPrefetching`) are planned to become defaults in a future major release.
+> **Next.js 16.3+ (the `instant` export is stable since 16.3; Cache Components is recommended and on by default in `create-next-app` since 16.4).** Requires `cacheComponents: true` in `next.config.ts`. Both flags (`cacheComponents`, `partialPrefetching`) become defaults in Next.js 17.
 
-In a server-driven app, a navigation that `await`s data on the server blocks until the network roundtrip completes: click → nothing → page. Next.js 16.3 makes slow navigations a development error (the **Instant Insights** panel) and gives you three ways to resolve each one:
+In a server-driven app, a navigation that `await`s data on the server blocks until the network roundtrip completes: click → nothing → page. Next.js makes slow navigations a development error (the **Instant Insights** panel) and gives you three ways to resolve each one:
 
 - **Stream** with `<Suspense>` — the user instantly sees a loading state, then UI streams in.
 - **Cache** with `'use cache'` — the user instantly sees previously cached UI reused between requests.
@@ -94,4 +94,4 @@ test('product title is available immediately', async ({ page }) => {
 
 - Enable with `cacheComponents: true`; combine with `partialPrefetching: true` for the shell prefetching that makes the first click instant (see [route-partial-prefetching](route-partial-prefetching.md)).
 - The **Navigation Inspector** in Next.js DevTools pauses a navigation at the shell so you can see what displays instantly versus after the network hop.
-- Known preview issues: Instant Insights tooling is unreliable in Safari — use Chrome or Firefox in development. Accessing `params` inside a shell with Partial Prefetching can block without being reported (fixed during the preview cycle).
+- Instant Insights validation runs in development only and the `level` option currently accepts only `'warning'`. Dev prefetching is not performed, so verify feel on `next start`.

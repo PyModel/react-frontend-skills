@@ -26,7 +26,7 @@ http.get('/api/user', () => {
 **Correct (explicit error types):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 // HTTP 4xx - Client errors
 http.get('/api/user/:id', () => {

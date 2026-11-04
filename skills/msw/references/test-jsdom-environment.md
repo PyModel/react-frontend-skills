@@ -60,6 +60,8 @@ JSDOM uses browser export conditions by default, causing packages like MSW to us
 
 `jest-fixed-jsdom` and Vitest correctly handle the Node.js/browser boundary.
 
+MSW 3 is ESM-only, so a Jest setup must be able to load ESM packages; Vitest needs no change.
+
 **When NOT to use this pattern:**
 - Vitest users don't need this; Vitest handles environments correctly
 - Node-only tests (no DOM) should use `testEnvironment: 'node'`

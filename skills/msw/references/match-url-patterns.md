@@ -23,7 +23,7 @@ http.get('/api/user/123', () => {
 **Correct (parameterized URL):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 export const handlers = [
   // Matches /api/user/123, /api/user/abc, etc.

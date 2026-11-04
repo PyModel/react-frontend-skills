@@ -23,7 +23,7 @@ http.all('/api/user', () => {
 **Correct (method-specific handlers):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 export const handlers = [
   // GET - retrieve resource

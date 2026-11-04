@@ -30,7 +30,7 @@ it('retries after failure', async () => {
 **Correct (one-time handler for first request):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 it('retries after failure and succeeds', async () => {
   server.use(

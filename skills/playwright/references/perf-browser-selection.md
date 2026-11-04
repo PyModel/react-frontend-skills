@@ -81,6 +81,28 @@ jobs:
           FULL_TEST: true
 ```
 
+**Keep extra projects configured but off by default (Playwright 1.64+):**
+
+Set `default: false` on a project to keep it in the config without running it on a plain `npx playwright test`. Select it with `--project`; `--project="*"` runs every project.
+
+```typescript
+export default defineConfig({
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] }, default: false },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] }, default: false },
+  ],
+});
+```
+
+```bash
+npx playwright test                    # chromium only
+npx playwright test --project=firefox  # firefox
+npx playwright test --project="*"      # all three, for example on CI
+```
+
+This replaces the `isMainBranch ? [...] : []` project array above when the only difference is which projects run by default.
+
 **Run specific browser locally:**
 
 ```bash

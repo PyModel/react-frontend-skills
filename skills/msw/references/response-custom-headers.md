@@ -26,7 +26,7 @@ http.get('/api/data', () => {
 **Correct (explicit headers):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 export const handlers = [
   // Authentication with cookies

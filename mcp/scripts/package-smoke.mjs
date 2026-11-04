@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process'
-import { mkdtemp, rm, stat, writeFile } from 'node:fs/promises'
+import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, resolve } from 'node:path'
 import { promisify } from 'node:util'
@@ -11,7 +11,12 @@ import { loadCatalog } from '../src/catalog.js'
 const execute = promisify(execFile)
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const generatedData = resolve(packageRoot, 'data')
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+// Run npm's own CLI through node: Windows refuses to spawn npm.cmd without a shell.
+// `npm run` sets npm_execpath; run this script through `npm run test:package`.
+async function npm(args, options) {
+  if (!process.env.npm_execpath) throw new Error('Run through npm: npm run test:package')
+  return execute(process.execPath, [process.env.npm_execpath, ...args], { maxBuffer: 10 * 1024 * 1024, ...options })
+}
 
 async function pathExists(path) {
   try {
@@ -25,16 +30,22 @@ async function pathExists(path) {
 async function main() {
   const source = await loadCatalog({ skillsDir: resolve(packageRoot, '..', 'skills') })
   const installationRoot = await mkdtemp(joinTempPath())
+  const { name, version } = JSON.parse(await readFile(resolve(packageRoot, 'package.json'), 'utf8'))
+  // npm pack's deterministic file name; removed on exit only if this run created it.
+  const expectedTarball = resolve(packageRoot, `${name.replace(/^@/, '').replace('/', '-')}-${version}.tgz`)
+  const preexisting = await pathExists(expectedTarball)
   let tarballPath
   let client
 
   try {
-    const { stdout } = await execute(npmCommand, ['pack', '--json', '--silent'], {
-      cwd: packageRoot,
-      maxBuffer: 10 * 1024 * 1024,
-    })
+    const { stdout } = await npm(['pack', '--json', '--silent'], { cwd: packageRoot })
+    // npm 10/11 print an array of results; npm 12 prints an object keyed by package name.
     const packResult = JSON.parse(stdout)
-    tarballPath = resolve(packageRoot, packResult[0].filename)
+    const [packed] = Array.isArray(packResult) ? packResult : Object.values(packResult)
+    if (!packed?.filename) throw new Error(`Unexpected npm pack --json output: ${stdout.slice(0, 200)}`)
+    tarballPath = resolve(packageRoot, packed.filename)
+    const dotfiles = packed.files.map((file) => file.path).filter((path) => /(^|\/)\./.test(path))
+    if (dotfiles.length) throw new Error(`Tarball ships dotfiles: ${dotfiles.join(', ')}`)
 
     if (await pathExists(generatedData)) {
       throw new Error('postpack did not remove generated data')
@@ -44,21 +55,18 @@ async function main() {
       resolve(installationRoot, 'package.json'),
       JSON.stringify({ name: 'react-skills-mcp-smoke', private: true, type: 'module' })
     )
-    await execute(
-      npmCommand,
-      ['install', '--ignore-scripts', '--no-audit', '--no-fund', tarballPath],
-      { cwd: installationRoot, maxBuffer: 10 * 1024 * 1024 }
-    )
+    await npm(['install', '--ignore-scripts', '--no-audit', '--no-fund', tarballPath], { cwd: installationRoot })
 
-    const executable = resolve(
+    // Run the installed bin through node: Windows refuses to spawn .cmd shims without a shell.
+    const entry = resolve(
       installationRoot,
       'node_modules',
-      '.bin',
-      process.platform === 'win32'
-        ? 'react-frontend-skills-mcp.cmd'
-        : 'react-frontend-skills-mcp'
+      '@pymodel',
+      'react-frontend-skills-mcp',
+      'bin',
+      'react-frontend-skills-mcp.js'
     )
-    const transport = new StdioClientTransport({ command: executable })
+    const transport = new StdioClientTransport({ command: process.execPath, args: [entry] })
     client = new Client({ name: 'packaged-smoke-test', version: '1.0.0' })
     await client.connect(transport)
 
@@ -84,7 +92,9 @@ async function main() {
     process.stdout.write('installed tarball MCP smoke: PASS\n')
   } finally {
     await client?.close().catch(() => undefined)
+    // Also covers a pack whose output could not be parsed; never deletes a tarball that was there before.
     if (tarballPath) await rm(tarballPath, { force: true })
+    if (!preexisting) await rm(expectedTarball, { force: true })
     await rm(installationRoot, { recursive: true, force: true })
     await rm(generatedData, { recursive: true, force: true })
   }

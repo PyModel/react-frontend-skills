@@ -7,7 +7,7 @@ tags: msw, graphql, schema, operation
 
 ## Resolve Operations Against a GraphQL Schema
 
-Instead of hand-writing every mocked GraphQL response, execute intercepted operations against a real schema with the `graphql` package inside a `graphql.operation()` catch-all handler. Responses stay schema-valid as operations evolve, and resolvers live in one place.
+Instead of hand-writing every mocked GraphQL response, execute intercepted operations against a real schema with the `graphql` package inside an `.operation()` catch-all handler on a `graphql.link()`. Responses stay schema-valid as operations evolve, and resolvers live in one place.
 
 **Incorrect (hand-maintained response shapes per operation):**
 
@@ -15,10 +15,10 @@ Instead of hand-writing every mocked GraphQL response, execute intercepted opera
 // Every handler duplicates the response shape; a schema change
 // silently leaves stale mocks that no longer match production
 export const handlers = [
-  graphql.query('GetUser', () =>
+  api.query('GetUser', () =>
     HttpResponse.json({ data: { user: { id: '1', firstName: 'John' } } }),
   ),
-  graphql.query('GetUserWithPosts', () =>
+  api.query('GetUserWithPosts', () =>
     HttpResponse.json({
       data: { user: { id: '1', firstName: 'John', posts: [] } },
     }),
@@ -29,8 +29,11 @@ export const handlers = [
 **Correct (schema-first resolution):**
 
 ```typescript
-import { graphql, HttpResponse } from 'msw'
+import { HttpResponse } from 'msw/http'
+import { graphql } from 'msw/graphql'
 import { graphql as executeGraphql, buildSchema } from 'graphql'
+
+const api = graphql.link('/graphql')
 
 const schema = buildSchema(`
   type User {
@@ -43,22 +46,22 @@ const schema = buildSchema(`
   }
 `)
 
-const data = {
+const db = {
   users: [
-    { id: '1', name: 'John' },
-    { id: '2', name: 'Kate' },
+    { id: '1', firstName: 'John' },
+    { id: '2', firstName: 'Kate' },
   ],
 }
 
 export const handlers = [
-  graphql.operation(async ({ query, variables }) => {
+  api.operation(async ({ query, variables }) => {
     const { data, errors } = await executeGraphql({
       schema,
       source: query,
       variableValues: variables,
       rootValue: {
         user(args) {
-          return data.users.find((user) => user.id === args.id)
+          return db.users.find((user) => user.id === args.id)
         },
       },
     })
@@ -70,7 +73,8 @@ export const handlers = [
 
 **Notes:**
 
-- `graphql.operation()` matches every operation; place more specific named-operation handlers above it when you need per-test overrides.
-- The `graphql` package (`buildSchema`, `graphql()`) is a peer dependency you install alongside MSW.
+- `api.operation()` matches every operation; place more specific named-operation handlers above it when you need per-test overrides.
+- The `graphql` package (`buildSchema`, `graphql()`) is an optional peer dependency of MSW 3; install it yourself.
+- On MSW 2.x: `import { graphql, HttpResponse } from 'msw'` and `graphql.operation(resolver)` instead of `api.operation`.
 - Because resolution runs against the schema, invalid client queries surface real GraphQL `errors` in the mocked response — useful for testing error UI.
 - Pair with [graphql-operation-handlers](graphql-operation-handlers.md) for targeted overrides and [graphql-error-responses](graphql-error-responses.md) for error-shape rules.

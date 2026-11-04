@@ -91,7 +91,7 @@ npx -y @pymodel/react-frontend-skills scan     # deprecated/removed API usage �
 npx -y @pymodel/react-frontend-skills scan --skill zod --json
 ```
 
-`scan` runs its 31 checks only for packages declared in `package.json`, and only when both the declared range and the installed version are at or above the major where the old API went away (`--all` overrides every gate). Inside a git work tree it scans what git tracks, so `.gitignore`d copies and builds are skipped; comment lines never count. It exits `1` when it finds hits. Each hit names a rule ID, and the fix is in that skill's `references/<rule>.md` (or `rules/<rule>.md`).
+`scan` runs its 35 checks only for packages declared in `package.json`, and only when both the declared range and the installed version are at or above the major where the old API went away (`--all` overrides every gate). Open ranges such as `>=18` defer to the installed version; without `node_modules`, the version comes from `package-lock.json`. Checks whose version stays unknown (a `latest`, `workspace:` or `catalog:` range with no install) are skipped and counted separately. Inside a git work tree it scans what git tracks, so `.gitignore`d copies, builds and dot-directories are skipped; comments never count. It exits `1` when it finds hits. Each hit names a rule ID, and the fix is in that skill's `references/<rule>.md` (or `rules/<rule>.md`).
 
 `detect` reports `range-mismatch` when the resolved install is a different major than `package.json` declares (for example, a hoisted copy from a parent directory).
 
@@ -137,37 +137,37 @@ The `skills` CLI supports dozens of agents beyond the table above, among them Gi
 
 ### Audited version baseline
 
-This repository contains guidance, not runtime dependencies. Last re-audited on 2026-09-26 against these releases:
+This repository contains guidance, not runtime dependencies. Last re-audited on 2026-11-03 against these releases:
 
 | Area | Audited line |
 | --- | --- |
-| React | 19.3 (`react` 19.3.0) |
-| Next.js | 16.3 (`next` 16.3.6) |
+| React | 19.3 (`react` 19.3.1) |
+| Next.js | 16.4 (`next` 16.4.5) |
 | TypeScript | 7.0 (`typescript` 7.0.2) |
-| Tailwind CSS | 4.3 (`tailwindcss` 4.3.3) |
-| Vitest | 5.0 (`vitest` 5.0.2) |
-| Playwright | 1.63 (`@playwright/test` 1.63.0) |
-| MSW | 2.15 (`msw` 2.15.0) |
-| TanStack Query | 5.x (`@tanstack/react-query` 5.104.0) |
-| React Hook Form | 7.x (`react-hook-form` 7.89.0) |
-| Zod | 4.6 (`zod` 4.6.5) |
-| nuqs | 2.10 (`nuqs` 2.10.1) |
+| Tailwind CSS | 4.3 (`tailwindcss` 4.3.4) |
+| Vitest | 5.1 (`vitest` 5.1.0) |
+| Playwright | 1.64 (`@playwright/test` 1.64.1) |
+| MSW | 3.0 (`msw` 3.0.3); 2.x differences noted per rule |
+| TanStack Query | 5.x (`@tanstack/react-query` 5.105.3) |
+| React Hook Form | 7.x (`react-hook-form` 7.91.0) |
+| Zod | 4.6 (`zod` 4.6.7) |
+| nuqs | 2.10 (`nuqs` 2.10.2) |
 
-For each package that changed since the 2026-08-20 baseline, every API that its release notes and migration guides list as deprecated, removed, renamed or given a new default was searched for across the rule files, and each matching section was read. Rules were not re-read line by line. New features the rules don't cover yet are not part of the audit. If your project pins a different version, trust that version's official docs over this baseline.
+For each package that changed since the 2026-09-26 baseline, every API that its release notes and migration guides list as deprecated, removed, renamed or given a new default was searched for across the rule files, and each matching section was read. Rules were not re-read line by line. New features the rules don't cover yet are not part of the audit. If your project pins a different version, trust that version's official docs over this baseline.
 
 ### Core framework
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
 | [react](skills/react) | 44 | React 19 concurrent rendering, Server Components, hook optimization |
-| [nextjs](skills/nextjs) | 42 | Next.js 16 App Router, caching, server components, routing |
+| [nextjs](skills/nextjs) | 43 | Next.js 16 App Router, caching, server components, routing |
 | [typescript](skills/typescript) | 44 | TypeScript 7 migration, compiler config, type safety, async patterns |
 
 ### UI and styling
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
-| [tailwind](skills/tailwind) | 42 | Tailwind CSS v4 optimization, utility patterns, theming |
+| [tailwind](skills/tailwind) | 43 | Tailwind CSS v4 optimization, utility patterns, theming |
 | [shadcn](skills/shadcn) | 44 | shadcn/ui with Radix or Base UI primitives, accessibility |
 | [ui-design](skills/ui-design) | 42 | UI and UX practices, accessibility, responsive design |
 | [web-design-guidelines](skills/web-design-guidelines) | pinned | Reviews UI code against Vercel's Web Interface Guidelines, fetched from a pinned upstream commit |
@@ -185,9 +185,9 @@ For each package that changed since the 2026-08-20 baseline, every API that its 
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
-| [vitest](skills/vitest) | 46 | Vitest 5 setup, mocking, async testing, worker pools |
+| [vitest](skills/vitest) | 47 | Vitest 5 setup, mocking, async testing, worker pools |
 | [playwright](skills/playwright) | 45 | End-to-end testing, selectors, authentication, CI |
-| [msw](skills/msw) | 48 | API mocking with Mock Service Worker |
+| [msw](skills/msw) | 51 | API mocking with Mock Service Worker |
 | [tdd](skills/tdd) | 42 | Test-driven development methodology |
 
 ### Architecture and practices
@@ -221,7 +221,7 @@ Each rule spells out the correct pattern with code, the anti-pattern to avoid, t
 
 ```text
 react-frontend-skills/
-├── .github/workflows/         # CI: npm test + MCP check on Node 20 and 24
+├── .github/workflows/         # CI: npm test, package smoke + MCP check on Node 22, 24 and 26, Windows, macOS
 ├── bin/                       # Companion CLI (detect, scan, lint)
 ├── mcp/                       # Publishable read-only MCP server
 ├── skills/

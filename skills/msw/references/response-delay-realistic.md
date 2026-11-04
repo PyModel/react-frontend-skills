@@ -12,7 +12,7 @@ Keep baseline handlers deterministic and fast. Add `delay()` in the specific tes
 **Correct (deterministic baseline handlers):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 export const handlers = [
   http.get('/api/user', () =>
@@ -24,7 +24,8 @@ export const handlers = [
 Override timing in the test that needs it:
 
 ```typescript
-import { delay, http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
+import { delay } from 'msw/utils/delay'
 
 it('shows loading while the request is pending', async () => {
   server.use(
@@ -61,7 +62,8 @@ Use `delay('infinite')` only when the test controls cancellation or timeout.
 **Incorrect (a global delay applied to every handler):**
 
 ```typescript
-import { http, delay } from 'msw'
+import { http } from 'msw/http'
+import { delay } from 'msw/utils/delay'
 
 export const handlers = [
   // Slows every test in the suite to buy timing realism no assertion depends on

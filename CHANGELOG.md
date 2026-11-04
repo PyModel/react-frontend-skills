@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-11-03
+
+### Breaking
+
+- Both packages require Node.js 22 or newer (`engines` `>=22`, was `>=20`); Node 20 is end-of-life. The MCP package is released as 2.0.0 for the same reason. CI no longer runs Node 20.
+
+### Added
+
+- `scan` checks for four MSW 3 hard breaks (35 checks, up from 31):
+  - `msw3-graphql-root-import`: `graphql` imported from the `msw` root (3.0.3 still re-exports `http`, `HttpResponse`, `ws`, `sse` and the utilities there, so those are not flagged).
+  - `msw3-on-unhandled-request-renamed`: `onUnhandledRequest`, now `onUnhandledFrame`.
+  - `msw3-graphql-link-first`: `graphql.query/mutation/operation`, now `graphql.link(url).query()`.
+  - `msw3-connection-event-renamed`: the `connection` life-cycle event, now `websocket:connection`.
+- nextjs `route-ensure-static` (Next.js 16.4 `ensureStatic`), tailwind `build-turbopack-loader` (`@tailwindcss/turbopack`, 4.3.4), vitest `perf-since-last-run` (`--since-last-run`, `--last-failed`, 5.1).
+- `npm run test:package` packs the CLI, installs the tarball and runs it through `node_modules/.bin`. CI runs it on Node 22, 24 and 26, and on Windows and macOS.
+
+### Changed
+
+- msw targets MSW 3.0 (3.0.3): a version gate with a 2.x ↔ 3.x table, subpath entry points, link-first GraphQL, `onUnhandledFrame`, `await worker.stop()`, Node 22.12+, the `msw/vite` plugin and GraphQL subscriptions (51 rules, up from 48). Rules note the MSW 2.x form where it differs. `detect` now reports MSW 2 projects as `older-major`.
+- nextjs: Partial Prefetching and instant navigations are no longer described as 16.3 previews; `navigation()` and `prefetch()` from `next/cache`.
+- playwright 1.64: `Locator.within()`, `test.describe.configure({ lock })`, `--shuffle`, `default: false` projects, WebP screenshots.
+- vitest 5.1: interactive snapshot review.
+- MCP: `@modelcontextprotocol/sdk` ^1.32.2, `zod` ^4.6.7, `yaml` ^2.9.1; lockfile has no `npm audit` findings.
+- Audit baseline re-checked on 2026-11-03 against React 19.3.1, Next.js 16.4.5, Tailwind CSS 4.3.4, Vitest 5.1.0, Playwright 1.64.1, MSW 3.0.3, TanStack Query 5.105.3, React Hook Form 7.91.0, Zod 4.6.7 and nuqs 2.10.2. React, TanStack Query, React Hook Form, nuqs and Zod releases since the last baseline change no API the rules use. Zod 4.6.6 notes that six malicious commits pushed to `main` on 2026-09-21 were reverted and never published to npm; 4.6.7 is the release pinned here.
+
+### Fixed
+
+- `scan` reported the line of blank lines before a match (`cache-segment-config` was usually off by one or more).
+- `scan` flagged code behind a trailing `//` comment and inside block comments without a leading `*`; a commented-out `cacheComponents: true` enabled the segment-config check.
+- `detect` and `scan` read the first number of open ranges (`>=18`, `^18 || ^19`) as the major, giving a false `range-mismatch` and skipping checks; a versionless `npm:` alias read digits from the package name.
+- `latest`, `workspace:` and `catalog:` ranges without an install were reported as "installed major predates them".
+- Check gaps: `border-`, `divide-`, `ring-` and `placeholder-opacity-*`; a leading `!` inside `cn()`/`clsx()`/`cva()`; `z.string({ ... }).email()` and arguments with parentheses; `export { middleware }` and default exports in `middleware.ts`; `revalidateTag(getTag(x))`; `vi.hoisted<T>()`.
+- `lint` and the MCP catalog failed on CRLF frontmatter (the MCP served an empty description).
+- Both npm tarballs shipped untracked dot-directories under `skills/` (agent tool state).
+- The MCP package smoke test crashed on npm 12 (`npm pack --json` returns an object) and left the tarball behind; it now runs the server through `node`, which also works on Windows.
+- `scan` disables git's fsmonitor when listing files in the scanned project, and skips a directory named like a config file.
+- Import and export brace-list checks (nuqs, msw, react-hook-form, next middleware) backtracked for 10 s or more on a large file with an unclosed `{`; every check now finishes in under 200 ms on 500 KB of adversarial input. Line numbers are counted incrementally, so a file with many hits no longer re-splits per hit.
+- `scan` skips dot-directories in git work trees as it already did without git; root dotfiles such as `.postcssrc.json` are still scanned.
+
 ## [2.3.0] - 2026-09-26
 
 ### Added
@@ -198,7 +237,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Priority-based skill organization (CRITICAL, HIGH, MEDIUM, LOW)
 - Category-based rule grouping for easy navigation
 
-[Unreleased]: https://github.com/PyModel/react-frontend-skills/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/PyModel/react-frontend-skills/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/PyModel/react-frontend-skills/compare/v2.3.0...v3.0.0
 [2.3.0]: https://github.com/PyModel/react-frontend-skills/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/PyModel/react-frontend-skills/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/PyModel/react-frontend-skills/compare/v2.0.1...v2.1.0

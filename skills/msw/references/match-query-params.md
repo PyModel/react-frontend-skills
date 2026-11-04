@@ -22,7 +22,7 @@ http.get('/api/users', ({ params }) => {
 **Correct (parse from request.url):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 export const handlers = [
   http.get('/api/users', ({ request }) => {

@@ -9,11 +9,13 @@ tags: graphql, variables, dynamic, input, resolver
 
 Access GraphQL variables through the `variables` property in the resolver argument. Use them to return dynamic responses based on query input.
 
+On MSW 2.x: `import { graphql, HttpResponse } from 'msw'` and `graphql.query('GetUser', resolver)` instead of `api.query`.
+
 **Incorrect (ignoring variables):**
 
 ```typescript
 // Returns same user regardless of which ID is requested
-graphql.query('GetUser', () => {
+api.query('GetUser', () => {
   return HttpResponse.json({
     data: {
       user: { id: '1', name: 'John' },
@@ -25,7 +27,10 @@ graphql.query('GetUser', () => {
 **Correct (using variables for dynamic responses):**
 
 ```typescript
-import { graphql, HttpResponse } from 'msw'
+import { HttpResponse } from 'msw/http'
+import { graphql } from 'msw/graphql'
+
+const api = graphql.link('/graphql')
 
 // Mock data store
 const users = new Map([
@@ -34,7 +39,7 @@ const users = new Map([
 ])
 
 export const handlers = [
-  graphql.query('GetUser', ({ variables }) => {
+  api.query('GetUser', ({ variables }) => {
     const user = users.get(variables.id)
 
     if (!user) {
@@ -50,7 +55,7 @@ export const handlers = [
   }),
 
   // Mutation with input variables
-  graphql.mutation('UpdateUser', ({ variables }) => {
+  api.mutation('UpdateUser', ({ variables }) => {
     const { id, input } = variables
     const existingUser = users.get(id)
 
@@ -70,7 +75,7 @@ export const handlers = [
   }),
 
   // Pagination with variables
-  graphql.query('GetUsers', ({ variables }) => {
+  api.query('GetUsers', ({ variables }) => {
     const { first = 10, after } = variables
     const allUsers = Array.from(users.values())
 
@@ -103,11 +108,16 @@ export const handlers = [
 **Type-safe variables:**
 
 ```typescript
+type GetUserQuery = {
+  user: { id: string; name: string }
+}
+
 type GetUserVariables = {
   id: string
 }
 
-graphql.query<GetUserVariables>('GetUser', ({ variables }) => {
+// Generics are <Query, Variables>; Variables is the second argument
+api.query<GetUserQuery, GetUserVariables>('GetUser', ({ variables }) => {
   // variables.id is typed as string
   return HttpResponse.json({
     data: {

@@ -2,12 +2,14 @@
 title: Configure Unhandled Request Behavior
 impact: CRITICAL
 impactDescription: Catches missing handlers immediately; prevents silent test failures
-tags: setup, unhandled, error, configuration, onUnhandledRequest
+tags: setup, unhandled, error, configuration, onUnhandledFrame
 ---
 
 ## Configure Unhandled Request Behavior
 
-Configure `onUnhandledRequest: 'error'` to fail tests when requests lack handlers. This catches missing mocks immediately instead of allowing silent network calls or undefined behavior.
+Configure `onUnhandledFrame: 'error'` to fail tests when requests or WebSocket connections lack handlers. This catches missing mocks immediately instead of allowing silent network calls or undefined behavior.
+
+On MSW 2.x: `server.listen({ onUnhandledRequest: 'error' })`; custom callback `onUnhandledRequest(request, print) { print.error() }` (`print.warning()` to warn).
 
 **Incorrect (default silent behavior):**
 
@@ -38,7 +40,7 @@ import { server } from './mocks/node'
 
 beforeAll(() => {
   server.listen({
-    onUnhandledRequest: 'error', // Fail on any unhandled request
+    onUnhandledFrame: 'error', // Fail on any unhandled request or WebSocket connection
   })
 })
 
@@ -51,20 +53,27 @@ afterAll(() => server.close())
 ```typescript
 beforeAll(() => {
   server.listen({
-    onUnhandledRequest(request, print) {
-      // Allow certain requests through (e.g., static assets)
-      if (request.url.includes('/static/')) {
-        return
+    onUnhandledFrame({ frame, defaults }) {
+      // frame.protocol is 'http' or 'ws'; narrow before reading frame.data
+      if (
+        frame.protocol === 'http' &&
+        frame.data.request.url.includes('/static/')
+      ) {
+        return // Perform as-is, no warning (e.g., static assets)
       }
-      // Error on all other unhandled requests
-      print.error()
+      // Error on all other unhandled requests and connections
+      defaults.error()
     },
   })
 })
 ```
 
+- Strategies: `'warn'` (default), `'error'`, `'bypass'`. `defaults` only has `warn()` and `error()`; return without calling either to let the frame through silently.
+- A custom callback opts out of MSW's default ignoring of static asset requests; call `isCommonAssetRequest(frame.data.request)` from `'msw/utils/is-common-asset-request'` to keep it.
+- WebSocket frames expose the connection under `frame.data.connection`.
+
 **When NOT to use this pattern:**
 - Development environments may prefer `'warn'` for less disruptive feedback
 - Integration tests that intentionally hit real endpoints
 
-Reference: [MSW Best Practices - Avoid Request Assertions](https://mswjs.io/docs/best-practices/avoid-request-assertions/)
+Reference: [MSW listen() - onUnhandledFrame](https://mswjs.io/api/setup-server/listen#onunhandledframe)

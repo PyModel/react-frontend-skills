@@ -21,7 +21,7 @@ http.get('/api/user', () => {
 **Correct (cookie-based auth handling):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 export const handlers = [
   // Login sets session cookie

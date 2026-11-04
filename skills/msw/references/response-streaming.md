@@ -23,7 +23,7 @@ http.post('/api/chat', () => {
 **Correct (streaming response):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 // Text streaming (like AI chat)
 http.post('/api/chat', () => {

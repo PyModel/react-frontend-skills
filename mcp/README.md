@@ -71,7 +71,7 @@ The configured directory must exist and contain skill folders with `SKILL.md` fi
 
 ## Requirements
 
-- Node.js 20 or newer
+- Node.js 22 or newer
 - An MCP client with stdio support
 
 ## License

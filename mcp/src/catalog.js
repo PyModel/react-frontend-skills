@@ -268,7 +268,8 @@ export async function loadCatalog(options = {}) {
     const loadedFiles = []
 
     for (const markdownFile of markdownFiles) {
-      const content = await readFile(markdownFile.absolutePath, 'utf8')
+      // Normalize CRLF (Windows checkouts) so frontmatter fences and line splits still match.
+      const content = (await readFile(markdownFile.absolutePath, 'utf8')).replace(/\r\n?/g, '\n')
       const metadata = parseFrontmatter(content, markdownFile.absolutePath)
       const id = fileId(skillName, markdownFile.relativePath)
       const description =

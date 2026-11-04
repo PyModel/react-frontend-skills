@@ -26,7 +26,7 @@ export const handlers = [
 
 ```typescript
 // mocks/handlers.ts - clean success states only
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 export const handlers = [
   http.get('/api/user', () => {
@@ -41,7 +41,7 @@ export const handlers = [
 
 ```typescript
 // user.test.ts - override for specific scenarios
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 import { server } from '../mocks/node'
 
 it('handles authentication error', () => {

@@ -7,9 +7,9 @@ tags: route, prefetching, partial-prefetching, shell, link, navigation
 
 ## Use Partial Prefetching for Reusable Route Shells
 
-> **Next.js 16.3 (preview, `next@preview`).** Requires `cacheComponents: true` and `partialPrefetching: true` in `next.config.ts`. Planned to become the default behavior in a future major release.
+> **Next.js 16.3+ (stable in 16.4).** Requires `cacheComponents: true` and `partialPrefetching: true` in `next.config.ts`. As of 16.4 Partial Prefetching is part of the Cache Components model, and both flags become defaults in Next.js 17. Leaving `partialPrefetching` unset while `cacheComponents` is on logs a warning.
 
-Before 16.2, Next.js sent a prefetch request for **every link** in the viewport — even many links to the same route, producing a flurry of requests on scroll. 16.3 replaces this with a single-page-app trick: **prefetch one reusable loading shell per route**, fetched once and cached on the client for the session.
+Before 16.3, Next.js sent a prefetch request for **every link** in the viewport — even many links to the same route, producing a flurry of requests on scroll. Partial Prefetching replaces this with a single-page-app trick: **prefetch one reusable loading shell per route**, fetched once and cached on the client for the session.
 
 ```typescript
 // next.config.ts
@@ -78,6 +78,30 @@ With `<Link prefetch={true}>`, Next.js still does not render the entire route. I
 - marked with `'use cache'`.
 
 This removes the all-or-nothing choice: the instant shell is the baseline, and `<Link prefetch={true}>` plus `'use cache'` adds per-link depth only where it pays off.
+
+**Defer expensive work out of the shell or the prefetch (16.4):**
+
+Two functions from `next/cache` mark where a subtree stops being part of an earlier navigation stage. Both take no arguments, return `Promise<void>`, require `cacheComponents`, and must be called outside any `'use cache'` scope and outside Client Components. Wrap the awaiting component in `<Suspense>` so a fallback renders in the earlier stage.
+
+```tsx
+import { Suspense } from 'react'
+import { navigation, prefetch } from 'next/cache'
+
+async function Thread({ id }: { id: string }) {
+  await navigation() // excluded from the App Shell AND per-link prefetches
+  return <ThreadList items={await getThread(id)} />
+}
+
+async function Recommendations() {
+  await prefetch() // excluded from the App Shell; may load in a per-link prefetch
+  return <List items={await getRecommendations()} />
+}
+```
+
+- `await navigation()`: content renders only when the user actually navigates. Use it so `<Link prefetch={true}>` does not load an expensive tail (for example a whole message thread) for every visible link.
+- `await prefetch()`: content stays out of the shared App Shell but can load in a per-link `prefetch={true}` or on navigation.
+- Unlike `connection()`, neither marks the subtree request-dependent, so work below them can still use `'use cache'`. Put the directive on a function called below the await.
+- To enforce a stage across a whole route instead of per subtree, see [route-ensure-static](route-ensure-static.md).
 
 **Notes:**
 

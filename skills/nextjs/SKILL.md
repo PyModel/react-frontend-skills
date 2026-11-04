@@ -5,7 +5,7 @@ description: Next.js 16 App Router caching and routing.
 
 # Next.js Community Next.js 16 App Router Best Practices
 
-Comprehensive performance optimization guide for Next.js 16 App Router applications, maintained by the Next.js Community. Contains 42 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation. Two rules cover Next.js 16.3 preview features (Instant Navigations, Partial Prefetching), gated behind `cacheComponents` and `partialPrefetching`.
+Comprehensive performance optimization guide for Next.js 16 App Router applications, maintained by the Next.js Community. Contains 43 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation. Current: Next.js 16.4 (16.4.5), where Cache Components with Partial Prefetching is the recommended model and `create-next-app` enables it by default. Three rules cover it (Instant Navigations, Partial Prefetching, `ensureStatic`), gated behind `cacheComponents` and `partialPrefetching`.
 
 ## When to Apply
 
@@ -62,8 +62,9 @@ Reference these guidelines when:
 - `route-parallel-routes` - Use Parallel Routes for Independent Content
 - `route-intercepting-routes` - Use Intercepting Routes for Modal Patterns
 - `route-prefetching` - Configure Link Prefetching Appropriately
-- `route-instant-navigations` - Make Navigations Instant with Stream, Cache, or Block (16.3 preview)
-- `route-partial-prefetching` - Use Partial Prefetching for Reusable Route Shells (16.3 preview)
+- `route-instant-navigations` - Make Navigations Instant with Stream, Cache, or Block (16.3+)
+- `route-partial-prefetching` - Use Partial Prefetching for Reusable Route Shells, plus `navigation()` / `prefetch()` (16.4)
+- `route-ensure-static` - Guard Static Routes with ensureStatic (16.4)
 - `route-proxy-ts` - Use proxy.ts for Network Boundary Logic
 - `route-not-found` - Use notFound() for Missing Resources
 

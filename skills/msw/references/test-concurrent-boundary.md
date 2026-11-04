@@ -34,7 +34,7 @@ it.concurrent('handles error', async () => {
 **Correct (boundary-isolated concurrent tests):**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 import { setupServer } from 'msw/node'
 
 const server = setupServer(

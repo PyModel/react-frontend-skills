@@ -68,8 +68,28 @@ test.describe('plan changes', { lock: ['billing-account', 'stripe-sandbox'] }, (
 
 In a file that is not fully parallel (the default or serial mode), a lock on any test is held for the whole file.
 
+**Lock a whole file or describe group (Playwright 1.64+):**
+
+`test.describe.configure({ lock })` adds locks to the enclosing file or describe group without repeating the option on every test. Repeated calls add locks; they do not remove existing ones.
+
+```typescript
+test.describe.configure({ lock: 'user-settings' });
+```
+
+**Find hidden test-order dependencies with `--shuffle` (Playwright 1.64+):**
+
+```bash
+npx playwright test --shuffle
+# Running 42 tests using 4 workers, shuffle seed 271828182
+
+# Re-run the same order to reproduce a failure
+npx playwright test --shuffle 271828182
+```
+
+Test files and (in parallel mode) individual tests run in random order; tests that must run together, such as a serial suite, keep their order. A test that only passes after another test ran is not isolated: fix it rather than pinning the order.
+
 **When NOT to use parallel execution:**
 - Tests with intentional sequential dependencies (prefer making them independent)
 - Resources that can't be isolated per test even with locks
 
-Reference: [Playwright Parallelism](https://playwright.dev/docs/test-parallel) · [Test locks](https://playwright.dev/docs/test-parallel#test-locks)
+Reference: [Playwright Parallelism](https://playwright.dev/docs/test-parallel) · [Test locks](https://playwright.dev/docs/test-parallel#test-locks) · [Playwright 1.64 release notes](https://playwright.dev/docs/release-notes#version-164)

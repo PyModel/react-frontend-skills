@@ -1,13 +1,15 @@
 ---
-title: Configure TypeScript for MSW v2
+title: Configure TypeScript for MSW v3
 impact: CRITICAL
-impactDescription: TypeScript 4.8+ required; incorrect config causes type errors
+impactDescription: TypeScript 5.9+ required; incorrect config causes type errors
 tags: setup, typescript, configuration, types, compiler
 ---
 
-## Configure TypeScript for MSW v2
+## Configure TypeScript for MSW v3
 
-MSW v2 requires TypeScript 4.8+ for proper type inference. Incorrect TypeScript configuration causes confusing type errors and prevents proper handler typing.
+MSW v3 requires TypeScript 5.9+ (optional peer dependency `typescript: >=5.9.x`) for proper type inference. Its subpath entrypoints (`msw/http`, `msw/graphql`, …) resolve only through package `exports`, so `moduleResolution` must be `bundler`, `node16` or `nodenext`.
+
+On MSW 2.x: TypeScript 4.8+ and `import { http, HttpResponse } from 'msw'`.
 
 **Incorrect (outdated TypeScript or missing config):**
 
@@ -24,8 +26,8 @@ MSW v2 requires TypeScript 4.8+ for proper type inference. Incorrect TypeScript 
 
 ```typescript
 // Type errors due to incorrect resolution
-import { http, HttpResponse } from 'msw'
-// Error: Cannot find module 'msw' or its corresponding type declarations
+import { http, HttpResponse } from 'msw/http'
+// Error: Cannot find module 'msw/http' or its corresponding type declarations
 ```
 
 **Correct (proper TypeScript configuration):**
@@ -47,7 +49,7 @@ import { http, HttpResponse } from 'msw'
 **Typed handlers with proper inference:**
 
 ```typescript
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 interface User {
   id: string
@@ -56,7 +58,7 @@ interface User {
 }
 
 export const handlers = [
-  http.get<never, never, User>('/api/user/:id', ({ params }) => {
+  http.get<{ id: string }, never, User>('/api/user/:id', ({ params }) => {
     // params.id is typed as string
     return HttpResponse.json({
       id: params.id,
@@ -69,6 +71,6 @@ export const handlers = [
 
 **When NOT to use this pattern:**
 - JavaScript-only projects don't need TypeScript configuration
-- Projects using older bundlers may need `moduleResolution: "node"`
+- `moduleResolution: "node"` (node10) ignores `exports` and cannot resolve the v3 subpaths
 
-Reference: [MSW v2 Migration - TypeScript](https://mswjs.io/docs/migrations/1.x-to-2.x/)
+Reference: [MSW 2.x → 3.x Migration](https://mswjs.io/docs/migrations/2.x-to-3.x)

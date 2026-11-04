@@ -9,6 +9,8 @@ tags: debug, lifecycle, events, logging, observability
 
 Subscribe to lifecycle events to observe request interception, matching, and responses. This is invaluable for debugging why handlers aren't matching or responses aren't arriving.
 
+On MSW 2.x: the WebSocket event is `server.events.on('connection', listener)` and listener types come from `import type { LifeCycleEventsMap } from 'msw'`.
+
 **Incorrect (guessing why requests fail):**
 
 ```typescript
@@ -37,8 +39,8 @@ server.events.on('request:match', ({ request }) => {
   console.log('MSW matched:', request.method, request.url)
 })
 
-// Log completed responses
-server.events.on('request:end', ({ request, response }) => {
+// Log mocked responses (request:end carries no response)
+server.events.on('response:mocked', ({ request, response }) => {
   console.log(
     'MSW responded:',
     request.method,
@@ -51,6 +53,14 @@ server.events.on('request:end', ({ request, response }) => {
 // Log unhandled requests
 server.events.on('request:unhandled', ({ request }) => {
   console.warn('MSW unhandled:', request.method, request.url)
+})
+
+// Log WebSocket connections and their errors
+server.events.on('websocket:connection', ({ url }) => {
+  console.log('MSW WebSocket:', url.href)
+})
+server.events.on('websocket:error', ({ url, error }) => {
+  console.error('MSW WebSocket errored:', url.href, error)
 })
 ```
 
@@ -72,17 +82,25 @@ if (process.env.DEBUG_MSW) {
 - `request:end` - Response sent (mocked or passthrough)
 - `response:mocked` - Mocked response sent
 - `response:bypass` - Request passed through to network
+- `unhandledException` - Resolver threw
+- `websocket:connection` - WebSocket connection intercepted
+- `websocket:error` - Intercepted WebSocket connection errored
+
+Types: `HttpNetworkFrameEventMap` and `WebSocketNetworkFrameEventMap` from `'msw/experimental'`.
 
 **Cleanup:**
 
 ```typescript
 // Remove event listeners when done
-const unsubscribe = server.events.on('request:start', handler)
-unsubscribe()  // Remove listener
+server.events.on('request:start', handler)
+server.events.removeListener('request:start', handler)
+
+// Or remove every listener (optionally for one event name)
+server.events.removeAllListeners()
 ```
 
 **When NOT to use this pattern:**
 - Production builds should not include debug logging
 - CI environments may want minimal logging for cleaner output
 
-Reference: [MSW Lifecycle Events](https://mswjs.io/docs/api/life-cycle-events)
+Reference: [MSW Lifecycle Events](https://mswjs.io/api/life-cycle-events)
