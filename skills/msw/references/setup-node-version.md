@@ -43,8 +43,8 @@ $ npm install msw@3
 ```
 
 ```yaml
-# .nvmrc
-22
+# .nvmrc (Node 22 LTS, latest release)
+lts/jod
 ```
 
 ```yaml

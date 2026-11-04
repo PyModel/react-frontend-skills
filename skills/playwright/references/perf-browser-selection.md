@@ -76,7 +76,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm ci
-      - run: npx playwright test
+      - run: npx playwright test --project="*"
         env:
           FULL_TEST: true
 ```
@@ -109,8 +109,8 @@ This replaces the `isMainBranch ? [...] : []` project array above when the only 
 # Quick test on Chromium only
 npx playwright test --project=chromium
 
-# Full cross-browser test
-npx playwright test
+# Full cross-browser test (every project, including default: false ones)
+npx playwright test --project="*"
 
 # Test specific browser
 npx playwright test --project=firefox

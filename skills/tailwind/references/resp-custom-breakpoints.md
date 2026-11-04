@@ -45,7 +45,7 @@ Add custom breakpoints using the `@theme` directive. This is useful for project-
 }
 ```
 
-**Canonicalization (Tailwind 4.3.4+):** `tailwindcss canonicalize` now converts arbitrary breakpoint and container-query variants to their named equivalents (for example `max-[64rem]:flex` becomes `max-lg:flex`), so arbitrary values that match a theme breakpoint should be written by name.
+**Canonicalization (Tailwind 4.3.4+):** `tailwindcss canonicalize` now converts arbitrary breakpoint and container-query variants to their named equivalents in the active theme (with the default theme, `max-[64rem]:flex` becomes `max-lg:flex`; with `--breakpoint-lg: 992px` above, the two are not equivalent), so arbitrary values that match a theme breakpoint should be written by name.
 
 **Benefits:**
 - Consistent breakpoint values across codebase

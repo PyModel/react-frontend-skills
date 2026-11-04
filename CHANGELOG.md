@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `scan` comment masking ran in quadratic time on some hostile files: 400 KB of unclosed `/*` or `<!--` lines, or a long CSS line full of `//`, took 10 to 60 s. Every case now finishes in milliseconds.
+- `scan` skips one-line regex literals such as `/[//]/` and unquoted CSS `url(http://…)` as text instead of reading `//` inside them as a comment, and masks comments inside template `${…}` expressions.
+- `scan` reads versions from npm 6 (`lockfileVersion` 1) lockfiles, and no longer counts a check that a project config flag rules out (`cacheComponents`) as version-unknown.
+- tailwind `tw4-leading-important-modifier` finds `!utility` after doubly nested calls inside class helpers, such as `cn(getBase(foo(bar)), '!flex')`.
+- The MCP package smoke test packs into a temp directory, so it no longer deletes a tarball already in `mcp/`.
+- README: `scan` reads tracked and untracked, non-ignored files; with no install or lockfile entry, a range that pins one major decides the gate alone.
+- msw: MSW 3 needs Node.js 22.12+ in the troubleshooting table; the `.nvmrc` example uses `lts/jod`; `moduleResolution` `node16`/`nodenext` must be paired with the matching `module` value.
+- playwright: the CI artifact glob includes `.webp` screenshots; full cross-browser runs pass `--project="*"`, so projects with `default: false` run too.
+- tailwind `resp-custom-breakpoints`: canonicalization maps to names in the active theme, so `max-[64rem]` matches `max-lg` only with the default breakpoints.
+
 ## [3.0.0] - 2026-11-03
 
 ### Breaking
