@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `scan` comment masking ran in quadratic time on some hostile files: 400 KB of unclosed `/*` or `<!--` lines, or a long CSS line full of `//`, took 10 to 60 s. Every case now finishes in milliseconds.
-- `scan` skips one-line regex literals such as `/[//]/` and unquoted CSS `url(http://…)` as text instead of reading `//` inside them as a comment, and masks comments inside template `${…}` expressions.
+- `scan` skips one-line regex literals such as `/[//]/` (including after `return`, where `/[/*]/` used to hide code up to the next `*/`) and unquoted CSS `url(http://…)` as text instead of reading `//` inside them as a comment, and masks comments inside template `${…}` expressions.
 - `scan` reads versions from npm 6 (`lockfileVersion` 1) lockfiles, and no longer counts a check that a project config flag rules out (`cacheComponents`) as version-unknown.
 - tailwind `tw4-leading-important-modifier` finds `!utility` after doubly nested calls inside class helpers, such as `cn(getBase(foo(bar)), '!flex')`.
 - The MCP package smoke test packs into a temp directory, so it no longer deletes a tarball already in `mcp/`.

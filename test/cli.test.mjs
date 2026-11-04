@@ -364,6 +364,8 @@ test('comment masking handles regex literals, template expressions and CSS url()
   assert.equal(masked('<span>{{a}}/{{b}} <!-- z.nativeEnum --></span>', 'a.vue').includes('nativeEnum'), false)
   assert.equal(masked('<style>\n.a { background: url(/bg.png); } /* legacy\n  .b { @apply !flex }\n*/\n</style>', 'a.vue').includes('!flex'), false)
   assert.equal(masked('x = /a/* 2 // z.nativeEnum(R)').includes('nativeEnum'), false)
+  assert.equal(masked('return /[/*]/\nz.nativeEnum(R)\n// */').split('\n')[1], 'z.nativeEnum(R)')
+  assert.equal(masked('const total = sum.return / 2 // drop').trimEnd(), 'const total = sum.return / 2')
   for (const text of ['/', 'x = /', '`${', '`${ /[ ', 'url(', 'a { b: url(http:// }']) {
     for (const file of ['a.ts', 'a.scss']) assert.equal(masked(text, file).length, text.length, `${file}: ${text}`)
   }

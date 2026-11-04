@@ -26,6 +26,7 @@ const URL_FILES = /\.(?:css|scss|sass|less|pcss|postcss|html|vue|svelte|astro)$/
 // A `/` after one of these (or at the start of the text) opens a regex literal, not a division.
 // `}` and `)` are left out: JSX `{b} />`, `{a}/{b}` and Vue `{{a}}/{{b}}` put a slash there.
 const REGEX_PRECEDERS = new Set(['(', ',', '=', ':', '[', '!', '&', '|', '?', '{', ';', '+', '-', '*', '%', '~', '^'])
+const KEYWORD_BEFORE_REGEX = /(?:^|[^\w$.])(?:return|typeof|case|void|yield|await|delete|throw|in|of|else|do)\s*$/
 const MAX_REPORTED_HITS = 200
 // Every installed skill's name + description rides in the agent's system prompt on every
 // message, so the budgets cap the whole pack, not each skill (tokens ≈ chars / 4).
@@ -230,8 +231,7 @@ function* projectFiles(dir, root) {
 // An unclosed /* or <!-- (a JS syntax error) masks only the rest of its line, so a stray
 // opener can never hide the remainder of the file. Template `${…}` expressions are code, and
 // one-line regex literals and unquoted CSS url(…) are skipped as text.
-// ponytail: a regex after a keyword (`return /x/`) reads as division; a `//` inside one hides
-// the rest of its line.
+// ponytail: a regex that spans an escaped newline or follows `)` reads as division.
 export function maskComments(text, file) {
   const lineComments = LINE_COMMENT_FILES.test(file)
   const blockComments = BLOCK_COMMENT_FILES.test(file)
@@ -312,7 +312,10 @@ export function maskComments(text, file) {
       }
       depth--
     }
-    if (index >= plainUntil && script && char === '/' && text[index + 1] !== '/' && text[index + 1] !== '*' && (previous === '' || REGEX_PRECEDERS.has(previous))) {
+    if (
+      index >= plainUntil && script && char === '/' && text[index + 1] !== '/' && text[index + 1] !== '*' &&
+      (previous === '' || REGEX_PRECEDERS.has(previous) || KEYWORD_BEFORE_REGEX.test(text.slice(Math.max(0, index - 12), index)))
+    ) {
       const close = regexEnd(index)
       if (close !== -1) {
         index = close
