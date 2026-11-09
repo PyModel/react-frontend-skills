@@ -7,7 +7,7 @@ tags: react, fragment, ref, dom, layout
 
 ## Attach DOM Behavior to Siblings with Fragment Refs
 
-Stable since React 19.3. Passing a `ref` to `<Fragment>` returns a fragment instance with methods that act on the fragment's first-level DOM children — event listeners, focus, visibility observation — without inserting a wrapper `<div>` that would break layouts.
+Stable in React 19.3. Passing a `ref` to `<Fragment>` returns a fragment instance with methods that act on the fragment's first-level DOM children — event listeners, focus, visibility observation — without inserting a wrapper `<div>` that would break layouts.
 
 **Incorrect (wrapper div just to hold a ref):**
 
@@ -67,5 +67,4 @@ fragmentRef.current.compareDocumentPosition(otherNode)
 **Notes:**
 
 - Methods target first-level DOM children only; nodes nested inside child components are not reached directly — lift the Fragment one level down if you need them.
-- Combine with `<Fragment key={...}>` as before; keys and refs compose.
-- Before 19.3 this API was experimental; remove any `'react-canary'` gating when upgrading.
+- Combine with `<Fragment key={...}>`; keys and refs compose.

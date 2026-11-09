@@ -88,6 +88,6 @@ const createUserSchema = userSchema.partial({ id: true })
 
 **When NOT to use this pattern:**
 - When modeling partial updates (PATCH endpoints)
-- When fields genuinely may not exist (legacy data, external APIs)
+- When fields genuinely may not exist (external APIs, partial payloads)
 
 Reference: [Zod API - optional](https://zod.dev/api#optional)

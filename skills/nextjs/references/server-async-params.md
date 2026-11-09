@@ -2,26 +2,16 @@
 title: Await params and searchParams
 impact: HIGH
 impactDescription: avoids reading a Promise as an object, which yields undefined values at runtime
-tags: server, params, searchparams, async, nextjs-16
+tags: server, params, searchparams, async
 ---
 
 ## Await params and searchParams
 
-Since Next.js 15, `params` is a Promise in pages, layouts, route handlers, `generateMetadata`, and metadata image routes; `searchParams` is a Promise in pages and `generateMetadata`. Next.js 15 still allowed synchronous access with a deprecation warning; Next.js 16 removed it, so a synchronous `params.slug` is a type error and reads `undefined` at runtime. Read them with `await` in Server Components, or with React's `use()` in a Client Component that receives them as props (other Client Components use `useParams()`).
+`params` is a Promise in pages, layouts, route handlers, `generateMetadata`, and metadata image routes; `searchParams` is a Promise in pages and `generateMetadata`. Type them as `Promise<...>` and await them. Read them with `await` in Server Components, or with React's `use()` in a Client Component that receives them as props (other Client Components use `useParams()`).
 
 In an `opengraph-image`/`icon` image function, Next.js 16 passes both `params` and `id` as Promises (`await id`); `generateImageMetadata` still receives synchronous `params`.
 
-**Incorrect (reads the Promise):**
-
-```tsx
-// app/blog/[slug]/page.tsx
-export default async function Page({ params }: { params: { slug: string } }) {
-  const post = await getPost(params.slug) // Next.js 16: params.slug is undefined
-  return <Article post={post} />
-}
-```
-
-**Correct (await the Promise):**
+**Pages await the Promise:**
 
 ```tsx
 // app/blog/[slug]/page.tsx

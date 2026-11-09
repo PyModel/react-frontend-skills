@@ -67,7 +67,7 @@ Reference these guidelines when:
 - `prefetch-on-hover` - Prefetch on hover for perceived speed
 - `prefetch-in-queryfn` - Start follow-up prefetches when keys become known
 - `prefetch-server-components` - Prefetch in Server Components
-- `prefetch-infinite-query` - Prefetch infinite lists with queryClient.infiniteQuery (5.102+)
+- `prefetch-infinite-query` - Prefetch infinite lists with queryClient.infiniteQuery
 - `prefetch-flatten-api` - Flatten API to reduce waterfalls
 
 ### 5. Infinite Queries (MEDIUM)
@@ -106,10 +106,9 @@ Run in the project root first:
 
 ```bash
 npx -y @pymodel/react-frontend-skills detect                       # installed vs. targeted versions
-npx -y @pymodel/react-frontend-skills scan --skill tanstack-query  # deprecated APIs → rule IDs
 ```
 
-Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
+Read `references/<rule-id>.md` for each rule above that matches the task: why it matters, then incorrect vs. correct code.
 
 ## Related Skills
 

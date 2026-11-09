@@ -1,50 +1,31 @@
 ---
 title: Use Slash Opacity Modifier
 impact: HIGH
-impactDescription: 50% fewer opacity-related classes
+impactDescription: one class per color instead of two
 tags: util, opacity, modifier, colors, syntax
 ---
 
 ## Use Slash Opacity Modifier
 
-Tailwind CSS v4 removes the deprecated opacity utilities (`bg-opacity-*`, `text-opacity-*`). Use the slash syntax for color opacity instead.
+Set color opacity with the slash modifier on the color utility (`bg-blue-500/50`). It works on every color utility and takes a theme step, an arbitrary value or a CSS variable color.
 
-**Incorrect (deprecated opacity utilities):**
+**Correct:**
 
 ```html
-<div class="bg-blue-500 bg-opacity-50">
-  <!-- Deprecated in v4 -->
-</div>
+<div class="bg-blue-500/50">Single class with opacity</div>
 
-<p class="text-black text-opacity-75">
-  <!-- Two classes for one effect -->
-</p>
+<p class="text-black/75">Cleaner, more readable</p>
 ```
 
-**Correct (slash opacity modifier):**
+**With CSS variables and arbitrary values:**
 
 ```html
-<div class="bg-blue-500/50">
-  <!-- Single class with opacity -->
-</div>
-
-<p class="text-black/75">
-  <!-- Cleaner, more readable -->
-</p>
-```
-
-**With CSS variables:**
-
-```html
-<div class="bg-(--brand-color)/50">
-  <!-- Works with custom properties too -->
-</div>
+<div class="bg-(--brand-color)/50">Custom property</div>
+<div class="bg-blue-500/[0.42]">Arbitrary opacity</div>
 ```
 
 **Benefits:**
-- Single class instead of two
 - Works with any color utility
 - Compatible with CSS variables
-- More readable markup
 
-Reference: [Tailwind CSS Upgrade Guide](https://tailwindcss.com/docs/upgrade-guide)
+Reference: [Tailwind CSS Color Opacity](https://tailwindcss.com/docs/background-color#changing-the-opacity)

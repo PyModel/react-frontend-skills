@@ -107,8 +107,7 @@ Reference these guidelines when:
 Run in the project root first:
 
 ```bash
-npx -y @pymodel/react-frontend-skills detect                   # installed vs. targeted versions
-npx -y @pymodel/react-frontend-skills scan --skill playwright  # deprecated APIs → rule IDs
+npx -y @pymodel/react-frontend-skills detect   # installed vs. targeted versions
 ```
 
-Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
+Read `references/<rule-id>.md` for each rule above that matches the task: why it matters, then incorrect vs. correct code.

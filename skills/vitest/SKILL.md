@@ -5,7 +5,7 @@ description: Vitest 5 unit tests and mocking.
 
 # Vitest Best Practices
 
-Vitest 5-compatible testing guide with 47 rules across 8 categories. Vitest 5 requires Node.js 22.12+ and Vite 6.4+; Vitest 4.1 remains on backport support. Current: Vitest 5.1 (5.1.0).
+Vitest 5-compatible testing guide with 46 rules across 8 categories. Vitest 5 requires Node.js 22.12+ and Vite 6.4+. Current: Vitest 5.1 (5.1.0).
 
 ## When to Apply
 
@@ -14,10 +14,7 @@ Reference these guidelines when:
 - Debugging flaky or slow tests
 - Setting up test configuration
 - Reviewing test code in PRs
-- Migrating from Jest to Vitest
 - Optimizing CI/CD test performance
-
-Jest-specific APIs and configuration outside documented migration differences are out of scope; use Jest's own documentation for tests that still run under Jest.
 
 ## Rule Categories by Priority
 
@@ -36,7 +33,7 @@ Jest-specific APIs and configuration outside documented migration differences ar
 
 ### 1. Async Patterns (CRITICAL)
 
-- `async-await-assertions` - Await async assertions (Vitest 5 fails unawaited ones)
+- `async-await-assertions` - Await async assertions
 - `async-return-promises` - Return promises from test functions
 - `async-fake-timers` - Use fake timers for time-dependent code
 - `async-waitfor-polling` - Use vi.waitFor for async conditions
@@ -52,7 +49,6 @@ Jest-specific APIs and configuration outside documented migration differences ar
 - `setup-beforeall-expensive` - Use beforeAll for expensive one-time setup
 - `setup-reset-modules` - Reset modules when testing module state
 - `setup-test-factories` - Use test factories for complex test data
-- `setup-vitest5-migration` - Plan the Vitest 5 migration deliberately (5.0)
 
 ### 3. Mocking Patterns (HIGH)
 
@@ -62,7 +58,7 @@ Jest-specific APIs and configuration outside documented migration differences ar
 - `mock-msw-network` - Use MSW for network request mocking
 - `mock-avoid-overmocking` - Avoid over-mocking
 - `mock-type-safety` - Maintain type safety in mocks
-- `mock-clear-between-tests` - Clear mock state between tests (default in Vitest 5)
+- `mock-clear-between-tests` - Clear mock state between tests
 
 ### 4. Performance (HIGH)
 
@@ -110,11 +106,10 @@ Jest-specific APIs and configuration outside documented migration differences ar
 Run in the project root first:
 
 ```bash
-npx -y @pymodel/react-frontend-skills detect               # installed vs. targeted versions
-npx -y @pymodel/react-frontend-skills scan --skill vitest  # deprecated APIs → rule IDs
+npx -y @pymodel/react-frontend-skills detect   # installed vs. targeted versions
 ```
 
-Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
+Read `references/<rule-id>.md` for each rule above that matches the task: why it matters, then incorrect vs. correct code.
 
 ## Related Skills
 

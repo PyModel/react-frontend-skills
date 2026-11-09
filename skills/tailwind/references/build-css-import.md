@@ -1,25 +1,15 @@
 ---
-title: Use CSS Import Over @tailwind Directives
+title: Import Tailwind With a Single CSS Import
 impact: CRITICAL
-impactDescription: eliminates deprecated patterns, enables v4 features
-tags: build, import, directives, migration, configuration
+impactDescription: enables automatic content detection with zero configuration
+tags: build, import, css, configuration
 ---
 
-## Use CSS Import Over @tailwind Directives
+## Import Tailwind With a Single CSS Import
 
-Tailwind CSS v4 replaces the old `@tailwind` directives with a single CSS import statement. This enables automatic content detection and modern CSS features.
+Load Tailwind with one `@import "tailwindcss";` statement. This enables automatic content detection and the full set of CSS-first features (`@theme`, `@utility`, `@source`).
 
-**Incorrect (v3 deprecated directives):**
-
-```css
-/* styles.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-/* Requires explicit content configuration */
-```
-
-**Correct (v4 CSS import):**
+**Correct:**
 
 ```css
 /* styles.css */
@@ -30,7 +20,7 @@ Tailwind CSS v4 replaces the old `@tailwind` directives with a single CSS import
 **Benefits:**
 - Zero configuration required for most projects
 - Automatic template file detection
-- Built-in @import support without additional plugins
+- Built-in `@import` support without additional plugins
 - Single source of truth for styles
 
-Reference: [Tailwind CSS Upgrade Guide](https://tailwindcss.com/docs/upgrade-guide)
+Reference: [Tailwind CSS Installation](https://tailwindcss.com/docs/installation)

@@ -7,7 +7,7 @@ tags: setup, entrypoint, node, server, msw-node
 
 ## Use Correct Entrypoint for Node.js
 
-MSW separates browser and Node.js entrypoints (since v2, unchanged in v3). Using the wrong import causes complete mocking failure with no interception occurring. Handlers come from their own entrypoints in v3 (see [setup-v3-handler-entrypoints](setup-v3-handler-entrypoints.md)).
+MSW separates browser and Node.js entrypoints. Using the wrong import causes complete mocking failure with no interception occurring. Handlers come from their own entrypoints (see [setup-v3-handler-entrypoints](setup-v3-handler-entrypoints.md)).
 
 **Incorrect (importing from wrong path):**
 

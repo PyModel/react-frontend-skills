@@ -66,7 +66,6 @@ describe('Button', () => {
 // vitest.config.ts
 export default defineConfig({
   test: {
-    // environmentMatchGlobs was removed in Vitest 4.0. Use projects instead.
     projects: [
       {
         test: {
@@ -99,7 +98,7 @@ export default defineConfig({
 })
 ```
 
-Since Vitest 5, inline projects inherit the root `test` config. Arrays are concatenated: a root `include: ['**/*.a.test.ts']` is added to every project's own `include`, and root `setupFiles` run in every project. `name` and `globalSetup` are not inherited. Keep shared arrays out of the root config, or set `extends: false` on a project that must start clean:
+Inline projects inherit the root `test` config. Arrays are concatenated: a root `include: ['**/*.a.test.ts']` is added to every project's own `include`, and root `setupFiles` run in every project. `name` and `globalSetup` are not inherited. Keep shared arrays out of the root config, or set `extends: false` on a project that must start clean:
 
 ```typescript
 projects: [

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Deterministic companion CLI for the React Frontend Skills.
-// Agents run `detect` and `scan` in a user project; maintainers run `lint` in this repo.
+// Agents run `detect` in a user project; maintainers run `lint` in this repo.
 // Zero dependencies: this file ships inside the npm package and runs through npx.
 
 import { realpathSync } from 'node:fs'

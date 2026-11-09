@@ -7,7 +7,7 @@ tags: perf, forms, re-renders, react-hook-form, isolation
 
 ## Avoid Unnecessary Re-renders in Forms
 
-Isolate frequently updating form state to prevent entire form re-renders. Watch specific fields instead of the entire form state.
+Isolate frequently updating form state to prevent entire form re-renders. Watch specific fields instead of the entire form state. Each `Controller` already re-renders only its own field, so keep reactive reads out of the component that owns the form.
 
 **Incorrect (watching entire form state):**
 
@@ -19,14 +19,16 @@ function CheckoutForm() {
   const total = calculateTotal(values.items, values.coupon)
 
   return (
-    <Form {...form}>
-      {/* All 20 form fields re-render on every keystroke */}
-      <FormField name="name" control={form.control} render={...} />
-      <FormField name="email" control={form.control} render={...} />
-      <FormField name="address" control={form.control} render={...} />
-      {/* ... 17 more fields */}
-      <div>Total: ${total}</div>
-    </Form>
+    <form onSubmit={form.handleSubmit(onSubmit)}>
+      <FieldGroup>
+        {/* All 20 form fields re-render on every keystroke */}
+        <Controller name="name" control={form.control} render={...} />
+        <Controller name="email" control={form.control} render={...} />
+        <Controller name="address" control={form.control} render={...} />
+        {/* ... 17 more fields */}
+        <div>Total: ${total}</div>
+      </FieldGroup>
+    </form>
   )
 }
 ```
@@ -34,26 +36,30 @@ function CheckoutForm() {
 **Correct (isolated watch with useWatch):**
 
 ```tsx
+import { Controller, useForm, useWatch, type Control } from "react-hook-form"
+import { FieldGroup } from "@/components/ui/field"
+
 function CheckoutForm() {
   const form = useForm<CheckoutFormValues>()
 
   return (
-    <Form {...form}>
-      <FormField name="name" control={form.control} render={...} />
-      <FormField name="email" control={form.control} render={...} />
-      <FormField name="address" control={form.control} render={...} />
-      {/* Fields don't re-render when unrelated fields change */}
+    <form onSubmit={form.handleSubmit(onSubmit)}>
+      <FieldGroup>
+        <Controller name="name" control={form.control} render={...} />
+        <Controller name="email" control={form.control} render={...} />
+        <Controller name="address" control={form.control} render={...} />
+        {/* Fields don't re-render when unrelated fields change */}
 
-      {/* Isolated component for reactive total */}
-      <OrderTotal control={form.control} />
-    </Form>
+        {/* Isolated component for reactive total */}
+        <OrderTotal control={form.control} />
+      </FieldGroup>
+    </form>
   )
 }
 
 function OrderTotal({ control }: { control: Control<CheckoutFormValues> }) {
   // Only this component re-renders when items or coupon change
-  const items = useWatch({ control, name: "items" })
-  const coupon = useWatch({ control, name: "coupon" })
+  const [items, coupon] = useWatch({ control, name: ["items", "coupon"] })
 
   const total = calculateTotal(items, coupon)
 
@@ -69,12 +75,12 @@ function CheckoutForm() {
 
   // Only watch specific fields needed for calculations
   const [items, coupon] = form.watch(["items", "coupon"])
-  // Still causes re-renders but only for these 2 fields
+  // Still re-renders the form component, but only when these 2 fields change
 
   return (
-    <Form {...form}>
+    <form onSubmit={form.handleSubmit(onSubmit)}>
       {/* ... */}
-    </Form>
+    </form>
   )
 }
 ```
@@ -83,6 +89,6 @@ function CheckoutForm() {
 - Use `useWatch` in isolated child components
 - Watch specific field names, not entire form
 - Use `useFormState` for submission/validation state
-- Use `useController` for complex controlled components
+- Render each field through `Controller` (or `useController` in a field component) so it subscribes to its own state only
 
 Reference: [React Hook Form useWatch](https://react-hook-form.com/docs/usewatch)

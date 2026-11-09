@@ -7,7 +7,7 @@ tags: object, strictObject, looseObject, unknown-keys
 
 ## Choose an Explicit Unknown-Key Policy
 
-`z.object()` strips unrecognized keys by default. In Zod 4, prefer the top-level object constructors when a non-default policy matters: `z.strictObject()` rejects unknown keys and `z.looseObject()` preserves them. The legacy `.strict()`, `.strip()`, and `.passthrough()` methods remain for compatibility but are deprecated guidance.
+`z.object()` strips unrecognized keys by default. When a non-default policy matters, use the top-level object constructors: `z.strictObject()` rejects unknown keys and `z.looseObject()` preserves them.
 
 **Default: strip unknown keys:**
 

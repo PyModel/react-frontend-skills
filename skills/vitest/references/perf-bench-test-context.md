@@ -1,25 +1,21 @@
 ---
 title: Write Benchmarks with the bench Test Fixture
 impact: MEDIUM
-impactDescription: Vitest 5 rewrote benchmarking; v4-style top-level bench() calls and benchmark.* options no longer exist
-tags: perf, bench, benchmark, vitest-5, performance-regression
+impactDescription: Using bench outside a test context throws; the fixture also enables comparison and regression assertions
+tags: perf, bench, benchmark, performance-regression
 ---
 
 ## Write Benchmarks with the bench Test Fixture
 
-In Vitest 5, `bench` is a test-context fixture, not an export of `vitest`. Benchmarks live in `*.bench.ts` (or `*.benchmark.ts`) files, run with `vitest bench`, and are skipped by `vitest run`. Using the fixture in a regular test file throws.
+`bench` is a test-context fixture, not an export of `vitest`. Benchmarks live in `*.bench.ts` (or `*.benchmark.ts`) files, run with `vitest bench`, and are skipped by `vitest run`. Using the fixture in a regular test file throws.
 
-**Incorrect (Vitest 4 API):**
+**Incorrect (fixture used outside a test):**
 
 ```typescript
 // sort.bench.ts
-import { bench, describe } from 'vitest' // Vitest 5: bench is no longer exported
+import { bench } from 'vitest' // bench is not exported from vitest
 
-describe('sort', () => {
-  bench('toSorted', () => { input.toSorted((a, b) => a - b) })
-  bench.skip('slice().sort', () => { input.slice().sort((a, b) => a - b) }) // removed
-})
-// Also removed: benchmark.reporters, benchmark.outputFile, --compare and --outputJson
+bench('toSorted', () => { input.toSorted((a, b) => a - b) }) // no test context: throws
 ```
 
 **Correct (fixture, compare, assert):**
@@ -56,4 +52,4 @@ npx vitest bench --run   # runs only *.bench.ts files
 - Micro-optimizations without a real hot path; profile the app first
 - Asserting absolute timings (`mean < 5ms`): they vary by CI machine, so compare against a baseline instead
 
-Reference: [Vitest Benchmarking](https://vitest.dev/guide/benchmarking) · [Vitest 5.0.0 release](https://github.com/vitest-dev/vitest/releases/tag/v5.0.0)
+Reference: [Vitest Benchmarking](https://vitest.dev/guide/benchmarking)

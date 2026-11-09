@@ -45,7 +45,7 @@ export const handlers = [
 ## Common Issues Quick Reference
 
 **Issue: "fetch is not defined"**
-- Fix: Upgrade Node.js to 22.12+ for MSW 3 (18+ for MSW 2)
+- Fix: Use Node.js 22.12+
 
 **Issue: Body parsing hangs with fake timers**
 ```typescript
@@ -64,20 +64,6 @@ afterEach(() => {
   queryClient.clear()  // TanStack Query
 })
 ```
-
-**Issue: MSW v1 code in v2/v3 project**
-```typescript
-// v2/v3 correct syntax:
-http.get('/api/user', () => {
-  return HttpResponse.json({ name: 'John' })
-})
-```
-
-**Issue: `graphql.query is not a function` / `graphql` not exported from 'msw' after upgrading to 3**
-- Fix: `import { graphql } from 'msw/graphql'` and define handlers on `graphql.link(url)` (see [graphql-operation-handlers](graphql-operation-handlers.md))
-
-**Issue: `onUnhandledRequest` has no effect after upgrading to 3**
-- Fix: rename it to `onUnhandledFrame` (see [setup-unhandled-requests](setup-unhandled-requests.md))
 
 **When NOT to use this pattern:**
 - Reference only; not all issues apply to every project

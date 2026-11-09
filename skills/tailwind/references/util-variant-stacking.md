@@ -1,27 +1,27 @@
 ---
-title: Use Left-to-Right Variant Stacking
+title: Stack Variants Left to Right
 impact: HIGH
 impactDescription: prevents broken responsive/state styles
 tags: util, variants, stacking, order, syntax
 ---
 
-## Use Left-to-Right Variant Stacking
+## Stack Variants Left to Right
 
-Tailwind CSS v4 changes variant stacking from right-to-left to left-to-right. Update stacked variants to maintain correct behavior.
+Stacked variants apply in the order written, left to right: outer context first, inner context last. Order them the way you would say the condition aloud.
 
-**Incorrect (v3 right-to-left order):**
+**Incorrect (inner variant first, selector chain is wrong):**
 
 ```html
 <ul class="*:py-2 first:*:pt-0 last:*:pb-0">
-  <!-- Child selector applied before first/last -->
+  <!-- first/last now target the list itself, not its children -->
 </ul>
 
 <div class="group-hover:dark:bg-black">
-  <!-- dark applied before group-hover -->
+  <!-- group-hover applied before dark -->
 </div>
 ```
 
-**Correct (v4 left-to-right order):**
+**Correct (left-to-right order):**
 
 ```html
 <ul class="*:py-2 *:first:pt-0 *:last:pb-0">
@@ -34,8 +34,8 @@ Tailwind CSS v4 changes variant stacking from right-to-left to left-to-right. Up
 ```
 
 **Reading order:**
-- Read variants left-to-right
+- Read variants left to right
 - Outer context first, inner context last
-- Matches natural language order: "in dark mode, on group hover, make background black"
+- Matches natural language: "in dark mode, on group hover, make background black"
 
-Reference: [Tailwind CSS Upgrade Guide](https://tailwindcss.com/docs/upgrade-guide)
+Reference: [Tailwind CSS Hover, Focus and Other States](https://tailwindcss.com/docs/hover-focus-and-other-states)

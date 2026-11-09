@@ -27,7 +27,7 @@
 
 React Frontend Skills is a collection of 18 AI agent skills for the React ecosystem. Drop them into your coding assistant and it starts applying real patterns for performance, UI, testing, data, and architecture instead of whatever it remembered from 2023.
 
-Each skill is a portable `SKILL.md` folder that indexes detailed `references/` or `rules/` files, loaded only when a task needs them. The layout follows the open agent-skills convention, so it works across major AI coding agents. A zero-dependency [companion CLI](#companion-cli) handles the deterministic steps: version detection and deprecated-API scans.
+Each skill is a portable `SKILL.md` folder that indexes detailed `references/` or `rules/` files, loaded only when a task needs them. The layout follows the open agent-skills convention, so it works across major AI coding agents. A zero-dependency [companion CLI](#companion-cli) handles the deterministic step: checking that the project is on the versions the skills target.
 
 Coverage: React 19 and Next.js 16 performance, Tailwind CSS v4 and shadcn/ui, testing with Vitest, Playwright and MSW, data handling with TanStack Query, Zod, React Hook Form and nuqs, plus feature-based architecture.
 
@@ -83,15 +83,14 @@ See [`mcp/README.md`](mcp/README.md) for the tool catalog and development detail
 
 ## Companion CLI
 
-Rules that a machine can check live in code, not prose. Agents run these in the project they are editing:
+The skills cover only the current major of each library. Agents run `detect` in the project they are editing to confirm it is on those majors:
 
 ```bash
-npx -y @pymodel/react-frontend-skills detect   # installed versions vs. each skill's target major
-npx -y @pymodel/react-frontend-skills scan     # deprecated/removed API usage → skill/rule to read
-npx -y @pymodel/react-frontend-skills scan --skill zod --json
+npx -y @pymodel/react-frontend-skills detect          # installed versions vs. each skill's target major
+npx -y @pymodel/react-frontend-skills detect --json
 ```
 
-`scan` runs its 35 checks only for packages declared in `package.json`, and only when the project is on or above the major where the old API went away (`--all` overrides the package and version gates; config-flag gates such as `cacheComponents: true` still apply). A range that pins one major (`^19`, `19.x`) and the installed version must both meet that major; with no install or lockfile entry, the pinned range decides alone. Open ranges such as `>=18` defer to the installed version; without `node_modules`, the version comes from `package-lock.json`. Checks whose version stays unknown (a `latest`, `workspace:` or `catalog:` range with no install) are skipped and counted separately. Inside a git work tree it scans tracked files plus untracked files that `.gitignore` does not exclude, so ignored copies, builds and dot-directories are skipped; comments never count. It exits `1` when it finds hits. Each hit names a rule ID, and the fix is in that skill's `references/<rule>.md` (or `rules/<rule>.md`).
+A range that pins one major (`^19`, `19.x`) and the installed version are both read, and the lower major is reported. Open ranges such as `>=18` defer to the installed version; without `node_modules`, the version comes from `package-lock.json`. A `latest`, `workspace:` or `catalog:` range with no install reports `unknown-version`; a project below a skill's target reports `older-major`.
 
 `detect` reports `range-mismatch` when the resolved install is a different major than `package.json` declares (for example, a hoisted copy from a parent directory).
 
@@ -147,13 +146,13 @@ This repository contains guidance, not runtime dependencies. Last re-audited on 
 | Tailwind CSS | 4.3 (`tailwindcss` 4.3.5) |
 | Vitest | 5.1 (`vitest` 5.1.0) |
 | Playwright | 1.65 (`@playwright/test` 1.65.0) |
-| MSW | 3.0 (`msw` 3.0.4); 2.x differences noted per rule |
+| MSW | 3.0 (`msw` 3.0.4) |
 | TanStack Query | 5.x (`@tanstack/react-query` 5.107.1) |
 | React Hook Form | 7.x (`react-hook-form` 7.91.0) |
 | Zod | 4.6 (`zod` 4.6.7) |
 | nuqs | 2.10 (`nuqs` 2.10.2) |
 
-For each package that changed since the previous baseline, every API that its release notes and migration guides list as deprecated, removed, renamed or given a new default was searched for across the rule files, and each matching section was read. Rules were not re-read line by line. New features the rules don't cover yet are not part of the audit. If your project pins a different version, trust that version's official docs over this baseline.
+The rules teach only these versions: deprecated APIs, migration guides and notes for older majors were removed in 4.0.0. For each package that changed since the previous baseline, every API its release notes list as deprecated, removed, renamed or given a new default was searched for across the rule files, and each matching section was read. New features the rules don't cover yet are not part of the audit. If your project pins an older version, upgrade first or use that version's official docs.
 
 ### Core framework
 
@@ -161,13 +160,13 @@ For each package that changed since the previous baseline, every API that its re
 | ----- | ----- | -------------- |
 | [react](skills/react) | 44 | React 19 concurrent rendering, Server Components, hook optimization |
 | [nextjs](skills/nextjs) | 44 | Next.js 16 App Router, caching, server components, routing |
-| [typescript](skills/typescript) | 44 | TypeScript 7 migration, compiler config, type safety, async patterns |
+| [typescript](skills/typescript) | 44 | TypeScript 7 compiler config, type safety, async patterns |
 
 ### UI and styling
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
-| [tailwind](skills/tailwind) | 43 | Tailwind CSS v4 optimization, utility patterns, theming |
+| [tailwind](skills/tailwind) | 41 | Tailwind CSS v4 optimization, utility patterns, theming |
 | [shadcn](skills/shadcn) | 44 | shadcn/ui with Radix or Base UI primitives, accessibility |
 | [ui-design](skills/ui-design) | 42 | UI and UX practices, accessibility, responsive design |
 | [web-design-guidelines](skills/web-design-guidelines) | pinned | Reviews UI code against Vercel's Web Interface Guidelines, fetched from a pinned upstream commit |
@@ -185,7 +184,7 @@ For each package that changed since the previous baseline, every API that its re
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
-| [vitest](skills/vitest) | 47 | Vitest 5 setup, mocking, async testing, worker pools |
+| [vitest](skills/vitest) | 46 | Vitest 5 setup, mocking, async testing, worker pools |
 | [playwright](skills/playwright) | 45 | End-to-end testing, selectors, authentication, CI |
 | [msw](skills/msw) | 51 | API mocking with Mock Service Worker |
 | [tdd](skills/tdd) | 42 | Test-driven development methodology |
@@ -222,7 +221,7 @@ Each rule spells out the correct pattern with code, the anti-pattern to avoid, t
 ```text
 react-frontend-skills/
 ├── .github/workflows/         # CI: npm test, package smoke + MCP check on Node 22, 24 and 26, Windows, macOS
-├── bin/                       # Companion CLI (detect, scan, lint)
+├── bin/                       # Companion CLI (detect, lint)
 ├── mcp/                       # Publishable read-only MCP server
 ├── scripts/                   # Shared dev-only npm-pack helper
 ├── skills/

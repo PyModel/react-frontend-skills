@@ -61,7 +61,7 @@ await vi.waitFor(
 
 **Polling a value with expect.poll:**
 
-`expect.poll` retries an assertion against a callback's result. Since Vitest 5 it fails as soon as `timeout` expires; a result that arrives later no longer rescues it. Set `timeout` to cover the slowest legitimate response. The callback receives an `AbortSignal`, so pass it on to cancel work from timed-out attempts:
+`expect.poll` retries an assertion against a callback's result. It fails as soon as `timeout` expires; a result that arrives later no longer rescues it. Set `timeout` to cover the slowest legitimate response. The callback receives an `AbortSignal`, so pass it on to cancel work from timed-out attempts:
 
 ```typescript
 await expect

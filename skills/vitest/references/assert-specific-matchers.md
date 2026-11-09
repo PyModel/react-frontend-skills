@@ -65,9 +65,9 @@ describe('UserService', () => {
 | `expect(obj.x).toBe(val)` | `toHaveProperty('x', val)` |
 | `expect(typeof x).toBe('string')` | `expect(x).toBeTypeOf('string')` |
 
-**Error messages (Vitest 5):**
+**Error messages:**
 
-`toThrow('')` now passes for any thrown error: an empty string is a substring of every message. Vitest 4 treated it as "message is empty". Assert what you actually mean:
+`toThrow('')` passes for any thrown error: an empty string is a substring of every message. Assert what you actually mean:
 
 ```typescript
 expect(() => parse('')).toThrow()                   // throws anything

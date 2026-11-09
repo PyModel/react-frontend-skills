@@ -1,43 +1,35 @@
 ---
 title: Use Trailing Important Modifier
 impact: HIGH
-impactDescription: prevents v4 syntax errors
-tags: util, important, modifier, syntax, migration
+impactDescription: prevents silently ignored important flags
+tags: util, important, modifier, syntax
 ---
 
 ## Use Trailing Important Modifier
 
-Tailwind CSS v4 moves the important modifier (`!`) from the beginning to the end of utility classes for better readability.
+Add the important modifier (`!`) at the end of the utility, after any variants. A leading `!` is not parsed as important.
 
-**Incorrect (v3 leading modifier):**
-
-```html
-<div class="!flex !bg-red-500 !p-4">
-  <!-- Leading exclamation marks -->
-</div>
-```
-
-**Correct (v4 trailing modifier):**
+**Incorrect (leading exclamation mark):**
 
 ```html
-<div class="flex! bg-red-500! p-4!">
-  <!-- Trailing exclamation marks -->
-</div>
+<div class="!flex !bg-red-500 !p-4">...</div>
 ```
 
-**Benefits of trailing modifier:**
-- Reads left-to-right naturally
-- Easier to spot important overrides
-- Consistent with other modifier patterns
+**Correct (trailing exclamation mark):**
+
+```html
+<div class="flex! bg-red-500! p-4!">...</div>
+```
 
 **With variants:**
 
 ```html
-<!-- v3 -->
-<div class="!hover:bg-blue-500">
-
-<!-- v4 -->
-<div class="hover:bg-blue-500!">
+<div class="hover:bg-blue-500!">...</div>
 ```
 
-Reference: [Tailwind CSS Upgrade Guide](https://tailwindcss.com/docs/upgrade-guide)
+**Benefits:**
+- Reads left-to-right naturally
+- Easier to spot important overrides
+- Consistent with other modifier patterns
+
+Reference: [Tailwind CSS Important Modifier](https://tailwindcss.com/docs/styling-with-utility-classes#using-the-important-modifier)

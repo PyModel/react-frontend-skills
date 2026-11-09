@@ -1,15 +1,15 @@
 ---
-title: Migrate TypeScript 7 Configuration Deliberately
+title: Configure tsconfig for TypeScript 7
 impact: CRITICAL
-impactDescription: accounts for TypeScript 7 defaults, removed options, native compiler, and tooling compatibility
-tags: tscfg, typescript-7, migration, tsconfig, compiler
+impactDescription: sets explicit module, resolution, rootDir, and types for the native compiler
+tags: tscfg, typescript-7, tsconfig, compiler
 ---
 
-## Migrate TypeScript 7 Configuration Deliberately
+## Configure tsconfig for TypeScript 7
 
-TypeScript 7 is a native compiler port with TypeScript 6-compatible type-checking behavior, but it adopts TypeScript 6 defaults and turns TypeScript 6 deprecations into hard errors. Upgrade the compiler, editor, and dependent tooling together; do not treat it as a performance-only drop-in.
+TypeScript 7 is the native compiler. Its defaults are strict and explicit, so declare module resolution, `rootDir`, and global types yourself.
 
-Important defaults include:
+Defaults to know:
 
 - `strict: true`
 - `module: "esnext"`
@@ -18,7 +18,7 @@ Important defaults include:
 - `rootDir: "./"`
 - `types: []` (list required global type packages explicitly)
 
-Example application configuration:
+**Correct (bundler application):**
 
 ```json
 {
@@ -33,28 +33,32 @@ Example application configuration:
 }
 ```
 
-TypeScript 7 no longer supports `target: "es5"`, `moduleResolution: "node"`/`"node10"`/`"classic"`, `baseUrl`, legacy `module` values such as AMD/UMD/SystemJS/`none`, `downlevelIteration`, or disabling `esModuleInterop`, `allowSyntheticDefaultImports`, or `alwaysStrict`. Replace those based on the runtime and bundler contract; do not copy `bundler` into Node applications that require `nodenext`.
-
-TypeScript 7.0 does not expose the legacy TypeScript API used by every tool. Where tooling still imports `typescript`, install the TypeScript 6 compatibility package under that name and add TypeScript 7 under a second alias:
+**Correct (Node application):**
 
 ```json
 {
-  "devDependencies": {
-    "@typescript/native": "npm:typescript@^7.0.2",
-    "typescript": "npm:@typescript/typescript6@^6.0.2"
-  }
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "types": ["node"]
+  },
+  "include": ["src"]
 }
 ```
 
-This provides TypeScript 7's `tsc` and TypeScript 6's `tsc6` plus compiler API. Verify ESLint, framework plugins, build tools, editor support, and declaration output before removing the compatibility bridge. Vue, MDX, Astro, Svelte, Angular template tooling, and other TypeScript-embedding workflows may still require TypeScript 6 until a TypeScript 7 API is available.
+Use `bundler` only when a bundler resolves imports; Node applications use `nodenext`.
 
-### JavaScript and JSDoc differences
+Options TypeScript 7 does not support, so never set them: `target: "es5"`, `moduleResolution: "node"`/`"node10"`/`"classic"`, `baseUrl`, `module` values AMD/UMD/SystemJS/`none`, `downlevelIteration`, and `esModuleInterop`, `allowSyntheticDefaultImports`, or `alwaysStrict` set to `false`. Map aliases with `paths` relative to the tsconfig.
 
-TypeScript 7 aligns JavaScript analysis more closely with TypeScript. Audit checked JavaScript separately: values used in type positions now need `typeof`; Closure-style `function(string): void` types should become `(value: string) => void`; standalone `?`, postfix `!`, and special handling for `@enum` or `@class` are no longer supported. Use the upstream `CHANGES.md` linked from the announcement for the complete compatibility list.
+### JavaScript and JSDoc
+
+Checked JavaScript follows TypeScript rules: values in type positions need `typeof`, function types use `(value: string) => void`, and standalone `?`, postfix `!`, and special `@enum` or `@class` handling are not supported.
 
 ### Parallelism controls
 
-TypeScript 7 uses four checker workers by default. The experimental `--checkers` and `--builders` flags trade memory for parallel type checking and project-reference builds; their effects multiply under `--build`. Benchmark them on representative developer and CI machines instead of maximizing both:
+TypeScript 7 uses four checker workers by default. The experimental `--checkers` and `--builders` flags trade memory for parallel type checking and project-reference builds; their effects multiply under `--build`. Benchmark on representative developer and CI machines instead of maximizing both:
 
 ```bash
 npx tsc --noEmit --checkers 4
@@ -62,14 +66,12 @@ npx tsc --build --checkers 2 --builders 2
 npx tsc --noEmit --singleThreaded
 ```
 
-Run version-matched checks after migration:
+Verify with:
 
 ```bash
 npx tsc --version
 npx tsc --noEmit
-npx tsc6 --noEmit
 ```
 
 References:
 - [TypeScript 7.0 announcement](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/)
-- [TypeScript 6.0 release notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-6-0.html)

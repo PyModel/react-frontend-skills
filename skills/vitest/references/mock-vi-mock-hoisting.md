@@ -72,9 +72,9 @@ describe('UserService', () => {
 })
 ```
 
-**Top level only (Vitest 5):**
+**Top level only:**
 
-`vi.mock`, `vi.unmock` and `vi.hoisted` must sit at module top level. A call inside `describe`, `it` or a hook fails the whole file at transform time with "was defined outside of the module's top level scope". Vitest 4 only warned. To mock a module for a single test, use `vi.doMock`, which is not hoisted, then import the module dynamically:
+`vi.mock`, `vi.unmock` and `vi.hoisted` must sit at module top level. A call inside `describe`, `it` or a hook fails the whole file at transform time with "was defined outside of the module's top level scope". To mock a module for a single test, use `vi.doMock`, which is not hoisted, then import the module dynamically:
 
 ```typescript
 import { it, expect, vi } from 'vitest'
@@ -92,4 +92,4 @@ it('uses the fallback user', async () => {
 - Variables are available at mock definition time
 - Clear control over mock behavior per test
 
-Reference: [Vitest vi.mock](https://vitest.dev/api/vi.html#vi-mock) · [Vitest 5 migration: hoisted calls at top level](https://vitest.dev/guide/migration#hoisted-mocking-calls-must-be-at-the-top-level)
+Reference: [Vitest vi.mock](https://vitest.dev/api/vi.html#vi-mock)

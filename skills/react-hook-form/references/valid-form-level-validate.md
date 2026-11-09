@@ -7,7 +7,7 @@ tags: react-hook-form, validation, cross-field, useForm
 
 ## Validate Cross-Fields with the Form-Level validate Option
 
-Since RHF 7.72, `useForm` accepts a built-in form-level `validate` function. Use it for cross-field rules (password confirmation, date ranges, dependent constraints) that previously required a schema resolver or watch-driven manual validation.
+Since RHF 7.72, `useForm` accepts a built-in form-level `validate` function. Use it for cross-field rules (password confirmation, date ranges, dependent constraints); no schema resolver or watch-driven manual validation needed.
 
 **Incorrect (watch + manual error injection for cross-field rules):**
 
@@ -44,4 +44,4 @@ const form = useForm<SignupValues>({
 
 - The function receives all current values and returns an errors object keyed by field path, a root error string, or `undefined` when valid.
 - It composes with resolvers and inline rules; keep single-field rules in schemas and reserve `validate` for dependencies between fields.
-- Also since 7.72, `formState` subscribes to submit state, so `isSubmitted`/`isSubmitting` drive UI without custom bookkeeping.
+- `formState` subscribes to submit state, so `isSubmitted`/`isSubmitting` drive UI without custom bookkeeping.

@@ -7,7 +7,7 @@ tags: comp, form, field, reusable, composition
 
 ## Create Reusable Form Field Components
 
-Extract common form field patterns into reusable components to reduce boilerplate and maintain consistency across forms.
+Extract the `Controller` + `Field` pattern into reusable components so every field gets the same label, invalid state, and error wiring.
 
 **Incorrect (repeated form field boilerplate):**
 
@@ -18,35 +18,43 @@ function UserForm() {
   })
 
   return (
-    <Form {...form}>
-      <FormField
-        control={form.control}
-        name="firstName"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>First Name</FormLabel>
-            <FormControl>
-              <Input placeholder="Enter first name" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="lastName"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Last Name</FormLabel>
-            <FormControl>
-              <Input placeholder="Enter last name" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      {/* 10 more fields with identical structure... */}
-    </Form>
+    <form onSubmit={form.handleSubmit(onSubmit)}>
+      <FieldGroup>
+        <Controller
+          name="firstName"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>First Name</FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                aria-invalid={fieldState.invalid}
+                placeholder="Enter first name"
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          name="lastName"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Last Name</FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                aria-invalid={fieldState.invalid}
+                placeholder="Enter last name"
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        {/* 10 more fields with identical structure... */}
+      </FieldGroup>
+    </form>
   )
 }
 ```
@@ -55,6 +63,10 @@ function UserForm() {
 
 ```tsx
 // components/form/text-field.tsx
+import { Controller, type Control, type FieldValues, type Path } from "react-hook-form"
+import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+
 interface TextFieldProps<T extends FieldValues> {
   control: Control<T>
   name: Path<T>
@@ -73,18 +85,22 @@ function TextField<T extends FieldValues>({
   type = "text",
 }: TextFieldProps<T>) {
   return (
-    <FormField
-      control={control}
+    <Controller
       name={name}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>{label}</FormLabel>
-          <FormControl>
-            <Input type={type} placeholder={placeholder} {...field} />
-          </FormControl>
-          {description && <FormDescription>{description}</FormDescription>}
-          <FormMessage />
-        </FormItem>
+      control={control}
+      render={({ field, fieldState }) => (
+        <Field data-invalid={fieldState.invalid}>
+          <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
+          <Input
+            {...field}
+            id={field.name}
+            type={type}
+            placeholder={placeholder}
+            aria-invalid={fieldState.invalid}
+          />
+          {description && <FieldDescription>{description}</FieldDescription>}
+          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+        </Field>
       )}
     />
   )
@@ -107,18 +123,20 @@ function SelectField<T extends FieldValues>({
   options,
 }: SelectFieldProps<T>) {
   return (
-    <FormField
-      control={control}
+    <Controller
       name={name}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>{label}</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
-            <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder={placeholder} />
-              </SelectTrigger>
-            </FormControl>
+      control={control}
+      render={({ field, fieldState }) => (
+        <Field data-invalid={fieldState.invalid}>
+          <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
+          <Select
+            name={field.name}
+            value={field.value}
+            onValueChange={field.onChange}
+          >
+            <SelectTrigger id={field.name} aria-invalid={fieldState.invalid}>
+              <SelectValue placeholder={placeholder} />
+            </SelectTrigger>
             <SelectContent>
               {options.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
@@ -127,8 +145,8 @@ function SelectField<T extends FieldValues>({
               ))}
             </SelectContent>
           </Select>
-          <FormMessage />
-        </FormItem>
+          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+        </Field>
       )}
     />
   )
@@ -139,19 +157,21 @@ function UserForm() {
   const form = useForm<UserFormValues>({ resolver: zodResolver(userSchema) })
 
   return (
-    <Form {...form}>
-      <TextField control={form.control} name="firstName" label="First Name" />
-      <TextField control={form.control} name="lastName" label="Last Name" />
-      <TextField control={form.control} name="email" label="Email" type="email" />
-      <SelectField
-        control={form.control}
-        name="role"
-        label="Role"
-        options={roleOptions}
-      />
-    </Form>
+    <form onSubmit={form.handleSubmit(onSubmit)}>
+      <FieldGroup>
+        <TextField control={form.control} name="firstName" label="First Name" />
+        <TextField control={form.control} name="lastName" label="Last Name" />
+        <TextField control={form.control} name="email" label="Email" type="email" />
+        <SelectField
+          control={form.control}
+          name="role"
+          label="Role"
+          options={roleOptions}
+        />
+      </FieldGroup>
+    </form>
   )
 }
 ```
 
-Reference: [React Hook Form with TypeScript](https://react-hook-form.com/ts)
+Reference: [shadcn - React Hook Form](https://ui.shadcn.com/docs/forms/react-hook-form)

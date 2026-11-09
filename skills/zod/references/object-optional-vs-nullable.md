@@ -82,9 +82,9 @@ z.object({
 })
 
 // nullish() - either undefined or null
-// Use for: Lenient APIs, legacy data, optional nullable DB columns
+// Use for: Lenient APIs, external data, optional nullable DB columns
 z.object({
-  legacyField: z.string().nullish(),  // string | null | undefined
+  optionalField: z.string().nullish(),  // string | null | undefined
 })
 ```
 

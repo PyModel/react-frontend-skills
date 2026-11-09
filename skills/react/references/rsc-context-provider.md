@@ -7,7 +7,7 @@ tags: react, rsc, context, server-components
 
 ## Render Context Providers in Server Components
 
-New in React 19.3: a Server Component can render a Context provider (created in a `'use client'` module) directly, passing a serializable value to client consumers. This removes the hand-written "Providers" client wrapper component that existed only because Server Components could not render providers.
+A Server Component can render a Context provider (created in a `'use client'` module) directly, passing a serializable value to client consumers. This removes the hand-written "Providers" client wrapper component that existed only because Server Components could not render providers.
 
 **Incorrect (client wrapper just to hold a provider):**
 

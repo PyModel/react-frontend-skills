@@ -100,7 +100,7 @@ z.safeParse(schema, data)
 // But prefer consistency - pick one for your codebase
 ```
 
-The Zod 4 launch benchmark measured a minimal core bundle at 5.36 kB gzip for regular Zod and 1.88 kB for Zod Mini. The current Zod Mini documentation shows different sizes for more complex schemas, so treat those figures as examples, not package-wide constants.
+The Zod launch benchmark measured a minimal core bundle at 5.36 kB gzip for regular Zod and 1.88 kB for Zod Mini. The current Zod Mini documentation shows different sizes for more complex schemas, so treat those figures as examples, not package-wide constants.
 
 **When NOT to use this pattern:**
 - Server-side applications (bundle size irrelevant)

@@ -83,8 +83,8 @@ const productSchema = z.object({
   id: z.string(),
   name: z.string(),
   price: z.number().positive(),
-  // Legacy field that might be missing or wrong format
-  legacyCode: z.string().catch('UNKNOWN'),
+  // External field that might be missing or wrong format
+  externalCode: z.string().catch('UNKNOWN'),
   // External data that might be malformed
   metadata: z.record(z.string(), z.unknown()).catch({}),
 })
@@ -94,7 +94,7 @@ const apiResponse = {
   id: 'prod-123',
   name: 'Widget',
   price: 29.99,
-  legacyCode: null,  // Bad - should be string
+  externalCode: null,  // Bad - should be string
   metadata: 'invalid',  // Bad - should be object
 }
 
@@ -123,8 +123,7 @@ z.string().catch('fallback')
 
 ```typescript
 // Catch only specific validation failures
-const schema = z.string()
-  .email()
+const schema = z.email()
   .catch('invalid@example.com')  // Fallback if not valid email
 
 // Chain for complex defaults

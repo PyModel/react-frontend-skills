@@ -7,7 +7,7 @@ tags: query, queryOptions, typescript, prefetching
 
 ## Use queryOptions for Type-Safe Sharing
 
-When sharing query configuration between `useQuery`, `queryClient.query` (which replaces the deprecated `prefetchQuery`/`fetchQuery`/`ensureQueryData` since v5.102), and `getQueryData`, inline objects lose type inference. The `queryOptions` helper preserves types across all usage sites.
+When sharing query configuration between `useQuery`, `queryClient.query`, and `getQueryData`, inline objects lose type inference. The `queryOptions` helper preserves types across all usage sites.
 
 **Incorrect (repeated configuration, lost types):**
 

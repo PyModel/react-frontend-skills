@@ -2,12 +2,12 @@
 title: Prefer Variant and Class Composition Over Important Overrides
 impact: HIGH
 impactDescription: preserves predictable customization while allowing documented escape hatches
-tags: style, important, specificity, tailwind-v4, overrides
+tags: style, important, specificity, tailwind, overrides
 ---
 
 ## Prefer Variant and Class Composition Over Important Overrides
 
-Prefer component variants, CSS variables, and `cn()`/`tailwind-merge` ordering over `!important`. Tailwind v4 supports the important modifier, but it should be a targeted escape hatch for specificity you cannot otherwise control, not the default component API.
+Prefer component variants, CSS variables, and `cn()`/`tailwind-merge` ordering over `!important`. Tailwind's important modifier should be a targeted escape hatch for specificity you cannot otherwise control, not the default component API.
 
 **Incorrect (locking every consumer out):**
 
@@ -46,7 +46,7 @@ function BrandButton({
 }
 ```
 
-When an important override is necessary, document why and use Tailwind v4's trailing syntax (`bg-red-500!`). The old leading syntax (`!bg-red-500`) is deprecated.
+When an important override is necessary, document why and use the trailing syntax (`bg-red-500!`).
 
 If a class does not win as expected:
 

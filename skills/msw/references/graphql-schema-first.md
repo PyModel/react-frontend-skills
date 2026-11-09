@@ -74,7 +74,6 @@ export const handlers = [
 **Notes:**
 
 - `api.operation()` matches every operation; place more specific named-operation handlers above it when you need per-test overrides.
-- The `graphql` package (`buildSchema`, `graphql()`) is an optional peer dependency of MSW 3; install it yourself.
-- On MSW 2.x: `import { graphql, HttpResponse } from 'msw'` and `graphql.operation(resolver)` instead of `api.operation`.
+- The `graphql` package (`buildSchema`, `graphql()`) is an optional peer dependency of MSW; install it yourself.
 - Because resolution runs against the schema, invalid client queries surface real GraphQL `errors` in the mocked response — useful for testing error UI.
 - Pair with [graphql-operation-handlers](graphql-operation-handlers.md) for targeted overrides and [graphql-error-responses](graphql-error-responses.md) for error-shape rules.

@@ -1,32 +1,19 @@
 ---
 title: Define GraphQL Operations on a graphql.link()
 impact: MEDIUM
-impactDescription: graphql.query/mutation/operation no longer exist in MSW 3; links scope operations to an endpoint
-tags: graphql, link, operation, query, mutation, matching, v3
+impactDescription: A link scopes operations to an endpoint, so same-named operations on different APIs stay apart
+tags: graphql, link, operation, query, mutation, matching
 ---
 
 ## Define GraphQL Operations on a graphql.link()
 
-MSW 3 GraphQL mocking is link-first. Create a link for the endpoint with `graphql.link(url)` and define handlers on it by operation name. Every GraphQL request goes to the same URL, so the operation name is the discriminator, and the link keeps same-named operations on different APIs apart.
-
-On MSW 2.x: `import { graphql, HttpResponse } from 'msw'`, then `graphql.query('GetUser', resolver)` (also `graphql.mutation`, `graphql.operation`); 3.0 removed these.
+GraphQL mocking is link-first. Create a link for the endpoint with `graphql.link(url)` and define handlers on it by operation name. Every GraphQL request goes to the same URL, so the operation name is the discriminator, and the link keeps same-named operations on different APIs apart.
 
 **Incorrect (URL-based matching for GraphQL):**
 
 ```typescript
 // All GraphQL requests go to /graphql - this catches everything!
 http.post('/graphql', () => {
-  return HttpResponse.json({ data: { user: { name: 'John' } } })
-})
-```
-
-**Incorrect (2.x namespace methods, removed in MSW 3):**
-
-```typescript
-import { graphql, HttpResponse } from 'msw'
-
-// 3.x: 'msw' no longer exports graphql, and graphql.query() was removed
-graphql.query('GetUser', () => {
   return HttpResponse.json({ data: { user: { name: 'John' } } })
 })
 ```

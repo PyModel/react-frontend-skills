@@ -55,4 +55,4 @@ export async function Sidebar({ userId }: { userId: string }) {
 }
 ```
 
-**Note:** React `cache()` deduplicates within a single request. For cross-request caching, use `unstable_cache` or the `'use cache'` directive.
+**Note:** React `cache()` deduplicates within a single request. For cross-request caching, use the `'use cache'` directive.

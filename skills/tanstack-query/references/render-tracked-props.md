@@ -17,7 +17,7 @@ function SimpleDisplay() {
   const {
     data,
     error,
-    isLoading,
+    isPending,
     isFetching,
     isError,
     isSuccess,

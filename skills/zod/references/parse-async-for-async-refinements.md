@@ -7,7 +7,7 @@ tags: parse, async, parseAsync, refinement
 
 ## Use parseAsync for Async Refinements
 
-If your schema uses `refine()` or `superRefine()` with async validation (like database lookups), you must use `parseAsync()` or `safeParseAsync()`. Using synchronous `parse()` with async refinements throws an error.
+If your schema uses `refine()` or `check()` with async validation (like database lookups), you must use `parseAsync()` or `safeParseAsync()`. Using synchronous `parse()` with async refinements throws an error.
 
 **Incorrect (sync parse with async refinement):**
 
@@ -86,10 +86,12 @@ import { NextRequest, NextResponse } from 'next/server'
 const registerSchema = z.object({
   email: z.email(),
   password: z.string().min(8),
-}).superRefine(async (data, ctx) => {
+}).check(async (ctx) => {
+  const data = ctx.value
   const existingUser = await db.users.findByEmail(data.email)
   if (existingUser) {
-    ctx.addIssue({
+    ctx.issues.push({
+      input: ctx.value,
       code: 'custom',
       path: ['email'],
       message: 'Email already registered',

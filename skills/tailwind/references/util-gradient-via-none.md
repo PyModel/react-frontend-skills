@@ -7,15 +7,14 @@ tags: util, gradients, via, variants, colors
 
 ## Use via-none to Reset Gradient Stops
 
-Tailwind CSS v4 preserves gradient values across variants instead of resetting them. Explicitly use `via-none` to remove a middle stop.
+Gradient stops are preserved across variants: overriding `from-*` or `to-*` in a variant leaves the other stops intact. Use `via-none` to remove a middle stop in a variant.
 
-**Incorrect (expecting gradient reset):**
+**Incorrect (expecting the variant to reset the whole gradient):**
 
 ```html
 <div class="bg-linear-to-r from-red-500 via-orange-400 to-yellow-400
             dark:from-blue-500 dark:to-teal-400">
-  <!-- v3: dark mode resets entire gradient -->
-  <!-- v4: dark mode keeps via-orange-400! -->
+  <!-- dark mode keeps via-orange-400 -->
 </div>
 ```
 
@@ -24,14 +23,13 @@ Tailwind CSS v4 preserves gradient values across variants instead of resetting t
 ```html
 <div class="bg-linear-to-r from-red-500 via-orange-400 to-yellow-400
             dark:via-none dark:from-blue-500 dark:to-teal-400">
-  <!-- Explicitly remove via stop in dark mode -->
+  <!-- Middle stop removed in dark mode -->
 </div>
 ```
 
-**How v4 works:**
-- Gradient stops are preserved across variants
-- Each stop can be individually overridden
-- Use `via-none` to convert 3-stop to 2-stop gradient
-- More consistent with other utility behaviors
+**How it works:**
+- Each stop can be overridden individually
+- Use `via-none` to turn a 3-stop gradient into a 2-stop gradient
+- Consistent with how other utilities compose across variants
 
-Reference: [Tailwind CSS Upgrade Guide](https://tailwindcss.com/docs/upgrade-guide)
+Reference: [Tailwind CSS Background Image](https://tailwindcss.com/docs/background-image)

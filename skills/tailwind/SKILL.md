@@ -5,13 +5,13 @@ description: Tailwind CSS v4 styling and configuration.
 
 # Tailwind Labs Tailwind CSS v4 Best Practices
 
-Comprehensive performance optimization guide for Tailwind CSS v4 applications, maintained by Tailwind Labs. Contains 43 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation. Current: Tailwind CSS 4.3.5.
+Comprehensive performance optimization guide for Tailwind CSS v4 applications, maintained by Tailwind Labs. Contains 41 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation. Current: Tailwind CSS 4.3.5.
 
 ## When to Apply
 
 Reference these guidelines when:
 - Configuring Tailwind CSS v4 build tooling (Vite plugin, PostCSS, CLI)
-- Writing or migrating styles using v4's CSS-first approach
+- Writing styles with v4's CSS-first approach
 - Optimizing CSS bundle size and build performance
 - Implementing responsive designs with breakpoints or container queries
 - Setting up theming with @theme directive and design tokens
@@ -34,12 +34,11 @@ Reference these guidelines when:
 ### 1. Build Configuration (CRITICAL)
 
 - [`build-vite-plugin`](references/build-vite-plugin.md) - Use Vite Plugin Over PostCSS
-- [`build-css-import`](references/build-css-import.md) - Use CSS Import Over @tailwind Directives
+- [`build-css-import`](references/build-css-import.md) - Import Tailwind With a Single CSS Import
 - [`build-turbopack-loader`](references/build-turbopack-loader.md) - Use the Turbopack Loader in Next.js
 - [`build-content-detection`](references/build-content-detection.md) - Leverage Automatic Content Detection
-- [`build-node-version`](references/build-node-version.md) - Use Node.js 20+ for the upgrade tool
-- [`build-postcss-simplify`](references/build-postcss-simplify.md) - Remove Redundant PostCSS Plugins
-- [`build-cli-package`](references/build-cli-package.md) - Use Correct CLI Package
+- [`build-postcss-simplify`](references/build-postcss-simplify.md) - Use Only the Tailwind PostCSS Plugin
+- [`build-cli-package`](references/build-cli-package.md) - Use the @tailwindcss/cli Package
 
 ### 2. CSS Generation (CRITICAL)
 
@@ -52,7 +51,7 @@ Reference these guidelines when:
 
 ### 3. Bundle Optimization (HIGH)
 
-- [`bundle-remove-unused-plugins`](references/bundle-remove-unused-plugins.md) - Remove Built-in Plugins
+- [`bundle-remove-unused-plugins`](references/bundle-remove-unused-plugins.md) - Use Built-in Features Instead of Plugins
 - [`bundle-avoid-preprocessors`](references/bundle-avoid-preprocessors.md) - Avoid Sass/Less Preprocessors
 - [`bundle-css-minification`](references/bundle-css-minification.md) - Enable CSS Minification in Production
 - [`bundle-avoid-cdn-production`](references/bundle-avoid-cdn-production.md) - Avoid Play CDN in Production
@@ -60,9 +59,8 @@ Reference these guidelines when:
 
 ### 4. Utility Patterns (HIGH)
 
-- [`util-renamed-utilities`](references/util-renamed-utilities.md) - Use Renamed Utility Classes
 - [`util-important-modifier`](references/util-important-modifier.md) - Use Trailing Important Modifier
-- [`util-variant-stacking`](references/util-variant-stacking.md) - Use Left-to-Right Variant Stacking
+- [`util-variant-stacking`](references/util-variant-stacking.md) - Stack Variants Left to Right
 - [`util-explicit-colors`](references/util-explicit-colors.md) - Use Explicit Border and Ring Colors
 - [`util-opacity-modifier`](references/util-opacity-modifier.md) - Use Slash Opacity Modifier
 - [`util-gradient-via-none`](references/util-gradient-via-none.md) - Use via-none to Reset Gradient Stops
@@ -103,8 +101,7 @@ Reference these guidelines when:
 Run in the project root first:
 
 ```bash
-npx -y @pymodel/react-frontend-skills detect                 # installed vs. targeted versions
-npx -y @pymodel/react-frontend-skills scan --skill tailwind  # deprecated APIs → rule IDs
+npx -y @pymodel/react-frontend-skills detect  # installed vs. targeted versions
 ```
 
-Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
+Read `references/<rule-id>.md` for each rule above that matches the task: why it matters, then incorrect vs. correct code.

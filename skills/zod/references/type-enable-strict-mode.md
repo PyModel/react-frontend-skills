@@ -101,10 +101,9 @@ const schema = z.object({ name: z.string() })
 schema.parse(data)  // data could be 'any', bypassing validation
 ```
 
-**Migrating to strict mode:**
+**Fixing strict-mode errors:**
 
 ```typescript
-// If enabling strict breaks existing code, fix issues incrementally
 // Common fixes:
 
 // 1. Add null checks

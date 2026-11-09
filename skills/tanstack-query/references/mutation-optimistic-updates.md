@@ -62,7 +62,7 @@ const mutation = useMutation({
 })
 ```
 
-**Simplified v5 pattern (using mutation state):**
+**Simplified pattern (using mutation state):**
 
 ```typescript
 const mutation = useMutation({

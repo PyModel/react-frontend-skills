@@ -68,7 +68,7 @@ Reference these guidelines when:
 - [`server-use-transition`](references/server-use-transition.md) - Integrate useTransition for loading states
 - [`server-parse-before-get`](references/server-parse-before-get.md) - Call parse() before get() in Server Components
 - [`server-share-parsers`](references/server-share-parsers.md) - Share parsers between client and server
-- [`server-next15-async`](references/server-next15-async.md) - Handle async searchParams in Next.js 15+
+- [`server-next15-async`](references/server-next15-async.md) - Await async searchParams in App Router pages
 
 ### 5. Performance Optimization (MEDIUM)
 
@@ -104,7 +104,6 @@ Run in the project root first:
 
 ```bash
 npx -y @pymodel/react-frontend-skills detect             # installed vs. targeted versions
-npx -y @pymodel/react-frontend-skills scan --skill nuqs  # deprecated APIs → rule IDs
 ```
 
-Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
+Read `references/<rule-id>.md` for each rule above that matches the task: why it matters, then incorrect vs. correct code.

@@ -7,7 +7,7 @@ tags: cwv, inp, responsiveness, javascript, performance
 
 ## Improve Interaction to Next Paint
 
-INP measures responsiveness to user interactions. Slow INP (over 200ms) makes buttons feel broken and causes users to click repeatedly. INP replaced FID in March 2024.
+INP measures responsiveness to user interactions. Slow INP (over 200ms) makes buttons feel broken and causes users to click repeatedly.
 
 **Incorrect (blocking main thread during interaction):**
 

@@ -7,7 +7,7 @@ tags: form, reset, state, react-hook-form, submission
 
 ## Reset Form State Correctly After Submission
 
-After successful form submission, reset the form state to prevent stale data, duplicate submissions, and confusion about form status.
+After successful form submission, reset the form state to prevent stale data, duplicate submissions, and confusion about form status. Controlled `Controller` fields need complete `defaultValues` so `reset()` returns them to a defined value.
 
 **Incorrect (form not reset after submission):**
 
@@ -24,13 +24,18 @@ function ContactForm() {
     // User might accidentally resubmit
   }
 
-  return <Form {...form}>{/* ... */}</Form>
+  return <form onSubmit={form.handleSubmit(onSubmit)}>{/* ... */}</form>
 }
 ```
 
 **Correct (form reset with proper state management):**
 
 ```tsx
+import { Controller, useForm } from "react-hook-form"
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+
 function ContactForm() {
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
@@ -53,14 +58,34 @@ function ContactForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        {/* Form fields */}
-        <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? "Sending..." : "Send Message"}
-        </Button>
-      </form>
-    </Form>
+    <form onSubmit={form.handleSubmit(onSubmit)}>
+      <FieldGroup>
+        <Controller
+          name="name"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                aria-invalid={fieldState.invalid}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        {/* email and message follow the same Controller + Field shape */}
+        <Field orientation="horizontal">
+          <Button type="button" variant="outline" onClick={() => form.reset()}>
+            Clear
+          </Button>
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? "Sending..." : "Send Message"}
+          </Button>
+        </Field>
+      </FieldGroup>
+    </form>
   )
 }
 ```
@@ -81,6 +106,7 @@ const { data: user } = useQuery({
 
 const form = useForm<UserFormValues>({
   resolver: zodResolver(userSchema),
+  defaultValues: { name: "", email: "" },
 })
 const { reset } = form
 

@@ -37,20 +37,6 @@ module.exports = {
 }
 ```
 
-**Alternative - migrate to Vitest:**
-
-```typescript
-// vitest.config.ts
-import { defineConfig } from 'vitest/config'
-
-export default defineConfig({
-  test: {
-    environment: 'jsdom',  // Vitest handles this correctly
-    setupFiles: ['./vitest.setup.ts'],
-  },
-})
-```
-
 **Why this matters:**
 
 JSDOM uses browser export conditions by default, causing packages like MSW to use browser-specific code in a Node.js context. This leads to:
@@ -58,12 +44,10 @@ JSDOM uses browser export conditions by default, causing packages like MSW to us
 - Incorrect module resolution
 - Silent failures or cryptic errors
 
-`jest-fixed-jsdom` and Vitest correctly handle the Node.js/browser boundary.
-
-MSW 3 is ESM-only, so a Jest setup must be able to load ESM packages; Vitest needs no change.
+`jest-fixed-jsdom` handles the Node.js/browser boundary correctly. MSW is ESM-only, so the Jest setup must also be able to load ESM packages.
 
 **When NOT to use this pattern:**
 - Vitest users don't need this; Vitest handles environments correctly
 - Node-only tests (no DOM) should use `testEnvironment: 'node'`
 
-Reference: [MSW v2 Migration - Jest/JSDOM](https://mswjs.io/docs/migrations/1.x-to-2.x/)
+Reference: [MSW Node.js integration](https://mswjs.io/docs/integrations/node)

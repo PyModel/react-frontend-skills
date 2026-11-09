@@ -54,7 +54,7 @@ useQuery({
 ```typescript
 import { noop } from '@tanstack/react-query'
 
-// queryClient.query replaces the deprecated prefetchQuery (v5.102+)
+// queryClient.query fetches into the cache
 await queryClient
   .query({
     queryKey: ['data'],

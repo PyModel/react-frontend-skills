@@ -39,7 +39,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const { id } = await params
   const queryClient = new QueryClient()
 
-  // queryClient.query replaces the deprecated prefetchQuery (v5.102+)
+  // queryClient.query fetches into the cache
   await queryClient
     .query({
       queryKey: ['project', id],

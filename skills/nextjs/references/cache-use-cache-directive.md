@@ -52,6 +52,6 @@ Without `'use cache'`, runtime fetches remain fresh by default. With it, the cac
 
 Do not read request-time values such as `cookies()`, `headers()`, or `searchParams` inside a cached scope. Read them outside and pass only the minimal serializable value as an argument. Do not cache personalized data under shared arguments.
 
-If `cacheComponents` is not enabled, follow the previous caching model (`fetch` cache options and, where needed, `unstable_cache`) rather than copying `'use cache'` into the app. Enabling Cache Components is a model change, not a rename-only migration.
+`'use cache'` requires `cacheComponents: true` in `next.config.ts`; without it, use `fetch` cache options.
 
 Reference: [Next.js Cache Components](https://nextjs.org/docs/app/getting-started/cache-components)

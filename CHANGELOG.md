@@ -7,32 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-11-09
+
+The pack now teaches only the current major of each library. MCP package: 3.0.0.
+
+### Breaking
+
+- `scan` is removed, with its 35 deprecated-API checks, comment masking, `--skill` and `--all`. `detect` and `lint` remain. Running `scan` now exits 2 as an unknown command.
+- Deprecated and legacy content is removed from every skill: migration guides, "Incorrect (deprecated in vN)" examples, notes for older majors, deprecated aliases and version-history asides. Rules that taught a current API through its deprecated predecessor are rewritten to teach the current API only.
+- Deleted rules: `tailwind/build-node-version`, `tailwind/util-renamed-utilities`, `vitest/setup-vitest5-migration` (tailwind 41 rules, vitest 46). `zod/refine-vs-superrefine` is now `zod/refine-vs-check`.
+- `detect` no longer reads npm 6 (`lockfileVersion: 1`) lockfiles. Its older-major hint says the skills cover only the target major; upgrade before applying them.
+- The CLI entry point no longer exports `detect`, `lint` or `rangeMajor`; import them from `bin/detect.mjs` and `bin/lint.mjs`. The MCP `startStdioServer` returns `{ server }` and `SkillsCatalog` is no longer exported.
+
 ### Changed
 
-- The CLI is split into focused modules (`cli`, `detect`, `scan`, `mask-comments`, `lint`) behind the same entry point. The entry point no longer re-exports `detect`, `scan`, `lint` or `maskComments`; import them from their modules. The command surface is unchanged; the scan footer now names `rules/<rule>.md` as well as `references/<rule>.md`, and `--help` says "scan hits" for exit code 1. npm-pack output parsing is shared by both smoke tests in `scripts/npm-pack.mjs`.
-- `scan --skill` accepts both the skill that owns a rule and the skill a package maps to in `PACKAGES`, so `--skill react` includes the forwardRef rule owned by `vercel-composition-patterns`. `--all` now respects `onlyIf` config gates instead of reporting a check whose flag is absent.
-- `lint` rejects duplicate scan-check ids, check packages missing from `PACKAGES`, a `since` newer than every gating package target, and global/sticky regexes on `pattern`, `files`, `requires` or `onlyIf`, so a typo cannot silently disable a check.
-- `scan` compiles each check's RegExp once per run instead of once per file.
+- Zod refinements use `.check()` instead of `superRefine`; shadcn and React Hook Form forms use `Controller` with `Field`/`FieldError` instead of the `Form`/`FormField` wrapper; MSW examples use `onUnhandledFrame`; nuqs and Next.js examples await `searchParams`; `useTransition` examples use `isPending`.
+- Next.js: new `server-async-params` rule (pages, layouts, route handlers, metadata routes, Client Components); Turbopack config lives under the top-level `turbopack` key.
+- TypeScript 7 rule is now "Configure tsconfig for TypeScript 7" and lists `downlevelIteration` and `module: "none"` among unsupported options.
+- MSW handler URL guidance scopes relative paths to browser/jsdom and uses an absolute URL or `*/path` in a pure Node test; Vitest and TDD examples follow it.
+- shadcn rules cover Base UI as well as Radix; the React 19 rule no longer claims `use()` replaces `useContext`; Tailwind dark mode uses `@custom-variant`; Lucide imports stay on the typed package entry; TDD uses MSW or an injected fake instead of replacing `global.fetch`.
+- Audit baseline re-checked on 2026-11-09 against Tailwind CSS 4.3.5, Playwright 1.65.0, MSW 3.0.4 and TanStack Query 5.107.1; Playwright 1.65 adds the sharded-run note to `perf-sharding`.
+- The CLI is split into `cli`, `detect`, `lint` and `packages` modules. npm-pack output parsing is shared by both smoke tests in `scripts/npm-pack.mjs`.
 - MCP search limits come from one pair of constants; the catalog no longer stores an unused per-skill file list or parses `SKILL.md` frontmatter twice.
-- Audit baseline re-checked on 2026-11-09 against Tailwind CSS 4.3.5, Playwright 1.65.0, MSW 3.0.4 and TanStack Query 5.107.1. Those releases do not change an API the rules use; Playwright 1.65 adds the sharded-run note to `perf-sharding`.
-- TypeScript 7 scan and rule now also cover `downlevelIteration` and `module: "none"`.
-- Next.js Turbopack guidance now says `experimental.turbo` is a working deprecated alias, not a removed option; `persistentCaching` remains a non-existent option.
-- Next.js route examples now await `params`/`searchParams`; the new `server-async-params` rule covers pages, layouts, route handlers, metadata routes and Client Components (nextjs, 44 rules).
-- MSW handler URL guidance now scopes relative paths to browser/jsdom and requires an absolute URL or `*/path` in a pure Node test.
-- shadcn rules label Radix-only props and cover Base UI; the React 19 rule no longer claims `use()` replaces `useContext`; Tailwind dark mode uses `@custom-variant`; Lucide imports stay on the typed package entry; TDD uses MSW or an injected fake instead of replacing `global.fetch`.
 - `web-design-guidelines` has one procedure section instead of two copies.
 
 ### Fixed
 
-- `detect --all`, `lint --skill`, and extra positional arguments now fail with exit 2 instead of being silently ignored.
-- React section links point at the real `_sections.md` anchors; `lint` now validates `SKILL.md` link fragments (including same-file `#anchor` links) with GitHub's slug rules for repeated, Unicode, linked and emphasized headings, ignoring fenced code, so a stale anchor fails CI.
-- `scan` no longer crashes on a dangling root config symlink (for example `next.config.ts`), and config-flag gates are read only for checks whose package the project declares.
-- The MCP SIGTERM test asserts the binary exits with code 0 and no signal, so dropping the shutdown handler fails it; a failed close sets exit code 1 before reporting and reports to stderr by default.
-- Vitest and TDD MSW examples use `*/path` handlers so they match in a pure Node test; `server-async-params` says Next.js 15 still allowed synchronous access and 16 removed it, and covers image-route `id`.
-- `test:package` reads `lint --json` and derives the skill count, so adding a skill no longer requires editing the smoke test.
-- The MCP SIGTERM test no longer reaches into `StdioClientTransport._process`; the shutdown handler is unit-tested through `closeOnSignals`. `startStdioServer` returns `{ server }` and `SkillsCatalog` is no longer exported.
+- `detect --all`, `lint --skill`, and extra positional arguments fail with exit 2 instead of being silently ignored.
+- `lint` validates `SKILL.md` link fragments, including same-file `#anchor` links, with GitHub's slug rules for repeated, Unicode, linked and emphasized headings, ignoring fenced code. React section links point at the real `_sections.md` anchors.
+- The MCP SIGTERM test asserts the binary exits with code 0 and no signal, so dropping the shutdown handler fails it. A failed close sets exit code 1 before reporting, and reports to stderr by default.
+- `test:package` reads `lint --json` and derives the skill count.
 - The MCP catalog tests pin the repository skills directory and cover missing `SKILL.md` and unclosed frontmatter.
-- `.gitignore` excludes all `.claude/` agent tool state, not just `.claude/autoharness/`.
+- `.gitignore` excludes all `.claude/` agent tool state.
 
 ## [3.0.1] - 2026-11-03
 
@@ -278,7 +284,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Priority-based skill organization (CRITICAL, HIGH, MEDIUM, LOW)
 - Category-based rule grouping for easy navigation
 
-[Unreleased]: https://github.com/PyModel/react-frontend-skills/compare/v3.0.1...HEAD
+[Unreleased]: https://github.com/PyModel/react-frontend-skills/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/PyModel/react-frontend-skills/compare/v3.0.1...v4.0.0
 [3.0.1]: https://github.com/PyModel/react-frontend-skills/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/PyModel/react-frontend-skills/compare/v2.3.0...v3.0.0
 [2.3.0]: https://github.com/PyModel/react-frontend-skills/compare/v2.2.0...v2.3.0

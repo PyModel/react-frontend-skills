@@ -48,9 +48,9 @@ When integrating Tailwind into existing projects or component libraries, use a p
 ```
 
 **When to use prefixes:**
-- Migrating existing projects with CSS variables
+- Adding Tailwind to projects with existing CSS variables or class names
 - Building embeddable widgets
 - Creating component libraries
 - Multi-framework applications
 
-Reference: [Tailwind CSS Upgrade Guide](https://tailwindcss.com/docs/upgrade-guide)
+Reference: [Tailwind CSS Theme Variables](https://tailwindcss.com/docs/theme#using-a-custom-prefix)

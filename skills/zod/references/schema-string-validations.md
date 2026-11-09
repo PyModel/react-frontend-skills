@@ -7,7 +7,7 @@ tags: schema, string, validation, security
 
 ## Apply String Validations at Schema Definition
 
-Plain `z.string()` accepts any string, including empty or unexpectedly long values. Apply length and shape constraints at the boundary. In Zod 4, string formats such as email, URL, and UUID are top-level schemas (`z.email()`, `z.url()`, `z.uuid()`). Validation does not sanitize untrusted HTML or make a value safe for a SQL/HTML sink; use the appropriate output encoding and parameterization too.
+Plain `z.string()` accepts any string, including empty or unexpectedly long values. Apply length and shape constraints at the boundary. String formats such as email, URL, and UUID are top-level schemas (`z.email()`, `z.url()`, `z.uuid()`). Validation does not sanitize untrusted HTML or make a value safe for a SQL/HTML sink; use the appropriate output encoding and parameterization too.
 
 **Incorrect (no string validations):**
 
@@ -40,8 +40,7 @@ const commentSchema = z.object({
     .min(1, 'Author is required')
     .max(100, 'Author name too long'),
 
-  // Zod 4: format validators are top-level schemas,
-  // not the deprecated z.string().email()/.url() methods.
+  // Format validators are top-level schemas.
   email: z.email('Invalid email address'),
 
   content: z.string()
@@ -79,7 +78,7 @@ z.string().includes('@')  // Contains check
 z.string().trim()  // Strips whitespace (transform)
 z.string().toLowerCase()  // Normalizes case (transform)
 
-// Zod 4: string formats are top-level validators
+// String formats are top-level validators
 z.email()  // Email format
 z.url()  // URL format
 z.uuid()  // UUID format

@@ -67,7 +67,6 @@ describe('Complex DOM interactions', () => {
 // vitest.config.ts
 export default defineConfig({
   test: {
-    // environmentMatchGlobs was removed in Vitest 4.0. Use projects instead.
     projects: [
       {
         test: {

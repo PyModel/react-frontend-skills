@@ -7,7 +7,7 @@ tags: setup, nextjs, version, compatibility, adapters
 
 ## Verify Framework Compatibility Before Setup
 
-nuqs 2.x supports Next.js 14.2 or newer for both App and Pages Routers. Earlier Next.js releases require the legacy nuqs 1.x line; do not combine nuqs 2.x with an unsupported router version.
+nuqs 2.x supports Next.js 14.2 or newer for both App and Pages Routers. Do not combine it with an unsupported router version.
 
 | Framework/router | Supported range for nuqs 2.x |
 | --- | --- |
@@ -58,7 +58,5 @@ import { NuqsAdapter } from 'nuqs/adapters/next/pages'
 // Mixed Next.js routers (slightly larger unified adapter)
 import { NuqsAdapter } from 'nuqs/adapters/next'
 ```
-
-When upgrading a working application, follow the nuqs migration guide and the framework's own migration guide; a blind `@latest` install can combine multiple unrelated major migrations.
 
 Reference: [nuqs installation and compatibility](https://nuqs.dev/docs/installation)

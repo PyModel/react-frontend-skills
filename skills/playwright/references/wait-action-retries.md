@@ -17,13 +17,13 @@ test('submit contact form', async ({ page }) => {
   await page.goto('/contact');
 
   // WRONG: unnecessary waits before actions
-  await page.waitForSelector('input[name="name"]');
+  await page.locator('input[name="name"]').waitFor();
   await page.getByLabel('Name').fill('John Doe');
 
-  await page.waitForSelector('input[name="email"]', { state: 'visible' });
+  await page.locator('input[name="email"]').waitFor({ state: 'visible' });
   await page.getByLabel('Email').fill('john@example.com');
 
-  await page.waitForSelector('button[type="submit"]', { state: 'attached' });
+  await page.locator('button[type="submit"]').waitFor({ state: 'attached' });
   await page.getByRole('button', { name: 'Submit' }).click();
 });
 ```

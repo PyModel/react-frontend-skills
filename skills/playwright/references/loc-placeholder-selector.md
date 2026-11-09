@@ -49,10 +49,10 @@ await page.getByLabel('Search products').fill('shoes');
 
 ```typescript
 // Third-party components without label access
-// Legacy code that can't be modified
+// Markup you cannot modify
 // Truly unlabeled search inputs (still should fix accessibility)
 
-test('search with legacy input', async ({ page }) => {
+test('search with unlabeled input', async ({ page }) => {
   // Document why placeholder is used
   // This input lacks proper labeling - tracked in ISSUE-123
   await page.getByPlaceholder('Search...').fill('shoes');

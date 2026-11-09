@@ -7,9 +7,9 @@ tags: gen, colors, oklch, p3, modern-css
 
 ## Use OKLCH Color Space for Vivid Colors
 
-Tailwind CSS v4 defaults to OKLCH color space, providing wider P3 gamut colors and perceptually uniform lightness. Use OKLCH syntax for custom colors.
+Tailwind's default palette is defined in OKLCH, providing wider P3 gamut colors and perceptually uniform lightness. Use OKLCH syntax for custom colors.
 
-**Incorrect (legacy sRGB hex values):**
+**Incorrect (sRGB hex values, limited gamut):**
 
 ```css
 @theme {

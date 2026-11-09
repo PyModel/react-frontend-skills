@@ -1,23 +1,13 @@
 ---
-title: Use Zod 4 Error Formatting Helpers
+title: Use Error Formatting Helpers
 impact: HIGH
-impactDescription: produces form-friendly or nested error structures without deprecated instance methods
+impactDescription: produces form-friendly or nested error structures from a ZodError
 tags: error, flattenError, treeifyError, forms, user-experience
 ---
 
-## Use Zod 4 Error Formatting Helpers
+## Use Error Formatting Helpers
 
-`ZodError.issues` preserves complete issue metadata. For UI rendering, use the Zod 4 top-level helpers: `z.flattenError()` for one-level forms and `z.treeifyError()` for nested schemas. The instance methods `error.flatten()` and `error.format()` are deprecated.
-
-**Incorrect (deprecated instance helper):**
-
-```typescript
-if (!result.success) {
-  const errors = result.error.flatten()
-}
-```
-
-**Correct (Zod 4 top-level helper):**
+`ZodError.issues` preserves complete issue metadata. For UI rendering, use the top-level helpers: `z.flattenError()` for one-level forms and `z.treeifyError()` for nested schemas.
 
 **Flat form errors:**
 

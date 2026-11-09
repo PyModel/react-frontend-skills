@@ -9,8 +9,6 @@ tags: debug, lifecycle, events, logging, observability
 
 Subscribe to lifecycle events to observe request interception, matching, and responses. This is invaluable for debugging why handlers aren't matching or responses aren't arriving.
 
-On MSW 2.x: the WebSocket event is `server.events.on('connection', listener)` and listener types come from `import type { LifeCycleEventsMap } from 'msw'`.
-
 **Incorrect (guessing why requests fail):**
 
 ```typescript

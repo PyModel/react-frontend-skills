@@ -1,98 +1,52 @@
 ---
-title: Use HttpResponse Syntax, Not v1 res(ctx)
+title: Return an HttpResponse from Every Resolver
 impact: CRITICAL
-impactDescription: v1 syntax breaks in v2 and v3; causes complete handler failure
-tags: handler, response, v2, v3, HttpResponse, migration
+impactDescription: A resolver that returns nothing falls through to the next handler; the mock silently does not apply
+tags: handler, response, HttpResponse, resolver
 ---
 
-## Use HttpResponse Syntax, Not v1 res(ctx)
+## Return an HttpResponse from Every Resolver
 
-MSW v2 replaced the composition-based `res(ctx.json())` syntax with native `Response` and `HttpResponse`, and v3 keeps it. Using v1 syntax causes handlers to fail silently.
+A resolver answers a request by returning a `Response`; `HttpResponse` is the `Response` subclass with `json()`, `text()`, `xml()` and `error()` helpers. A resolver that returns nothing (a missing `return`, a forgotten branch) tells MSW the handler did not apply, so the request falls through to the next handler or goes unhandled.
 
-On MSW 2.x: same handler code, imported as `import { http, HttpResponse, delay } from 'msw'`.
-
-**Incorrect (v1 composition syntax):**
+**Incorrect (no return, request falls through):**
 
 ```typescript
-// MSW v1 syntax - does not work in v2 or v3
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 export const handlers = [
-  rest.get('/api/user', (req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json({ name: 'John' }),
-      ctx.delay(100)
-    )
+  http.get('/api/user', () => {
+    // Builds a response but never returns it
+    HttpResponse.json({ name: 'John' })
   }),
 ]
 ```
 
-**Correct (HttpResponse syntax, v3 imports):**
+**Correct (return the response):**
 
 ```typescript
-// MSW v3 syntax
 import { http, HttpResponse } from 'msw/http'
 import { delay } from 'msw/utils/delay'
 
 export const handlers = [
   http.get('/api/user', async () => {
     await delay(100)
-    return HttpResponse.json(
-      { name: 'John' },
-      { status: 200 }
-    )
-  }),
-]
-```
-
-**Common response patterns:**
-
-```typescript
-import { http, HttpResponse } from 'msw/http'
-import { delay } from 'msw/utils/delay'
-
-export const handlers = [
-  // JSON response
-  http.get('/api/user', () => {
-    return HttpResponse.json({ name: 'John' })
+    return HttpResponse.json({ name: 'John' }, { status: 200 })
   }),
 
-  // Text response
-  http.get('/api/text', () => {
-    return HttpResponse.text('Hello, World!')
-  }),
-
-  // XML response
-  http.get('/api/xml', () => {
-    return HttpResponse.xml('<user><name>John</name></user>')
-  }),
-
-  // Empty response with status
   http.delete('/api/user/:id', () => {
     return new HttpResponse(null, { status: 204 })
   }),
 
-  // Custom headers
-  http.get('/api/data', () => {
-    return HttpResponse.json(
-      { data: 'value' },
-      {
-        headers: {
-          'X-Custom-Header': 'custom-value',
-        },
-      }
-    )
-  }),
-
-  // Network error
   http.get('/api/error', () => {
     return HttpResponse.error()
   }),
 ]
 ```
 
-**When NOT to use this pattern:**
-- Projects still on MSW v1 should use the v1 syntax until migration
+Return `undefined` on purpose only to skip a handler conditionally and let a later one answer. Status, headers and body variants are covered in [response-http-response-helpers](response-http-response-helpers.md) and [response-custom-headers](response-custom-headers.md).
 
-Reference: [MSW v2 Migration Guide](https://mswjs.io/docs/migrations/1.x-to-2.x/), [MSW v3 Migration Guide](https://mswjs.io/docs/migrations/2.x-to-3.x)
+**When NOT to use this pattern:**
+- Intentional fall-through: return nothing when a later handler should answer
+
+Reference: [MSW HttpResponse](https://mswjs.io/docs/api/http-response)

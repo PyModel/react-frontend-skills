@@ -7,7 +7,7 @@ tags: async, promises, assertions, false-positives
 
 ## Await Async Assertions
 
-Forgetting to await async assertions lets the test body finish before the assertion settles. Vitest 5 fails such a test and points at the unawaited assertion (Vitest 4 auto-awaited it with a warning); other runners such as Jest can let the test pass while the check runs afterwards, hiding real failures. Await it so the failure is reported where it happens.
+Forgetting to await async assertions lets the test body finish before the assertion settles. Vitest fails such a test and points at the unawaited assertion. Await it so the failure is reported where it happens.
 
 **Incorrect (missing await):**
 
@@ -17,7 +17,7 @@ import { describe, it, expect } from 'vitest'
 describe('UserService', () => {
   it('should reject invalid users', () => {
     const service = new UserService()
-    // Not awaited: Vitest 5 fails the test; Jest may pass it
+    // Not awaited: Vitest fails the test
     expect(service.validate({ name: '' })).rejects.toThrow('Name required')
   })
 })

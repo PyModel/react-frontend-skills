@@ -7,7 +7,7 @@ tags: msw, websocket, ws, realtime, socket.io
 
 ## Mock WebSocket Connections with ws.link
 
-MSW intercepts WebSocket connections with the `ws` namespace (from `'msw/ws'` in v3). `ws.link(url)` creates a WebSocket link handler; its `connection` event gives you the `client` and `server` connection objects to mock a realtime session.
+MSW intercepts WebSocket connections with the `ws` namespace (from `'msw/ws'`). `ws.link(url)` creates a WebSocket link handler; its `connection` event gives you the `client` and `server` connection objects to mock a realtime session.
 
 **Incorrect (mocking WebSocket with ad-hoc stubs):**
 
@@ -85,5 +85,4 @@ export const handlers = [
 - The connection listener arguments include `client`, `server`, `params` (path parameters from the link URL), and connection `info`.
 - Call `server.connect()` only when you want to establish the actual underlying server connection; omit it for fully mocked sessions.
 - WebSocket links go in the same `handlers` array as `http`/`graphql` handlers and work in browser and Node.js integrations.
-- The link's own `'connection'` event keeps its name in v3; only the server/worker lifecycle event became `'websocket:connection'`.
-- On MSW 2.x: `import { ws } from 'msw'`; the handler code is the same.
+- The link's own event is `'connection'`; the server/worker lifecycle event is `'websocket:connection'`.

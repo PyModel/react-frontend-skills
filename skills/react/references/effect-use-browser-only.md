@@ -57,6 +57,5 @@ export function LocalTimeSlot() {
 **When NOT to use this pattern:**
 - The library touches `window` at import time, or you want its code split out: `use(browser())` doesn't code-split, so the module still loads on the server. Use `next/dynamic` with `ssr: false` from a Client Component instead.
 - Values that can be rendered on the server and only differ slightly (such as a timestamp): render a stable value, or use `suppressHydrationWarning` on that one element.
-- React versions before 19.3: `browser` is not exported. Keep the effect-based pattern.
 
 Reference: [react.dev - browser](https://react.dev/reference/react-dom/browser) · [React 19.3 release](https://react.dev/blog/2026/09/09/react-19-3)

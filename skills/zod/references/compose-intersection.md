@@ -128,7 +128,7 @@ const fullDocumentSchema = withAudit(withVersioning(documentSchema))
 const a = z.object({ x: z.string(), y: z.number() })
 const b = z.object({ y: z.string() })
 
-// Zod 4 object composition: the later shape replaces overlapping fields.
+// Object composition: the later shape replaces overlapping fields.
 // Prefer object spread for the best TypeScript performance.
 const overridden = z.object({ ...a.shape, ...b.shape })
 // { x: string, y: string }
@@ -141,7 +141,5 @@ a.and(b) // Validation fails because y cannot be both number and string.
 - When object schemas have fields you intend to override; use object spread or `.extend()`
 - When callers need object helpers such as `.pick()` or `.omit()` on the result; prefer object composition
 - Simple cases where `.extend()` is clearer
-
-> Zod 4 deprecates `.merge()` in favor of `.extend()` or object spread.
 
 Reference: [Zod API - intersection](https://zod.dev/api#intersection)

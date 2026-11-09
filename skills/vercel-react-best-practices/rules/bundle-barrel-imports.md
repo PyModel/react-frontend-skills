@@ -24,7 +24,7 @@ import { Button, TextField } from '@mui/material'
 // Loads 2,225 modules, takes ~4.2s extra in dev
 ```
 
-**Correct - Next.js 13.5+ (recommended):**
+**Correct - Next.js (recommended):**
 
 ```js
 // next.config.js - automatically optimizes barrel imports at build time

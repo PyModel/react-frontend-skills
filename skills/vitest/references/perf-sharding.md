@@ -62,7 +62,7 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           name: vitest-results-${{ matrix.shard }}  # unique per shard
-          path: .vitest                             # Vitest 5 writes blobs to .vitest/blob
+          path: .vitest                             # blobs are written to .vitest/blob
           include-hidden-files: true                # .vitest is a dot-directory
           retention-days: 1
 
