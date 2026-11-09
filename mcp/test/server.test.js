@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { spawn } from 'node:child_process'
 import { once } from 'node:events'
 import { dirname, resolve } from 'node:path'
 import test from 'node:test'
@@ -7,16 +8,18 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js'
 import { ErrorCode } from '@modelcontextprotocol/sdk/types.js'
+import { loadCatalog, MAX_SEARCH_LIMIT } from '../src/catalog.js'
 import { createSkillsServer } from '../src/server.js'
 
 const testDirectory = dirname(fileURLToPath(import.meta.url))
 const repositorySkills = resolve(testDirectory, '..', '..', 'skills')
 const binaryPath = resolve(testDirectory, '..', 'bin', 'react-frontend-skills-mcp.js')
+const repositoryCatalog = await loadCatalog({ skillsDir: repositorySkills })
 
 async function connectInMemory(context) {
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair()
   const client = new Client({ name: 'react-skills-test-client', version: '1.0.0' })
-  const { server, catalog } = await createSkillsServer({ skillsDir: repositorySkills })
+  const { server, catalog } = await createSkillsServer({ catalog: repositoryCatalog })
 
   await Promise.all([client.connect(clientTransport), server.connect(serverTransport)])
   context.after(async () => {
@@ -94,11 +97,12 @@ test('returns explicit tool errors for unknown skills and unsafe references', as
 })
 
 test('rejects invalid tool schemas and unknown resource IDs', async (context) => {
+  assert.equal(MAX_SEARCH_LIMIT, 20, 'search_skills limit is part of the public tool schema')
   const { client } = await connectInMemory(context)
   const invalidCalls = [
     { query: '' },
     { query: 'x'.repeat(201) },
-    { query: 'cache', limit: 21 },
+    { query: 'cache', limit: MAX_SEARCH_LIMIT + 1 },
   ]
 
   for (const arguments_ of invalidCalls) {
@@ -157,34 +161,35 @@ test(
 )
 
 test(
-  'stdio binary exits cleanly on SIGTERM',
+  'stdio binary exits 0 after SIGTERM',
   { timeout: 15_000, skip: process.platform === 'win32' },
   async () => {
-    const transport = new StdioClientTransport({
-      command: process.execPath,
-      args: [binaryPath],
-      env: {
-        ...process.env,
-        REACT_FRONTEND_SKILLS_DIR: repositorySkills,
-      },
+    const child = spawn(process.execPath, [binaryPath], {
+      env: { ...process.env, REACT_FRONTEND_SKILLS_DIR: repositorySkills },
+      stdio: ['pipe', 'pipe', 'inherit'],
     })
-    const client = new Client({ name: 'react-skills-signal-test', version: '1.0.0' })
+    const exited = once(child, 'exit')
 
     try {
-      await client.connect(transport)
-      await client.listTools()
+      child.stdin.write(
+        `${JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'initialize',
+          params: {
+            protocolVersion: '2025-06-18',
+            capabilities: {},
+            clientInfo: { name: 'react-skills-signal-test', version: '1.0.0' },
+          },
+        })}\n`
+      )
+      await once(child.stdout, 'data')
 
-      const child = transport._process
-      assert.ok(child)
-      assert.equal(child.kill('SIGTERM'), true)
-
-      const [code, signal] = await once(child, 'exit', {
-        signal: AbortSignal.timeout(5_000),
-      })
-      assert.equal(code, 0)
-      assert.equal(signal, null)
+      child.kill('SIGTERM')
+      const [code, signal] = await exited
+      assert.deepEqual({ code, signal }, { code: 0, signal: null }, 'the SIGTERM handler closes the server and exits cleanly')
     } finally {
-      await client.close().catch(() => undefined)
+      if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL')
     }
   }
 )

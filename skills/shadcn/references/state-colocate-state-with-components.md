@@ -30,7 +30,7 @@ function Sidebar() {
 }
 ```
 
-**Correct (colocated local state):**
+**Correct (colocated local state, shown with a Radix-generated Accordion):**
 
 ```tsx
 function Sidebar() {
@@ -62,6 +62,8 @@ interface GlobalState {
   // Only app-level state that multiple components need
 }
 ```
+
+A Base UI-generated Accordion exposes its own open-state props; where the state lives does not change.
 
 **State location decision tree:**
 

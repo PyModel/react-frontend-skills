@@ -1,13 +1,13 @@
 ---
-title: Preserve ARIA Attributes from Radix Primitives
+title: Preserve the Primitive's ARIA Attributes
 impact: CRITICAL
 impactDescription: maintains screen reader compatibility
-tags: ally, aria, radix, screen-readers, accessibility
+tags: ally, aria, radix, base-ui, screen-readers, accessibility
 ---
 
-## Preserve ARIA Attributes from Radix Primitives
+## Preserve the Primitive's ARIA Attributes
 
-Radix primitives automatically manage ARIA attributes for accessibility. Overriding or omitting these attributes breaks screen reader functionality.
+Radix and Base UI primitives manage ARIA attributes for accessibility. Overriding or omitting these attributes breaks screen reader functionality.
 
 **Incorrect (ARIA attributes overridden):**
 
@@ -38,7 +38,7 @@ function CustomAccordion({ items }: { items: AccordionItem[] }) {
 }
 ```
 
-**Correct (using Radix primitives with automatic ARIA):**
+**Correct (Radix-generated wrapper; a Base UI wrapper manages the same ARIA through its own props):**
 
 ```tsx
 import {
@@ -54,11 +54,11 @@ function CustomAccordion({ items }: { items: AccordionItem[] }) {
       {items.map((item) => (
         <AccordionItemComponent key={item.id} value={item.id}>
           <AccordionTrigger>
-            {/* Radix adds aria-expanded, aria-controls automatically */}
+            {/* The primitive adds aria-expanded and aria-controls */}
             {item.title}
           </AccordionTrigger>
           <AccordionContent>
-            {/* Radix adds aria-labelledby, role="region" automatically */}
+            {/* The primitive adds aria-labelledby and role="region" */}
             {item.content}
           </AccordionContent>
         </AccordionItemComponent>
@@ -68,10 +68,10 @@ function CustomAccordion({ items }: { items: AccordionItem[] }) {
 }
 ```
 
-**ARIA attributes managed by Radix:**
+**ARIA attributes managed by the primitive:**
 - `aria-expanded` on triggers (Accordion, Collapsible, Dialog)
 - `aria-controls` / `aria-labelledby` for content relationships
 - `role` attributes (dialog, menu, tablist, etc.)
 - `aria-selected` / `aria-checked` for selection states
 
-Reference: [Radix Accessibility](https://www.radix-ui.com/primitives/docs/overview/accessibility)
+Reference: [Radix Accessibility](https://www.radix-ui.com/primitives/docs/overview/accessibility) · [Base UI Accessibility](https://base-ui.com/react/overview/accessibility)

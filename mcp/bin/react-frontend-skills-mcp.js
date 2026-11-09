@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { closeOnSignals } from '../src/lifecycle.js'
 import { startStdioServer } from '../src/server.js'
 
 function errorMessage(error) {
@@ -8,23 +9,8 @@ function errorMessage(error) {
 
 async function main() {
   const { server } = await startStdioServer()
-  let closing = false
 
-  const shutdown = async (signal) => {
-    if (closing) return
-    closing = true
-
-    try {
-      await server.close()
-      process.exitCode = 0
-    } catch (error) {
-      process.stderr.write(`Failed to close MCP server after ${signal}: ${errorMessage(error)}\n`)
-      process.exitCode = 1
-    }
-  }
-
-  process.once('SIGINT', () => void shutdown('SIGINT'))
-  process.once('SIGTERM', () => void shutdown('SIGTERM'))
+  closeOnSignals(server)
 }
 
 main().catch((error) => {

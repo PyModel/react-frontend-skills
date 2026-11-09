@@ -44,7 +44,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test test/cli.test.mjs && node bin/react-frontend-skills.mjs lint",
+    "test": "node --test \"test/*.test.mjs\" && node bin/react-frontend-skills.mjs lint",
     "test:package": "node test/package-smoke.mjs"
   }
 }

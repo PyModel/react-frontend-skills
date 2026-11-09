@@ -34,6 +34,11 @@ Tailwind CSS v4 renames several utility classes to create consistent scaling. Up
 | `ring` (3px) | `ring-3` | Explicit width |
 | `ring` (1px) | `ring` | New default |
 | `outline-none` | `outline-hidden` | Semantic clarity |
+| `flex-shrink-*` | `shrink-*` | Consistent naming |
+| `flex-grow-*` | `grow-*` | Consistent naming |
+| `overflow-ellipsis` | `text-ellipsis` | Describes the result |
+| `decoration-slice` | `box-decoration-slice` | Consistent naming |
+| `decoration-clone` | `box-decoration-clone` | Consistent naming |
 
 **Automated migration:**
 

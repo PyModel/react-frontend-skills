@@ -36,15 +36,15 @@ Reference these guidelines when:
 - [`arch-use-asChild-for-custom-triggers`](references/arch-use-asChild-for-custom-triggers.md) - Use the generated primitive's composition API
 - [`arch-current-cli-registry`](references/arch-current-cli-registry.md) - Use the current CLI for component lifecycle (v4, registries, MCP)
 - [`arch-unified-radix-package`](references/arch-unified-radix-package.md) - Import primitives from the unified radix-ui package
-- [`arch-preserve-radix-primitive-structure`](references/arch-preserve-radix-primitive-structure.md) - Maintain Radix compound component hierarchy
+- [`arch-preserve-radix-primitive-structure`](references/arch-preserve-radix-primitive-structure.md) - Maintain the generated compound component hierarchy
 - [`arch-extend-variants-with-cva`](references/arch-extend-variants-with-cva.md) - Use Class Variance Authority for type-safe variants
 - [`arch-use-cn-for-class-merging`](references/arch-use-cn-for-class-merging.md) - Use cn() utility for safe Tailwind class merging
-- [`arch-forward-refs-for-composable-components`](references/arch-forward-refs-for-composable-components.md) - Forward refs for form and focus integration
+- [`arch-forward-refs-for-composable-components`](references/arch-forward-refs-for-composable-components.md) - Pass refs through for form and focus integration
 - [`arch-isolate-component-variants`](references/arch-isolate-component-variants.md) - Separate base styles from variant-specific styles
 
 ### 2. Accessibility Preservation (CRITICAL)
 
-- [`ally-preserve-aria-attributes`](references/ally-preserve-aria-attributes.md) - Keep Radix ARIA attributes intact
+- [`ally-preserve-aria-attributes`](references/ally-preserve-aria-attributes.md) - Keep the primitive's ARIA attributes intact
 - [`ally-provide-sr-only-labels`](references/ally-provide-sr-only-labels.md) - Add screen reader labels for icon buttons
 - [`ally-maintain-focus-management`](references/ally-maintain-focus-management.md) - Preserve focus trapping in modals
 - [`ally-preserve-keyboard-navigation`](references/ally-preserve-keyboard-navigation.md) - Keep WAI-ARIA keyboard patterns
@@ -88,7 +88,7 @@ Reference these guidelines when:
 
 - [`perf-lazy-load-heavy-components`](references/perf-lazy-load-heavy-components.md) - Lazy load components over 50KB
 - [`perf-memoize-expensive-renders`](references/perf-memoize-expensive-renders.md) - Memoize list items and expensive components
-- [`perf-optimize-icon-imports`](references/perf-optimize-icon-imports.md) - Use direct imports for Lucide icons
+- [`perf-optimize-icon-imports`](references/perf-optimize-icon-imports.md) - Import icons through the package entry so the bundler can tree-shake them
 - [`perf-avoid-unnecessary-rerenders-in-forms`](references/perf-avoid-unnecessary-rerenders-in-forms.md) - Isolate form field watching
 - [`perf-debounce-search-inputs`](references/perf-debounce-search-inputs.md) - Debounce search and filter inputs
 

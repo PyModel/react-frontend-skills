@@ -18,8 +18,9 @@ export const metadata = {
   description: 'View product details'
 }
 
-export default async function ProductPage({ params }) {
-  const product = await getProduct(params.id)
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const product = await getProduct(id)
   return <ProductDetails product={product} />
 }
 ```
@@ -33,9 +34,10 @@ import type { Metadata } from 'next'
 export async function generateMetadata({
   params
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }): Promise<Metadata> {
-  const product = await getProduct(params.id)
+  const { id } = await params
+  const product = await getProduct(id)
 
   return {
     title: product.name,
@@ -61,8 +63,9 @@ export async function generateMetadata({
   }
 }
 
-export default async function ProductPage({ params }) {
-  const product = await getProduct(params.id)  // Deduplicated with cache()
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const product = await getProduct(id)  // Deduplicated with cache()
   return <ProductDetails product={product} />
 }
 ```

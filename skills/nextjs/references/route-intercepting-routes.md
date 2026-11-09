@@ -53,8 +53,9 @@ app/
 // app/@modal/(.)photo/[id]/page.tsx
 import { Modal } from '@/components/Modal'
 
-export default async function PhotoModal({ params }: { params: { id: string } }) {
-  const photo = await getPhoto(params.id)
+export default async function PhotoModal({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const photo = await getPhoto(id)
   return (
     <Modal>
       <PhotoDetail photo={photo} />
@@ -63,8 +64,9 @@ export default async function PhotoModal({ params }: { params: { id: string } })
 }
 
 // app/photo/[id]/page.tsx
-export default async function PhotoPage({ params }: { params: { id: string } }) {
-  const photo = await getPhoto(params.id)
+export default async function PhotoPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const photo = await getPhoto(id)
   return <PhotoDetail photo={photo} />  // Full page
 }
 ```

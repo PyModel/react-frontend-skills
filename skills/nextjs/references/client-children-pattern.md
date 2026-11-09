@@ -58,8 +58,9 @@ export function Modal({ children, trigger }: { children: ReactNode; trigger: str
 }
 
 // app/product/[id]/page.tsx (Server Component)
-export default async function ProductPage({ params }) {
-  const product = await getProduct(params.id)
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const product = await getProduct(id)
 
   return (
     <Modal trigger="View Details">

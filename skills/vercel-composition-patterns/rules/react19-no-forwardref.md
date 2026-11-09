@@ -1,15 +1,15 @@
 ---
-title: React 19 API Changes
+title: React 19 Ref as a Prop
 impact: MEDIUM
-impactDescription: cleaner component definitions and context usage
+impactDescription: cleaner component definitions without the forwardRef wrapper
 tags: react19, refs, context, hooks
 ---
 
-## React 19 API Changes
+## React 19 Ref as a Prop
 
 > **⚠️ React 19+ only.** Skip this if you're on React 18 or earlier.
 
-In React 19, `ref` is now a regular prop (no `forwardRef` wrapper needed), and `use()` replaces `useContext()`.
+In React 19, `ref` is a regular prop, so a function component accepts it without the `forwardRef` wrapper. `useContext` is still supported; `use()` can read context conditionally when that is actually needed.
 
 **Incorrect (forwardRef in React 19):**
 
@@ -27,16 +27,6 @@ function ComposerInput({ ref, ...props }: Props & { ref?: React.Ref<TextInput> }
 }
 ```
 
-**Incorrect (useContext in React 19):**
+**Context reads:**
 
-```tsx
-const value = useContext(MyContext)
-```
-
-**Correct (use instead of useContext):**
-
-```tsx
-const value = use(MyContext)
-```
-
-`use()` can also be called conditionally, unlike `useContext()`.
+`useContext(MyContext)` remains correct at the top level of a component. `use(MyContext)` can be called conditionally or inside a loop, which `useContext` cannot, so reach for `use()` only when that conditional read is the point.

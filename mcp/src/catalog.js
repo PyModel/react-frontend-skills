@@ -3,9 +3,9 @@ import { isAbsolute, posix, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parse as parseYaml } from 'yaml'
 
-const MAX_SEARCH_LIMIT = 20
-const DEFAULT_SEARCH_LIMIT = 10
-const MAX_SNIPPET_LENGTH = 480
+export const MAX_SEARCH_LIMIT = 20
+export const DEFAULT_SEARCH_LIMIT = 10
+export const MAX_SNIPPET_LENGTH = 480
 
 function parseFrontmatter(content, filePath) {
   if (!content.startsWith('---\n')) return {}
@@ -167,7 +167,7 @@ function normalizeReferencePath(referencePath) {
   return normalized
 }
 
-export class SkillsCatalog {
+class SkillsCatalog {
   constructor(skillsDirectory, skills, files) {
     this.skillsDirectory = skillsDirectory
     this.skills = skills
@@ -294,18 +294,11 @@ export async function loadCatalog(options = {}) {
     const skillFile = loadedFiles.find((file) => file.relativePath === 'SKILL.md')
     if (!skillFile) throw new Error(`Missing SKILL.md for ${skillName}`)
 
-    const skillMetadata = parseFrontmatter(skillFile.content, `${skillName}/SKILL.md`)
-    const description =
-      typeof skillMetadata.description === 'string'
-        ? skillMetadata.description.trim()
-        : skillFile.description
-
     skills.push({
       name: skillName,
-      description,
+      description: skillFile.description,
       content: skillFile.content,
       fileCount: loadedFiles.length,
-      files: loadedFiles,
     })
   }
 

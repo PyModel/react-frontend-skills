@@ -91,7 +91,7 @@ npx -y @pymodel/react-frontend-skills scan     # deprecated/removed API usage �
 npx -y @pymodel/react-frontend-skills scan --skill zod --json
 ```
 
-`scan` runs its 35 checks only for packages declared in `package.json`, and only when the project is on or above the major where the old API went away (`--all` overrides every gate). A range that pins one major (`^19`, `19.x`) and the installed version must both meet that major; with no install or lockfile entry, the pinned range decides alone. Open ranges such as `>=18` defer to the installed version; without `node_modules`, the version comes from `package-lock.json`. Checks whose version stays unknown (a `latest`, `workspace:` or `catalog:` range with no install) are skipped and counted separately. Inside a git work tree it scans tracked files plus untracked files that `.gitignore` does not exclude, so ignored copies, builds and dot-directories are skipped; comments never count. It exits `1` when it finds hits. Each hit names a rule ID, and the fix is in that skill's `references/<rule>.md` (or `rules/<rule>.md`).
+`scan` runs its 35 checks only for packages declared in `package.json`, and only when the project is on or above the major where the old API went away (`--all` overrides the package and version gates; config-flag gates such as `cacheComponents: true` still apply). A range that pins one major (`^19`, `19.x`) and the installed version must both meet that major; with no install or lockfile entry, the pinned range decides alone. Open ranges such as `>=18` defer to the installed version; without `node_modules`, the version comes from `package-lock.json`. Checks whose version stays unknown (a `latest`, `workspace:` or `catalog:` range with no install) are skipped and counted separately. Inside a git work tree it scans tracked files plus untracked files that `.gitignore` does not exclude, so ignored copies, builds and dot-directories are skipped; comments never count. It exits `1` when it finds hits. Each hit names a rule ID, and the fix is in that skill's `references/<rule>.md` (or `rules/<rule>.md`).
 
 `detect` reports `range-mismatch` when the resolved install is a different major than `package.json` declares (for example, a hoisted copy from a parent directory).
 
@@ -137,30 +137,30 @@ The `skills` CLI supports dozens of agents beyond the table above, among them Gi
 
 ### Audited version baseline
 
-This repository contains guidance, not runtime dependencies. Last re-audited on 2026-11-03 against these releases:
+This repository contains guidance, not runtime dependencies. Last re-audited on 2026-11-09 against these releases:
 
 | Area | Audited line |
 | --- | --- |
 | React | 19.3 (`react` 19.3.1) |
 | Next.js | 16.4 (`next` 16.4.5) |
 | TypeScript | 7.0 (`typescript` 7.0.2) |
-| Tailwind CSS | 4.3 (`tailwindcss` 4.3.4) |
+| Tailwind CSS | 4.3 (`tailwindcss` 4.3.5) |
 | Vitest | 5.1 (`vitest` 5.1.0) |
-| Playwright | 1.64 (`@playwright/test` 1.64.1) |
-| MSW | 3.0 (`msw` 3.0.3); 2.x differences noted per rule |
-| TanStack Query | 5.x (`@tanstack/react-query` 5.105.3) |
+| Playwright | 1.65 (`@playwright/test` 1.65.0) |
+| MSW | 3.0 (`msw` 3.0.4); 2.x differences noted per rule |
+| TanStack Query | 5.x (`@tanstack/react-query` 5.107.1) |
 | React Hook Form | 7.x (`react-hook-form` 7.91.0) |
 | Zod | 4.6 (`zod` 4.6.7) |
 | nuqs | 2.10 (`nuqs` 2.10.2) |
 
-For each package that changed since the 2026-09-26 baseline, every API that its release notes and migration guides list as deprecated, removed, renamed or given a new default was searched for across the rule files, and each matching section was read. Rules were not re-read line by line. New features the rules don't cover yet are not part of the audit. If your project pins a different version, trust that version's official docs over this baseline.
+For each package that changed since the previous baseline, every API that its release notes and migration guides list as deprecated, removed, renamed or given a new default was searched for across the rule files, and each matching section was read. Rules were not re-read line by line. New features the rules don't cover yet are not part of the audit. If your project pins a different version, trust that version's official docs over this baseline.
 
 ### Core framework
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
 | [react](skills/react) | 44 | React 19 concurrent rendering, Server Components, hook optimization |
-| [nextjs](skills/nextjs) | 43 | Next.js 16 App Router, caching, server components, routing |
+| [nextjs](skills/nextjs) | 44 | Next.js 16 App Router, caching, server components, routing |
 | [typescript](skills/typescript) | 44 | TypeScript 7 migration, compiler config, type safety, async patterns |
 
 ### UI and styling
@@ -224,6 +224,7 @@ react-frontend-skills/
 ├── .github/workflows/         # CI: npm test, package smoke + MCP check on Node 22, 24 and 26, Windows, macOS
 ├── bin/                       # Companion CLI (detect, scan, lint)
 ├── mcp/                       # Publishable read-only MCP server
+├── scripts/                   # Shared dev-only npm-pack helper
 ├── skills/
 │   ├── react/                # React 19 patterns
 │   ├── nextjs/               # Next.js 16 App Router
@@ -243,7 +244,7 @@ react-frontend-skills/
 │   ├── vercel-composition-patterns/
 │   ├── vercel-react-best-practices/
 │   └── web-design-guidelines/
-├── test/                      # CLI tests
+├── test/                      # CLI and packaging tests
 ├── UPSTREAM.md                # Vercel-sourced skills: local patches, sync steps
 ├── README.md
 ├── LICENSE

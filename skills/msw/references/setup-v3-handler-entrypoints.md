@@ -7,7 +7,7 @@ tags: setup, imports, entrypoints, esm, v3, migration
 
 ## Import Handlers from the MSW 3 Subpath Entrypoints
 
-MSW 3 ships each handler namespace and utility from its own entrypoint. `graphql` is no longer exported from `'msw'`, so a root import of it fails. The root still re-exports `http`, `HttpResponse`, `ws`, `sse`, `delay`, `bypass` and `passthrough` (checked in 3.0.3), but the migration guide documents the subpaths as the 3.x imports, so new code uses them.
+MSW 3 ships each handler namespace and utility from its own entrypoint. `graphql` is no longer exported from `'msw'`, so a root import of it fails. The root still re-exports `http`, `HttpResponse`, `ws`, `sse`, `delay`, `bypass` and `passthrough` (checked in 3.0.4), but the migration guide documents the subpaths as the 3.x imports, so new code uses them.
 
 **Incorrect (root imports):**
 

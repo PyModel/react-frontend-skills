@@ -1,12 +1,15 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { CHECKS } from '../bin/checks.mjs'
-import { detect, lint, maskComments, rangeMajor, scan } from '../bin/react-frontend-skills.mjs'
+import { detect, rangeMajor } from '../bin/detect.mjs'
+import { headingAnchors, lint, validateChecks } from '../bin/lint.mjs'
+import { maskComments } from '../bin/mask-comments.mjs'
+import { scan } from '../bin/scan.mjs'
 
 const cli = join(dirname(fileURLToPath(import.meta.url)), '..', 'bin', 'react-frontend-skills.mjs')
 
@@ -27,7 +30,7 @@ test('repository skills pass lint', () => {
 test('lint rejects unindexed rules, stale counts, broken links, and unsafe descriptions', (context) => {
   const root = fixture(context, {
     'skills/demo/SKILL.md':
-      '---\nname: demo\ndescription: Demo: an unquoted colon\n---\n# Demo\n\nContains 3 rules.\n\n- `a-one`\n\nSee [missing](references/nope.md).\n',
+      '---\nname: demo\ndescription: Demo: an unquoted colon\n---\n# Demo\n\nContains 3 rules.\n\n- `a-one`\n\nSee [missing](references/nope.md) and [bad anchor](references/a-one.md#missing).\n',
     'skills/demo/references/a-one.md': '# One\n',
     'skills/demo/references/a-two.md': '# Two\n',
     'skills/demo/references/_sections.md': '# Sections\n',
@@ -38,6 +41,7 @@ test('lint rejects unindexed rules, stale counts, broken links, and unsafe descr
   assert.ok(errors.some((error) => error.includes('references/_sections.md is not indexed')))
   assert.ok(errors.some((error) => error.includes('claims 3 rules, found 2')))
   assert.ok(errors.some((error) => error.includes('broken link references/nope.md')))
+  assert.ok(errors.some((error) => error.includes('broken anchor references/a-one.md#missing')))
 })
 
 test('lint caps the resident description budget across the whole pack', (context) => {
@@ -165,6 +169,12 @@ test('scan gates checks on the installed major, npm aliases, and project flags',
     'segment config is legal without cacheComponents; TS 7 resolves through the npm alias'
   )
 
+  assert.equal(
+    scan(root, { all: true }).hits.some((hit) => hit.rule === 'cache-segment-config'),
+    false,
+    '--all does not invent the cacheComponents flag'
+  )
+
   writeFileSync(join(root, 'next.config.ts'), 'export default { cacheComponents: true }\n')
   assert.ok(scan(root).hits.some((hit) => hit.rule === 'cache-segment-config'))
   assert.ok(scan(root, { all: true }).hits.some((hit) => hit.rule === 'schema-use-enums'))
@@ -177,7 +187,7 @@ test('lint accepts CRLF frontmatter', (context) => {
 
 test('only ranges that pin one major decide the major', () => {
   const cases = {
-    '19': 19, '^19.1.0': 19, '~19.1': 19, '19.x': 19, '=19.0.0': 19, 'v19.0.0': 19, '16.0.0-canary.3': 16,
+    '19': 19, '^19.1.0': 19, '~19.1': 19, '19.x': 19, '19.*': 19, '19.X': 19, '=19.0.0': 19, 'v19.0.0': 19, '16.0.0-canary.3': 16,
     'npm:typescript@^7.0.2': 7, 'npm:@scope/pkg@~6.1.0': 6,
     '>=18': undefined, '^18 || ^19': undefined, '*': undefined, latest: undefined,
     'workspace:*': undefined, 'catalog:': undefined, 'npm:@typescript/typescript6': undefined, 'npm:typescript': undefined,
@@ -273,6 +283,9 @@ test('check patterns match the removed API and leave current code alone', () => 
     ['msw3-graphql-link-first', "api.query('GetUser', resolver)", false],
     ['msw3-connection-event-renamed', "server.events.on('connection', listener)", true],
     ['msw3-connection-event-renamed', "server.events.on('websocket:connection', listener)", false],
+    ['ts7-removed-compiler-options', '{ "compilerOptions": { "downlevelIteration": true } }', true],
+    ['ts7-removed-compiler-options', '{ "compilerOptions": { "module": "none" } }', true],
+    ['ts7-removed-compiler-options', '{ "compilerOptions": { "module": "preserve" } }', false],
   ]
   for (const [id, input, expected] of cases) assert.equal(pattern(id).test(input), expected, `${id}: ${input}`)
 })
@@ -397,5 +410,75 @@ test('brace-list patterns stay fast on unclosed braces', () => {
 test('cli exits 2 on usage errors and 0 on help', () => {
   assert.equal(spawnSync(process.execPath, [cli, 'bogus']).status, 2)
   assert.equal(spawnSync(process.execPath, [cli, 'scan', '--skill']).status, 2)
+  assert.equal(spawnSync(process.execPath, [cli, 'detect', '--all']).status, 2)
+  assert.equal(spawnSync(process.execPath, [cli, 'lint', '--skill', 'zod']).status, 2)
+  assert.equal(spawnSync(process.execPath, [cli, 'detect', 'a', 'b']).status, 2)
   assert.equal(spawnSync(process.execPath, [cli, '--help']).status, 0)
+})
+
+test('lint keeps the scan table and package map in agreement', () => {
+  const packages = [{ skill: 'demo', packages: ['demo'], target: 2 }]
+  const check = (overrides) => ({ id: 'demo-check', packages: ['demo'], since: 1, ...overrides })
+  assert.deepEqual(validateChecks([check()], packages), [])
+  assert.match(validateChecks([check(), check()], packages)[0], /duplicate id/)
+  assert.match(validateChecks([check({ packages: ['other'] })], packages)[0], /not covered by PACKAGES/)
+  assert.match(validateChecks([check({ since: 3 })], packages)[0], /newer than every gating package target/)
+  assert.match(validateChecks([check({ packages: [] })], packages)[0], /no gating package/)
+  assert.match(validateChecks([check({ pattern: /x/g })], packages)[0], /pattern must not be global or sticky/)
+  assert.match(validateChecks([check({ files: /x/y })], packages)[0], /files must not be global or sticky/)
+  assert.match(validateChecks([check({ requires: /x/g })], packages)[0], /requires must not be global or sticky/)
+  assert.deepEqual(validateChecks([check({ onlyIf: { files: /a/g, pattern: /b/y } })], packages), [
+    'scan check demo-check: onlyIf.files must not be global or sticky',
+    'scan check demo-check: onlyIf.pattern must not be global or sticky',
+  ])
+  assert.deepEqual(validateChecks([{ id: 'bare' }], packages), ['scan check bare: has no gating package'])
+})
+
+test('lint checks README rule counts when the table is present', (context) => {
+  const root = fixture(context, {
+    'README.md': '| [demo](skills/demo) | 3 |\n',
+    'skills/demo/SKILL.md': '---\nname: demo\ndescription: Demo.\n---\n# Demo\n\n- `a-one`\n',
+    'skills/demo/references/a-one.md': '# One\n',
+  })
+  assert.ok(
+    lint(join(root, 'skills')).errors.some((error) => error.includes('README.md lists 3 rules for demo'))
+  )
+})
+
+test('scan --skill accepts the package skill and the rule owner', (context) => {
+  const root = fixture(context, {
+    'package.json': { dependencies: { react: '^19.0.0', zod: '^4.1.0' } },
+    'src/a.tsx': "import { forwardRef } from 'react'\nexport const C = forwardRef((props, ref) => null)\n",
+    'src/b.ts': "import { z } from 'zod'\nz.nativeEnum(Role)\n",
+  })
+  assert.deepEqual(scan(root, { skill: 'react' }).hits.map((hit) => hit.rule), ['react19-no-forwardref'])
+  assert.deepEqual(
+    scan(root, { skill: 'vercel-composition-patterns' }).hits.map((hit) => hit.rule),
+    ['react19-no-forwardref']
+  )
+  assert.deepEqual(scan(root, { skill: 'zod' }).hits.map((hit) => hit.rule), ['schema-use-enums'])
+})
+
+test('heading anchors follow GitHub slugs: repeats, Unicode, links, emphasis, fences', () => {
+  const anchors = headingAnchors(
+    '# Foo\n## Foo\n## Café\n## See [docs](https://x.y)\n## _my_thing_\n```sh\n# fenced\n```\n## 1. Concurrent Rendering (conc)\n'
+  )
+  assert.deepEqual([...anchors], ['foo', 'foo-1', 'café', 'see-docs', 'my_thing', '1-concurrent-rendering-conc'])
+})
+
+test('lint resolves duplicate, encoded and same-file anchors', (context) => {
+  const root = fixture(context, {
+    'skills/demo/SKILL.md':
+      '---\nname: demo\ndescription: Demo skill\n---\n# Demo\n\n## Usage\n\n[a](references/a.md#foo-1) [b](references/a.md#caf%C3%A9) [c](#usage) [d](#nope) [e](references/a.md#fenced)\n',
+    'skills/demo/references/a.md': '# Foo\n## Foo\n## Café\n```\n# fenced\n```\n',
+  })
+  const anchors = lint(join(root, 'skills')).errors.filter((error) => error.includes('anchor'))
+  assert.deepEqual(anchors, ['demo: broken anchor #nope', 'demo: broken anchor references/a.md#fenced'])
+})
+
+test('scan survives a dangling root config symlink', { skip: process.platform === 'win32' }, (context) => {
+  const root = fixture(context, { 'package.json': { dependencies: { next: '16.0.0' } } })
+  symlinkSync(join(root, 'missing.ts'), join(root, 'next.config.ts'))
+  assert.equal(scan(root, { all: true }).hits.length, 0)
+  assert.equal(scan(root).hits.length, 0)
 })

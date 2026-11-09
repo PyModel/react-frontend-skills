@@ -13,12 +13,14 @@ Export a `preload` function that initiates data fetching at the top of the compo
 
 ```typescript
 // app/product/[id]/page.tsx
-export default async function ProductPage({ params }: { params: { id: string } }) {
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+
   return (
     <div>
       <Header />
       <Breadcrumbs />
-      <ProductDetails id={params.id} />  {/* Fetch starts here */}
+      <ProductDetails id={id} />  {/* Fetch starts here */}
     </div>
   )
 }
@@ -47,14 +49,15 @@ export const preloadProduct = (id: string) => {
 // app/product/[id]/page.tsx
 import { preloadProduct, getProduct } from '@/lib/data'
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
-  preloadProduct(params.id)  // Start fetch immediately
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  preloadProduct(id)  // Start fetch immediately
 
   return (
     <div>
       <Header />
       <Breadcrumbs />
-      <ProductDetails id={params.id} />
+      <ProductDetails id={id} />
     </div>
   )
 }

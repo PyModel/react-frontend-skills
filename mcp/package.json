@@ -45,7 +45,7 @@
     "start": "node bin/react-frontend-skills-mcp.js",
     "test": "node --test",
     "test:package": "node scripts/package-smoke.mjs",
-    "check": "node --check bin/react-frontend-skills-mcp.js && node --check src/catalog.js && node --check src/server.js && node --check scripts/package-skills.mjs && node --check scripts/package-smoke.mjs && npm test && npm run test:package",
+    "check": "node --check bin/react-frontend-skills-mcp.js && node --check src/catalog.js && node --check src/lifecycle.js && node --check src/server.js && node --check scripts/package-skills.mjs && node --check scripts/package-smoke.mjs && npm test && npm run test:package",
     "prepare:skills": "node scripts/package-skills.mjs prepare",
     "cleanup:skills": "node scripts/package-skills.mjs clean",
     "prepack": "npm run prepare:skills",

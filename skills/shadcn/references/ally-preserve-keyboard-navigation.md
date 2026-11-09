@@ -2,12 +2,12 @@
 title: Preserve Keyboard Navigation Patterns
 impact: CRITICAL
 impactDescription: enables non-mouse users to navigate components
-tags: ally, keyboard, navigation, radix, arrow-keys
+tags: ally, keyboard, navigation, radix, base-ui, arrow-keys
 ---
 
 ## Preserve Keyboard Navigation Patterns
 
-Radix components implement WAI-ARIA keyboard navigation patterns. Custom styling or structure changes must not break these patterns.
+Radix and Base UI components implement WAI-ARIA keyboard navigation patterns. Custom styling or structure changes must not break these patterns.
 
 **Incorrect (keyboard navigation broken):**
 

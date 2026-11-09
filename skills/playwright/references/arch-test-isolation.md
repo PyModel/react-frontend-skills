@@ -9,32 +9,38 @@ tags: arch, isolation, context, browser, fixtures
 
 Tests that share browser state can pass or fail unpredictably based on execution order. Playwright creates a fresh context per test by default—never disable this behavior.
 
-**Incorrect (shared state between tests):**
+**Incorrect (shared page between tests):**
 
 ```typescript
-// playwright.config.ts
-export default defineConfig({
-  use: {
-    // Reusing context causes state leakage
-    launchOptions: {
-      args: ['--disable-web-security'],
-    },
-  },
+// tests/checkout.spec.ts
+import { chromium, expect, test, type Browser, type Page } from '@playwright/test';
+
+let browser: Browser;
+let page: Page;
+
+test.beforeAll(async () => {
+  browser = await chromium.launch();
+  page = await browser.newPage(); // one page for every test
 });
 
-// tests/checkout.spec.ts
-test('add to cart', async ({ page }) => {
+test.afterAll(async () => {
+  await browser.close();
+});
+
+test('add to cart', async () => {
   await page.goto('/product/1');
   await page.getByRole('button', { name: 'Add to Cart' }).click();
   // Cart state persists to next test!
 });
 
-test('checkout empty cart', async ({ page }) => {
+test('checkout empty cart', async () => {
   await page.goto('/checkout');
   // Fails because cart has items from previous test
   await expect(page.getByText('Your cart is empty')).toBeVisible();
 });
 ```
+
+Never disable browser web security to make a test pass; fix the origin or CORS setup, or use `page.route` to mock the cross-origin call.
 
 **Correct (isolated context per test):**
 

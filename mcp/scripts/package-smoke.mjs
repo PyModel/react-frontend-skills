@@ -6,6 +6,7 @@ import { promisify } from 'node:util'
 import { fileURLToPath } from 'node:url'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
+import { dotfilesIn, parsePackOutput } from '../../scripts/npm-pack.mjs'
 import { loadCatalog } from '../src/catalog.js'
 
 const execute = promisify(execFile)
@@ -35,12 +36,9 @@ async function main() {
   try {
     // Pack into the temp dir, so a tarball already sitting in the package root is never touched.
     const { stdout } = await npm(['pack', '--json', '--silent', '--pack-destination', installationRoot], { cwd: packageRoot })
-    // npm 10/11 print an array of results; npm 12 prints an object keyed by package name.
-    const packResult = JSON.parse(stdout)
-    const [packed] = Array.isArray(packResult) ? packResult : Object.values(packResult)
-    if (!packed?.filename) throw new Error(`Unexpected npm pack --json output: ${stdout.slice(0, 200)}`)
+    const packed = parsePackOutput(stdout)
     const tarballPath = resolve(installationRoot, packed.filename)
-    const dotfiles = packed.files.map((file) => file.path).filter((path) => /(^|\/)\./.test(path))
+    const dotfiles = dotfilesIn(packed.files)
     if (dotfiles.length) throw new Error(`Tarball ships dotfiles: ${dotfiles.join(', ')}`)
 
     if (await pathExists(generatedData)) {

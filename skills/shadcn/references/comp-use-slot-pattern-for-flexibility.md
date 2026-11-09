@@ -70,7 +70,7 @@ function Notification({ children, className }: NotificationProps) {
 }
 
 function NotificationIcon({ children }: { children: React.ReactNode }) {
-  return <div className="flex-shrink-0">{children}</div>
+  return <div className="shrink-0">{children}</div>
 }
 
 function NotificationContent({ children }: { children: React.ReactNode }) {

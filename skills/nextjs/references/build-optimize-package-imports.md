@@ -1,42 +1,43 @@
 ---
-title: Configure optimizePackageImports for Icon Libraries
-impact: CRITICAL
-impactDescription: 200-800ms faster imports, 50-80% smaller bundles
+title: Configure optimizePackageImports for Large Libraries
+impact: HIGH
+impactDescription: speeds up dev startup and trims bundles only for dependencies that are not optimized by default
 tags: build, imports, tree-shaking, icons, turbopack
 ---
 
-## Configure optimizePackageImports for Icon Libraries
+## Configure optimizePackageImports for Large Libraries
 
-Icon libraries like `lucide-react` export hundreds of modules. Without optimization, importing one icon loads the entire library. Configure `optimizePackageImports` to automatically tree-shake unused exports.
+Some icon and component packages export hundreds of entry points. Next.js already optimizes a default list, including `lucide-react`, `@mui/material`, `@mui/icons-material`, `@heroicons/react/24/*` and `rxjs`, so adding them again changes nothing.
 
-**Incorrect (loads entire library):**
-
-```typescript
-// next.config.ts
-const nextConfig = {
-  // No optimization configured
-}
-
-// components/Header.tsx
-import { Menu, X, Search } from 'lucide-react'
-// Loads 1,583 modules, adds ~2.8s to dev startup
-```
-
-**Correct (loads only used icons):**
+**Incorrect (configuring a library Next.js already optimizes):**
 
 ```typescript
 // next.config.ts
 const nextConfig = {
   experimental: {
-    optimizePackageImports: ['lucide-react', '@heroicons/react', '@mui/icons-material']
-  }
+    optimizePackageImports: ['lucide-react'],
+  },
 }
 
 // components/Header.tsx
 import { Menu, X, Search } from 'lucide-react'
-// Loads only 3 modules (~2KB vs ~1MB)
+// Already optimized: the extra entry is a no-op.
 ```
 
-**Note:** Next.js 16 automatically optimizes common libraries. Add custom libraries that export many modules.
+**Correct (add only a library that is not on the default list and is measurably slow):**
+
+```typescript
+// next.config.ts
+const nextConfig = {
+  experimental: {
+    optimizePackageImports: ['@icon-library/core'],
+  },
+}
+
+// components/Header.tsx
+import { Menu, X, Search } from '@icon-library/core'
+```
+
+Check dev startup time or the bundle analyzer before adding an entry, and remove it if neither improves. The option remains under `experimental` in Next.js 16.
 
 Reference: [How we optimized package imports in Next.js](https://vercel.com/blog/how-we-optimized-package-imports-in-next-js)

@@ -67,9 +67,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 // app/sitemap/[id]/route.ts
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const page = parseInt(params.id)
+  const { id } = await params
+  const page = parseInt(id)
   const products = await getProductsPage(page, 10000)
   // Generate sitemap XML for this page
 }

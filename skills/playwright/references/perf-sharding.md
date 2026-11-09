@@ -102,4 +102,6 @@ export default defineConfig({
 | 200-500 | 4-8 |
 | 500+ | 8-16 |
 
+**Playwright 1.65+:** a sharded run fails with "No tests found" when no tests match across all shards. An individual empty shard still passes when other shards have tests. Pass `--pass-with-no-tests` when an empty run is expected.
+
 Reference: [Playwright Sharding](https://playwright.dev/docs/test-sharding)

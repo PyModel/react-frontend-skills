@@ -3,7 +3,7 @@ import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mc
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { ErrorCode, McpError } from '@modelcontextprotocol/sdk/types.js'
 import { z } from 'zod'
-import { loadCatalog } from './catalog.js'
+import { DEFAULT_SEARCH_LIMIT, loadCatalog, MAX_SEARCH_LIMIT } from './catalog.js'
 
 const packageMetadata = JSON.parse(
   readFileSync(new URL('../package.json', import.meta.url), 'utf8')
@@ -61,8 +61,8 @@ function registerTools(server, catalog) {
           .number()
           .int()
           .min(1)
-          .max(20)
-          .default(10)
+          .max(MAX_SEARCH_LIMIT)
+          .default(DEFAULT_SEARCH_LIMIT)
           .describe('Maximum number of matches'),
       },
       annotations: READ_ONLY_ANNOTATIONS,
@@ -190,8 +190,8 @@ export async function createSkillsServer(options = {}) {
 }
 
 export async function startStdioServer(options = {}) {
-  const { server, catalog } = await createSkillsServer(options)
+  const { server } = await createSkillsServer(options)
   const transport = new StdioServerTransport()
   await server.connect(transport)
-  return { server, catalog, transport }
+  return { server }
 }

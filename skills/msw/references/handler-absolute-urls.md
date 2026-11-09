@@ -1,70 +1,59 @@
 ---
 title: Use Absolute URLs in Handlers
 impact: CRITICAL
-impactDescription: Prevents URL mismatch failures; required for Node.js environments
+impactDescription: prevents unhandled requests in Node.js tests, where relative paths do not resolve to an origin
 tags: handler, url, absolute, node, matching
 ---
 
 ## Use Absolute URLs in Handlers
 
-Use absolute URLs or URL patterns in request handlers. Node.js environments require absolute URLs for proper matching, and relative URLs cause silent handler failures.
+In a pure Node.js environment there is no `location`, so MSW preserves a relative handler path as-is and it does not match an absolute request URL. Use an absolute URL to pin an origin, or `*/path` to match any origin. Relative paths work in the browser and in jsdom/happy-dom because they resolve against `location.href`, but not under `@vitest-environment node` or a plain Node script.
 
-**Incorrect (relative URLs in Node.js context):**
+**Incorrect (relative handler in a Node test):**
 
 ```typescript
 // mocks/handlers.ts
 export const handlers = [
-  // Relative URL - may not match in Node.js tests
   http.get('/api/user', () => {
     return HttpResponse.json({ name: 'John' })
   }),
 ]
 
-// Test makes request to full URL
+// Test makes an absolute request
 await fetch('http://localhost:3000/api/user')
-// Handler doesn't match - request goes unhandled
+// No location in Node: the handler does not match, and the request is unhandled
 ```
 
-**Correct (absolute URLs or wildcards):**
+**Correct (pin the origin):**
 
 ```typescript
-// mocks/handlers.ts
 export const handlers = [
-  // Absolute URL - matches reliably
   http.get('http://localhost:3000/api/user', () => {
     return HttpResponse.json({ name: 'John' })
   }),
 ]
 ```
 
-**Better (wildcard for any origin):**
+**Correct (match any origin):**
 
 ```typescript
-// mocks/handlers.ts
 export const handlers = [
-  // Wildcard matches any origin - most flexible
   http.get('*/api/user', () => {
-    return HttpResponse.json({ name: 'John' })
-  }),
-
-  // Or use path patterns that MSW resolves against baseURL
-  http.get('/api/user', () => {
     return HttpResponse.json({ name: 'John' })
   }),
 ]
 ```
 
+**Browser and jsdom:** a relative handler is resolved against `location.href`, so `http.get('/api/user', ...)` works there. Do not copy that form into a Node-environment test.
+
 **Environment variable pitfall:**
 
 ```typescript
-// AVOID: Environment variable not set in tests
-const API_URL = process.env.API_URL // undefined in tests!
+// AVOID: the variable is undefined in tests
+const API_URL = process.env.API_URL
 
 http.get(`${API_URL}/user`, () => { /* ... */ })
-// Results in: http.get('undefined/user', ...) - never matches
+// Results in http.get('undefined/user', ...), which never matches
 ```
 
-**When NOT to use this pattern:**
-- Browser environments with properly configured base URLs may use relative paths
-
-Reference: [MSW Debugging Runbook](https://mswjs.io/docs/runbook/)
+Reference: [MSW Request Matching](https://mswjs.io/docs/http/intercepting-requests)

@@ -7,7 +7,7 @@ tags: module, barrel-files, imports, tree-shaking, bundling
 
 ## Avoid Barrel File Imports
 
-Barrel files (index.ts re-exports) defeat tree-shaking and force bundlers to load entire module graphs. Import directly from source files to enable proper dead-code elimination.
+Barrel files (index.ts re-exports) defeat tree-shaking and force bundlers to load entire module graphs. Import directly from source files to enable proper dead-code elimination. A feature's small public-API index is the deliberate exception (see the `feature-arch` skill); the problem is a package-wide barrel that re-exports everything.
 
 **Incorrect (imports entire module tree):**
 
@@ -36,12 +36,11 @@ import { formatDate } from '@/utils/date'
 **For icon libraries (common barrel offender):**
 
 ```typescript
-// Incorrect - loads all 1500+ icons
+// Correct - the package entry stays tree-shakeable, and the icons keep their types
 import { Check, X } from 'lucide-react'
 
-// Correct - loads only 2 icons
-import Check from 'lucide-react/dist/esm/icons/check'
-import X from 'lucide-react/dist/esm/icons/x'
+// Avoid deep dist/esm paths: they bypass the package's type declarations and
+// resolve to `any` under strict/noImplicitAny unless you add a local .d.ts.
 ```
 
 **Alternative (configure bundler optimization):**

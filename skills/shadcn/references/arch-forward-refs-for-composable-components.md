@@ -1,11 +1,11 @@
 ---
-title: Forward Refs for Composable Components
+title: Pass Refs Through Composable Components
 impact: CRITICAL
 impactDescription: enables integration with form libraries and focus management
 tags: arch, ref, refs, composition, forms
 ---
 
-## Forward Refs for Composable Components
+## Pass Refs Through Composable Components
 
 Custom components wrapping shadcn/ui primitives must let a ref reach the underlying element to enable form library integration, focus management, and imperative handles. In React 19, `ref` is a regular prop — accept it and pass it through. The legacy `forwardRef` wrapper is no longer needed (and shadcn/ui's own components have dropped it).
 

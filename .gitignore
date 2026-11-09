@@ -14,6 +14,8 @@ npm-debug.log*
 # Skills CLI
 skills-lock.json
 
-# Agent tool state and pack leftovers
-.claude/autoharness/
+# Agent tool state (sidecars, ledgers, evidence, autoharness)
+.claude/
+
+# Pack leftovers
 *.tgz

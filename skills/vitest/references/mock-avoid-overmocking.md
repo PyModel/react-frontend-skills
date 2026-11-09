@@ -47,12 +47,12 @@ describe('UserService', () => {
 ```typescript
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { setupServer } from 'msw/node'
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 import { createUser } from './userService'
 
 // Only mock external boundaries (network, database)
 const server = setupServer(
-  http.post('/api/users', async ({ request }) => {
+  http.post('*/api/users', async ({ request }) => {
     const body = await request.json()
     return HttpResponse.json({ id: 1, ...body })
   }),

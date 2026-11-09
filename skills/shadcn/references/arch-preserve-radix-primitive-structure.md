@@ -1,13 +1,13 @@
 ---
-title: Preserve Radix Primitive Structure
+title: Preserve the Primitive's Compound Structure
 impact: CRITICAL
 impactDescription: maintains keyboard navigation and focus management
-tags: arch, radix, primitives, compound-components, structure
+tags: arch, radix, base-ui, primitives, compound-components, structure
 ---
 
-## Preserve Radix Primitive Structure
+## Preserve the Primitive's Compound Structure
 
-shadcn/ui components are built on Radix primitives with specific parent-child relationships. Breaking this structure disables keyboard navigation, focus trapping, and ARIA attributes.
+shadcn/ui components wrap Radix or Base UI primitives with specific parent-child relationships. Breaking this structure disables keyboard navigation, focus trapping, and ARIA attributes.
 
 **Incorrect (broken primitive hierarchy):**
 
@@ -37,9 +37,7 @@ function CustomDialog({ children }: { children: React.ReactNode }) {
 function CustomDialog({ children }: { children: React.ReactNode }) {
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <button>Open</button>
-      </DialogTrigger>
+      <DialogTrigger>Open</DialogTrigger>
       <DialogContent>
         {/* Proper hierarchy: Dialog > DialogContent */}
         {children}

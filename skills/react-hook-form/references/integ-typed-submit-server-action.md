@@ -48,5 +48,5 @@ const form = useForm<SignupValues>({
 **Notes:**
 
 - The function `action` receives validated values and runs alongside (not instead of) RHF's validation pipeline; URL-string `action` remains supported for native form posts.
-- Pair with `useFormState`'s `isSubmitting`/`isSubmitSuccessful` for pending UI; Server Action results surface through the same state.
+- Pair with `useFormState`'s `isSubmitting`/`isSubmitSuccessful` for pending UI. The action's return value is not part of that state; capture it from the submit promise or store it yourself.
 - v8 note: RHF v8 is in beta (breaking: `Controller`/custom register passes the input ref instead of a partial object) — stay on the 7.8x line for production until v8 is stable.

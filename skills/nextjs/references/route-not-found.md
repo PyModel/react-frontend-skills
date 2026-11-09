@@ -13,8 +13,9 @@ Call `notFound()` when a dynamic resource doesn't exist. This renders the closes
 
 ```typescript
 // app/product/[id]/page.tsx
-export default async function ProductPage({ params }: { params: { id: string } }) {
-  const product = await getProduct(params.id)
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const product = await getProduct(id)
 
   if (!product) {
     return <div>Product not found</div>  // Returns 200, bad for SEO
@@ -30,8 +31,9 @@ export default async function ProductPage({ params }: { params: { id: string } }
 // app/product/[id]/page.tsx
 import { notFound } from 'next/navigation'
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
-  const product = await getProduct(params.id)
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const product = await getProduct(id)
 
   if (!product) {
     notFound()  // Returns 404, renders not-found.tsx

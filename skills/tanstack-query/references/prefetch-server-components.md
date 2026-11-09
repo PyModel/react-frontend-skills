@@ -15,10 +15,13 @@ In Next.js App Router, prefetch data in Server Components and pass the hydrated 
 // app/projects/[id]/page.tsx
 'use client'
 
-export default function ProjectPage({ params }: { params: { id: string } }) {
+import { use } from 'react'
+
+export default function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const { data, isPending } = useQuery({
-    queryKey: ['project', params.id],
-    queryFn: () => fetchProject(params.id),
+    queryKey: ['project', id],
+    queryFn: () => fetchProject(id),
   })
 
   if (isPending) return <Skeleton /> // User sees loading spinner

@@ -34,6 +34,8 @@ import { UserProfile, useUser } from '@/features/user';
 import type { User } from '@/features/user';
 ```
 
+**Scope:** this is a feature boundary, not a package-wide barrel. Keep the index small and export only the public surface. A bundle-sensitive consumer can still import one concrete module when the barrel pulls in heavy code; the `nextjs` and `typescript` skills cover that trade-off.
+
 **Internal file can import freely:**
 
 ```typescript

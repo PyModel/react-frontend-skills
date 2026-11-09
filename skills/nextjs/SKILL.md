@@ -5,7 +5,7 @@ description: Next.js 16 App Router caching and routing.
 
 # Next.js Community Next.js 16 App Router Best Practices
 
-Comprehensive performance optimization guide for Next.js 16 App Router applications, maintained by the Next.js Community. Contains 43 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation. Current: Next.js 16.4 (16.4.5), where Cache Components with Partial Prefetching is the recommended model and `create-next-app` enables it by default. Three rules cover it (Instant Navigations, Partial Prefetching, `ensureStatic`), gated behind `cacheComponents` and `partialPrefetching`.
+Comprehensive performance optimization guide for Next.js 16 App Router applications, maintained by the Next.js Community. Contains 44 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation. Current: Next.js 16.4 (16.4.5), where Cache Components with Partial Prefetching is the recommended model and `create-next-app` enables it by default. Three rules cover it (Instant Navigations, Partial Prefetching, `ensureStatic`), gated behind `cacheComponents` and `partialPrefetching`.
 
 ## When to Apply
 
@@ -33,7 +33,7 @@ Reference these guidelines when:
 
 ### 1. Build & Bundle Optimization (CRITICAL)
 
-- `build-optimize-package-imports` - Configure optimizePackageImports for Icon Libraries
+- `build-optimize-package-imports` - Configure optimizePackageImports for large libraries
 - `build-dynamic-imports` - Use Dynamic Imports for Heavy Components
 - `build-barrel-files` - Avoid Barrel File Imports in App Router
 - `build-turbopack-config` - Configure Turbopack at the top level
@@ -50,6 +50,7 @@ Reference these guidelines when:
 
 ### 3. Server Components & Data Fetching (HIGH)
 
+- `server-async-params` - Await params and searchParams (Next.js 15+)
 - `server-parallel-fetching` - Fetch Data in Parallel in Server Components
 - `server-component-streaming` - Stream Server Components for Progressive Loading
 - `server-data-colocation` - Colocate Data Fetching with Components
@@ -65,7 +66,7 @@ Reference these guidelines when:
 - `route-instant-navigations` - Make Navigations Instant with Stream, Cache, or Block (16.3+)
 - `route-partial-prefetching` - Use Partial Prefetching for Reusable Route Shells, plus `navigation()` / `prefetch()` (16.4)
 - `route-ensure-static` - Guard Static Routes with ensureStatic (16.4)
-- `route-proxy-ts` - Use proxy.ts for Network Boundary Logic
+- `route-proxy-ts` - Use proxy.ts for Node-runtime boundaries (keep middleware.ts for Edge)
 - `route-not-found` - Use notFound() for Missing Resources
 
 ### 5. Server Actions & Mutations (MEDIUM-HIGH)

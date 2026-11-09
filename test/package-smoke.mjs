@@ -2,10 +2,11 @@
 // the installed node_modules/.bin entry, the path npx uses. Needs no registry: the package has
 // no dependencies and the temp project declares none until after the install.
 import { execFileSync } from 'node:child_process'
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { dotfilesIn, parsePackOutput } from '../scripts/npm-pack.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const run = (command, args, cwd) => execFileSync(command, args, { cwd, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
@@ -15,10 +16,8 @@ const npm = (args, cwd) => run(process.execPath, [process.env.npm_execpath, ...a
 
 const project = mkdtempSync(join(tmpdir(), 'rfs-package-smoke-'))
 try {
-  // npm 10/11 print an array of results; npm 12 prints an object keyed by package name.
-  const result = JSON.parse(npm(['pack', '--json', '--silent', '--pack-destination', project], root))
-  const [packed] = Array.isArray(result) ? result : Object.values(result)
-  const dotfiles = packed.files.map((file) => file.path).filter((path) => /(^|\/)\./.test(path))
+  const packed = parsePackOutput(npm(['pack', '--json', '--silent', '--pack-destination', project], root))
+  const dotfiles = dotfilesIn(packed.files)
   if (dotfiles.length) throw new Error(`tarball ships dotfiles: ${dotfiles.join(', ')}`)
 
   writeFileSync(join(project, 'package.json'), JSON.stringify({ name: 'rfs-smoke', private: true }))
@@ -35,8 +34,13 @@ try {
     process.platform === 'win32'
       ? run(process.execPath, [installed, ...args], project)
       : run(join(project, 'node_modules', '.bin', 'react-frontend-skills'), args, project)
-  const lint = cli(['lint'])
-  if (!/^0 error\(s\) across 18 skill\(s\)/m.test(lint)) throw new Error(`packaged lint failed:\n${lint}`)
+  const lint = JSON.parse(cli(['lint', '--json']))
+  if (lint.errors.length) throw new Error(`packaged lint failed:\n${lint.errors.join('\n')}`)
+  const skillCount = readdirSync(join(root, 'skills'), { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && !entry.name.startsWith('.')).length
+  if (lint.skills !== skillCount) {
+    throw new Error(`packaged lint saw ${lint.skills} skills, repository has ${skillCount}`)
+  }
   const detect = JSON.parse(cli(['detect', '--json']))
   if (!detect.some((row) => row.skill === 'react')) throw new Error(`detect missed react: ${JSON.stringify(detect)}`)
 

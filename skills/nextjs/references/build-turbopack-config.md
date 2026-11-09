@@ -9,7 +9,7 @@ tags: build, turbopack, caching, development
 
 Next.js 16 uses Turbopack by default for both `next dev` and `next build`. Turbopack filesystem caching is also enabled by default for development and production builds. Do not add an opt-in flag merely to obtain the default behavior.
 
-**Incorrect (removed or fictitious options):**
+**Incorrect (deprecated alias and a non-existent option):**
 
 ```typescript
 const nextConfig = {
@@ -20,6 +20,8 @@ const nextConfig = {
   },
 }
 ```
+
+`experimental.turbo` still works in Next.js 16 as an alias for the top-level `turbopack` key, but new configuration belongs under `turbopack`. `persistentCaching` is not a Next.js option: the filesystem cache is on by default, and the supported overrides are `experimental.turbopackFileSystemCacheForDev` and `experimental.turbopackFileSystemCacheForBuild`.
 
 **Correct (only configure supported custom behavior):**
 

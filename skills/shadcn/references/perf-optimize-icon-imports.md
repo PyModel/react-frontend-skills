@@ -1,60 +1,48 @@
 ---
 title: Optimize Icon Imports from Lucide
 impact: MEDIUM
-impactDescription: reduces bundle by 200-500KB with direct imports
+impactDescription: keeps icon code tree-shakeable without losing type declarations
 tags: perf, icons, lucide, tree-shaking, imports
 ---
 
 ## Optimize Icon Imports from Lucide
 
-Import Lucide icons directly from their paths or use Next.js optimizePackageImports to avoid loading the entire icon library.
+Import icons from the package entry and let the bundler tree-shake them. Lucide ships ESM modules with no side effects, and Next.js includes `lucide-react` in its default `optimizePackageImports` list, so a named import does not ship the whole icon set.
 
-**Incorrect (barrel import loads all icons):**
-
-```tsx
-import { Check, X, Menu, Settings, User, Bell } from "lucide-react"
-// In dev mode: loads 1,500+ icons, adds ~2.8s to startup
-// In production: tree-shaking may not fully eliminate unused icons
-```
-
-**Correct (direct imports):**
+**Incorrect (deep path import):**
 
 ```tsx
 import Check from "lucide-react/dist/esm/icons/check"
-import X from "lucide-react/dist/esm/icons/x"
-import Menu from "lucide-react/dist/esm/icons/menu"
-import Settings from "lucide-react/dist/esm/icons/settings"
-import User from "lucide-react/dist/esm/icons/user"
-import Bell from "lucide-react/dist/esm/icons/bell"
-// Loads only 6 icons (~2KB each)
+// Bypasses the package's type declarations: under strict/noImplicitAny this
+// resolves to `any` unless you add a local declaration file.
 ```
 
-**Alternative (Next.js 13.5+ optimizePackageImports):**
+**Correct (named import):**
+
+```tsx
+import { Check, X, Menu, Settings, User, Bell } from "lucide-react"
+// The bundler keeps only the icons that are used.
+```
+
+**If a bundler does not tree-shake the package entry:**
 
 ```js
-// next.config.js
+// next.config.js — lucide-react is optimized by default; list other icon
+// libraries that need the same treatment.
 module.exports = {
   experimental: {
-    optimizePackageImports: ["lucide-react"],
+    optimizePackageImports: ["@icon-library/core"],
   },
 }
 ```
 
-```tsx
-// Now barrel imports are automatically optimized
-import { Check, X, Menu, Settings, User, Bell } from "lucide-react"
-// Next.js transforms this to direct imports at build time
-```
+For Vite, named imports from an ESM package are tree-shaken by Rollup in production; `optimizeDeps.include` only pre-bundles dependencies for dev, so it is not a tree-shaking fix.
 
-**Creating an icon wrapper for consistency:**
+**Optional wrapper for naming consistency:**
 
 ```tsx
 // components/icons.tsx
-export { default as CheckIcon } from "lucide-react/dist/esm/icons/check"
-export { default as XIcon } from "lucide-react/dist/esm/icons/x"
-export { default as MenuIcon } from "lucide-react/dist/esm/icons/menu"
-export { default as SettingsIcon } from "lucide-react/dist/esm/icons/settings"
-// Centralized icon exports with consistent naming
+export { Check as CheckIcon, X as XIcon } from "lucide-react"
 ```
 
 Reference: [Vercel Package Import Optimization](https://vercel.com/blog/how-we-optimized-package-imports-in-next-js)

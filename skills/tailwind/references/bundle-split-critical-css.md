@@ -36,10 +36,10 @@ For large applications, consider extracting critical CSS for above-the-fold cont
 </head>
 ```
 
-**Framework integration:**
+**Framework integration (Pages Router):**
 
 ```typescript
-// Next.js example with critical CSS extraction
+// pages/_document.tsx with critical CSS extraction
 import { getCriticalCss } from "your-critical-css-tool";
 
 export default function Document() {
@@ -53,6 +53,8 @@ export default function Document() {
   );
 }
 ```
+
+**App Router:** there is no `_document.tsx`. Inline the critical CSS in `app/layout.tsx` inside `<head>`, or let the framework's route-level CSS pipeline handle it; hand-extracted critical CSS is rarely needed in a Next.js App Router app.
 
 **When to use:**
 - Large CSS bundles (>50KB)

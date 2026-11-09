@@ -33,7 +33,7 @@ Example application configuration:
 }
 ```
 
-TypeScript 7 no longer supports `target: "es5"`, `moduleResolution: "node"`/`"node10"`/`"classic"`, `baseUrl`, legacy `module` values such as AMD/UMD/SystemJS, or disabling `esModuleInterop`, `allowSyntheticDefaultImports`, or `alwaysStrict`. Replace those based on the runtime and bundler contract; do not copy `bundler` into Node applications that require `nodenext`.
+TypeScript 7 no longer supports `target: "es5"`, `moduleResolution: "node"`/`"node10"`/`"classic"`, `baseUrl`, legacy `module` values such as AMD/UMD/SystemJS/`none`, `downlevelIteration`, or disabling `esModuleInterop`, `allowSyntheticDefaultImports`, or `alwaysStrict`. Replace those based on the runtime and bundler contract; do not copy `bundler` into Node applications that require `nodenext`.
 
 TypeScript 7.0 does not expose the legacy TypeScript API used by every tool. Where tooling still imports `typescript`, install the TypeScript 6 compatibility package under that name and add TypeScript 7 under a second alias:
 

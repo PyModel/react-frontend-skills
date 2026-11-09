@@ -5,7 +5,7 @@ description: Tailwind CSS v4 styling and configuration.
 
 # Tailwind Labs Tailwind CSS v4 Best Practices
 
-Comprehensive performance optimization guide for Tailwind CSS v4 applications, maintained by Tailwind Labs. Contains 43 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation. Current: Tailwind CSS 4.3.4.
+Comprehensive performance optimization guide for Tailwind CSS v4 applications, maintained by Tailwind Labs. Contains 43 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation. Current: Tailwind CSS 4.3.5.
 
 ## When to Apply
 

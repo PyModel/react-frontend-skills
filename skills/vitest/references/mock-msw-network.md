@@ -36,14 +36,14 @@ describe('UserAPI', () => {
 ```typescript
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest'
 import { setupServer } from 'msw/node'
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw/http'
 
 const server = setupServer(
-  http.get('/api/users/:id', ({ params }) => {
+  http.get('*/api/users/:id', ({ params }) => {
     return HttpResponse.json({ id: params.id, name: 'Alice' })
   }),
 
-  http.post('/api/users', async ({ request }) => {
+  http.post('*/api/users', async ({ request }) => {
     const body = await request.json()
     return HttpResponse.json({ id: 1, ...body }, { status: 201 })
   }),
@@ -61,7 +61,7 @@ describe('UserAPI', () => {
 
   it('should handle 404', async () => {
     server.use(
-      http.get('/api/users/:id', () => {
+      http.get('*/api/users/:id', () => {
         return new HttpResponse(null, { status: 404 })
       }),
     )

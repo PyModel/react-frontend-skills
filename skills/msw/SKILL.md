@@ -5,7 +5,7 @@ description: MSW 3 API mocking for tests.
 
 # MSW Best Practices
 
-Comprehensive API mocking guide for MSW v3 applications (current: MSW 3.0), designed for AI agents and LLMs. Contains 51 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
+Comprehensive API mocking guide for MSW v3 applications (current: MSW 3.0.4), designed for AI agents and LLMs. Contains 51 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
 
 ## Check the Version First
 
@@ -28,6 +28,8 @@ Before writing any code, read the `msw` version in `package.json` (or run `npx -
 | Node.js | 18+ | 22+ (`engines: >=22.12.0`) |
 
 `setupServer` (`'msw/node'`), `setupWorker` (`'msw/browser'`), `HttpResponse` usage, `ws.link(url).addEventListener('connection', …)` and `server.use()`/`resetHandlers()` are the same in both.
+
+**Relative handler paths:** in the browser and in jsdom/happy-dom, a relative path resolves against `location.href`. In a pure Node environment there is no `location`, so use an absolute URL or `*/path` (see `handler-absolute-urls`).
 
 ## When to Apply
 
@@ -70,7 +72,7 @@ Reference these guidelines when:
 
 - `handler-happy-path-first` - Define happy path handlers as baseline
 - `handler-domain-grouping` - Group handlers by domain
-- `handler-absolute-urls` - Use absolute URLs in handlers
+- `handler-absolute-urls` - Use absolute URLs in Node handlers
 - `handler-shared-resolvers` - Extract shared response logic into resolvers
 - `handler-v2-response-syntax` - Use HttpResponse syntax, not v1 res(ctx)
 - `handler-request-body-parsing` - Explicitly parse request bodies

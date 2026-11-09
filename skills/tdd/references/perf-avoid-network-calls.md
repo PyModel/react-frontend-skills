@@ -31,30 +31,26 @@ test('sends notification', async () => {
 })
 ```
 
-**Correct (mocked network):**
+**Correct (MSW for HTTP):**
 
 ```typescript
+import { expect, test, vi } from 'vitest'
+import { http, HttpResponse } from 'msw/http'
+import { server } from './mocks/server'
+
 test('fetches user profile', async () => {
-  // Mock the fetch function
   const mockUser = { id: '123', name: 'Alice', email: 'alice@test.com' }
-  global.fetch = jest.fn().mockResolvedValue({
-    ok: true,
-    json: async () => mockUser
-  })
+  server.use(http.get('*/api/users/123', () => HttpResponse.json(mockUser)))
 
   const user = await userService.getProfile('123')
 
-  expect(user.name).toBe('Alice')
-  expect(fetch).toHaveBeenCalledWith(
-    expect.stringContaining('/api/users/123')
-  )
+  expect(user.name).toBe('Alice') // assert behavior, not that fetch was called
 })
 
 test('sends notification', async () => {
-  const mockNotificationApi = {
-    send: jest.fn().mockResolvedValue({ delivered: true, messageId: 'm1' })
-  }
-  const service = new NotificationService(mockNotificationApi)
+  // Inject the collaborator instead of replacing global.fetch
+  const send = vi.fn().mockResolvedValue({ delivered: true, messageId: 'm1' })
+  const service = new NotificationService({ send })
 
   const result = await service.send({
     to: 'test@example.com',
@@ -62,7 +58,7 @@ test('sends notification', async () => {
   })
 
   expect(result.delivered).toBe(true)
-  expect(mockNotificationApi.send).toHaveBeenCalledWith({
+  expect(send).toHaveBeenCalledWith({
     to: 'test@example.com',
     message: 'Hello'
   })
@@ -70,9 +66,9 @@ test('sends notification', async () => {
 ```
 
 **Mocking strategies:**
-- Jest mock functions: `jest.fn()`, `jest.spyOn()`
-- Mock service worker (MSW) for HTTP interception
+- MSW for HTTP interception (see the `msw` skill)
+- Vitest `vi.fn()` / `vi.spyOn()`; Jest uses `jest.fn()` / `jest.spyOn()`
 - Dependency injection with fake implementations
-- Environment-based mock configuration
+- Do not replace `global.fetch` by hand: the stub leaks between tests and bypasses the app's request layer
 
 Reference: [MSW - Mock Service Worker](https://mswjs.io/)

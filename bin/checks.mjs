@@ -17,6 +17,16 @@ export const PACKAGES = [
   { skill: 'playwright', packages: ['@playwright/test'], target: 1 },
 ]
 
+const PACKAGE_SKILL = new Map(
+  PACKAGES.flatMap(({ skill, packages }) => packages.map((name) => [name, skill]))
+)
+
+// `scan --skill` accepts the skill that owns a rule (vercel-composition-patterns) as well as the
+// skill a package maps to in PACKAGES (react), so `detect` and `scan` speak the same vocabulary.
+export function checkMatchesSkill(check, skill) {
+  return check.skill === skill || check.packages.some((name) => PACKAGE_SKILL.get(name) === skill)
+}
+
 // File matchers run against the project-relative POSIX path.
 const JS = /\.[cm]?[jt]sx?$/
 const MARKUP = /\.(?:[cm]?[jt]sx?|html|vue|svelte|astro|mdx)$/
@@ -80,7 +90,7 @@ export const CHECKS = [
     files: NEXT_CONFIG,
     pattern: /\bturbo\s*:\s*\{|\bpersistentCaching\s*:/,
     requires: /\bexperimental\s*:/,
-    message: "experimental.turbo / persistentCaching are removed or fictitious options: configure Turbopack at the top-level `turbopack` key; Turbopack and its filesystem cache are on by default in Next.js 16.",
+    message: "experimental.turbo is a deprecated alias for the top-level `turbopack` key (still working in Next.js 16); persistentCaching is not a Next.js option. Move the config under `turbopack`; Turbopack and its filesystem cache are on by default.",
   },
   {
     id: 'next16-segment-config-under-cache-components',
@@ -393,17 +403,17 @@ export const CHECKS = [
     id: 'ts7-removed-compiler-options',
     skill: 'typescript',
     rule: 'tscfg-typescript-7',
-    packages: ['@typescript/native','typescript'],
+    packages: ['@typescript/native', 'typescript'],
     since: 7,
     files: TSCONFIG,
-    pattern: /"target"\s*:\s*"[Ee][Ss]5"|"moduleResolution"\s*:\s*"(?:[Nn][Oo][Dd][Ee](?:10)?|[Cc]lassic)"|"baseUrl"\s*:|"module"\s*:\s*"(?:[Aa][Mm][Dd]|[Uu][Mm][Dd]|[Ss]ystem)"/,
-    message: "TypeScript 7 no longer supports target \"es5\", moduleResolution \"node\"/\"node10\"/\"classic\", baseUrl, or AMD/UMD/System module: replace them based on the runtime and bundler contract (do not copy `bundler` into Node apps that need `nodenext`).",
+    pattern: /"target"\s*:\s*"[Ee][Ss]5"|"moduleResolution"\s*:\s*"(?:[Nn][Oo][Dd][Ee](?:10)?|[Cc]lassic)"|"baseUrl"\s*:|"module"\s*:\s*"(?:[Aa][Mm][Dd]|[Uu][Mm][Dd]|[Ss]ystem|[Nn]one)"|"downlevelIteration"\s*:/,
+    message: "TypeScript 7 no longer supports target \"es5\", moduleResolution \"node\"/\"node10\"/\"classic\", baseUrl, AMD/UMD/System/none modules, or downlevelIteration: replace them based on the runtime and bundler contract (do not copy `bundler` into Node apps that need `nodenext`).",
   },
   {
     id: 'ts7-disabled-interop-flags',
     skill: 'typescript',
     rule: 'tscfg-typescript-7',
-    packages: ['@typescript/native','typescript'],
+    packages: ['@typescript/native', 'typescript'],
     since: 7,
     files: TSCONFIG,
     pattern: /"(?:esModuleInterop|allowSyntheticDefaultImports|alwaysStrict)"\s*:\s*false\b/,

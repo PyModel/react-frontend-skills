@@ -26,7 +26,7 @@ By default, Tailwind v4 uses `prefers-color-scheme`. For user-controlled theme s
 ```css
 @import "tailwindcss";
 
-@variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 ```
 
 ```html

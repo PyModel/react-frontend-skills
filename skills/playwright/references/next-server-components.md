@@ -38,20 +38,13 @@ test('server component renders user data', async ({ page }) => {
 });
 ```
 
-**Mock server data with MSW for RSC:**
+**Mock the API boundary:**
+
+Playwright's `page.route` intercepts browser requests only. A Server Component's server-side `fetch` runs in the Next.js server process, so for RSC data use a test API or run MSW in the app process. The example below mocks a browser request.
 
 ```typescript
-// For testing RSC with mocked data, use Mock Service Worker
-// This intercepts server-side fetch calls
-
 // tests/user-profile.spec.ts
-import { setupServer } from 'msw/node';
-import { http, HttpResponse } from 'msw';
-
-test('RSC with mocked data', async ({ page }) => {
-  // Playwright can't mock RSC's server-side fetches directly
-  // Instead, mock at the API level
-
+test('client fetch with mocked data', async ({ page }) => {
   await page.route('/api/user/*', async (route) => {
     await route.fulfill({
       body: JSON.stringify({

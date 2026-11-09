@@ -69,11 +69,12 @@ export function PostContent({ post }: PostContentProps) {
 import { PostPage } from '@/features/post';
 import { Comments } from '@/features/comment';
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   // Parallel fetch at app layer
   const [post, comments] = await Promise.all([
-    getPost(params.id),
-    getComments(params.id),
+    getPost(id),
+    getComments(id),
   ]);
 
   return (
