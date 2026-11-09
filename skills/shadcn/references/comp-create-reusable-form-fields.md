@@ -107,6 +107,14 @@ function TextField<T extends FieldValues>({
 }
 
 // components/form/select-field.tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
 interface SelectFieldProps<T extends FieldValues> {
   control: Control<T>
   name: Path<T>
@@ -131,7 +139,7 @@ function SelectField<T extends FieldValues>({
           <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
           <Select
             name={field.name}
-            value={field.value}
+            value={field.value ?? ""}
             onValueChange={field.onChange}
           >
             <SelectTrigger id={field.name} aria-invalid={fieldState.invalid}>
@@ -154,7 +162,10 @@ function SelectField<T extends FieldValues>({
 
 // Usage - clean and consistent
 function UserForm() {
-  const form = useForm<UserFormValues>({ resolver: zodResolver(userSchema) })
+  const form = useForm<UserFormValues>({
+    resolver: zodResolver(userSchema),
+    defaultValues: { firstName: "", lastName: "", email: "", role: "" },
+  })
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>

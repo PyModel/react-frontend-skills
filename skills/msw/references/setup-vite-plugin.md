@@ -7,7 +7,7 @@ tags: setup, vite, worker, plugin, virtual-msw
 
 ## Serve the Worker with the msw/vite Plugin
 
-In a Vite app, The `msw/vite` plugin serves `mockServiceWorker.js` from the installed package during development, so there is no copy in `public/` to commit or keep in sync. It also exposes a preconfigured `network` through the `virtual:msw` module that works in the browser and in SSR code, and does nothing in production builds.
+In a Vite app, the `msw/vite` plugin serves `mockServiceWorker.js` from the installed package during development, so there is no copy in `public/` to commit or keep in sync. It also exposes a preconfigured `network` through the `virtual:msw` module that works in the browser and in SSR code, and does nothing in production builds.
 
 **Incorrect (copied worker plus hand-wired setupWorker in a Vite app):**
 

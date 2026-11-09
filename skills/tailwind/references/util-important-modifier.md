@@ -7,15 +7,9 @@ tags: util, important, modifier, syntax
 
 ## Use Trailing Important Modifier
 
-Add the important modifier (`!`) at the end of the utility, after any variants. A leading `!` is not parsed as important.
+Write the important modifier (`!`) at the end of the utility, after any variants: `bg-red-500!`.
 
-**Incorrect (leading exclamation mark):**
-
-```html
-<div class="!flex !bg-red-500 !p-4">...</div>
-```
-
-**Correct (trailing exclamation mark):**
+**Example:**
 
 ```html
 <div class="flex! bg-red-500! p-4!">...</div>

@@ -166,7 +166,7 @@ The rules teach only these versions: deprecated APIs, migration guides and notes
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
-| [tailwind](skills/tailwind) | 41 | Tailwind CSS v4 optimization, utility patterns, theming |
+| [tailwind](skills/tailwind) | 42 | Tailwind CSS v4 optimization, utility patterns, theming |
 | [shadcn](skills/shadcn) | 44 | shadcn/ui with Radix or Base UI primitives, accessibility |
 | [ui-design](skills/ui-design) | 42 | UI and UX practices, accessibility, responsive design |
 | [web-design-guidelines](skills/web-design-guidelines) | pinned | Reviews UI code against Vercel's Web Interface Guidelines, fetched from a pinned upstream commit |
@@ -184,7 +184,7 @@ The rules teach only these versions: deprecated APIs, migration guides and notes
 
 | Skill | Rules | What it covers |
 | ----- | ----- | -------------- |
-| [vitest](skills/vitest) | 46 | Vitest 5 setup, mocking, async testing, worker pools |
+| [vitest](skills/vitest) | 47 | Vitest 5 setup, mocking, async testing, worker pools |
 | [playwright](skills/playwright) | 45 | End-to-end testing, selectors, authentication, CI |
 | [msw](skills/msw) | 51 | API mocking with Mock Service Worker |
 | [tdd](skills/tdd) | 42 | Test-driven development methodology |

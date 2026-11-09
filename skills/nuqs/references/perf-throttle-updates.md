@@ -9,20 +9,19 @@ tags: perf, limitUrlUpdates, throttle, rate-limiting, slider
 
 nuqs already applies a browser-adapted default throttle to URL writes. Increase it only when high-frequency state changes should update the URL or a `shallow: false` server route less often. Use `limitUrlUpdates: throttle(ms)`.
 
-**Incorrect (custom option where the default is enough):**
+**Incorrect (every keystroke sends a server request):**
 
 ```tsx
-const [page, setPage] = useQueryState(
-  'page',
-  parseAsInteger.withDefault(1).withOptions({ limitUrlUpdates: throttle(1000) })
+import { parseAsString, useQueryState } from 'nuqs'
+
+const [search, setSearch] = useQueryState(
+  'q',
+  parseAsString.withDefault('').withOptions({ shallow: false })
 )
+// onChange={(e) => setSearch(e.target.value)} re-runs the server route on each keystroke
 ```
 
-When the default browser-adapted limit is sufficient, no custom option is needed:
-
-```tsx
-const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
-```
+Without `limitUrlUpdates`, a `shallow: false` search input hits the server for every character.
 
 **Correct (throttle only high-frequency state):**
 
@@ -61,6 +60,6 @@ import { defaultRateLimit } from 'nuqs'
 await setVolume(50, { limitUrlUpdates: defaultRateLimit })
 ```
 
-Use `debounce()` rather than `throttle()` when only the final high-frequency value matters. Values below nuqs/browser minimums may be ignored, so do not use a zero-duration throttle as an "immediate" escape hatch.
+Use `debounce()` (also imported from `nuqs`) rather than `throttle()` when only the final high-frequency value matters, such as a `shallow: false` search input. Values below nuqs/browser minimums may be ignored, so do not use a zero-duration throttle as an "immediate" escape hatch.
 
 Reference: [nuqs rate-limiting options](https://nuqs.dev/docs/options#rate-limiting-url-updates)

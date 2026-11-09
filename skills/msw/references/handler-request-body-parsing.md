@@ -41,7 +41,8 @@ export const handlers = [
   http.post('/api/upload', async ({ request }) => {
     const formData = await request.formData()
     const file = formData.get('file')
-    return HttpResponse.json({ filename: file?.name })
+    const name = file instanceof File ? file.name : null
+    return HttpResponse.json({ filename: name })
   }),
 
   // ArrayBuffer for binary

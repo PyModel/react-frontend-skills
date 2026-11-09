@@ -5,7 +5,7 @@ description: Vitest 5 unit tests and mocking.
 
 # Vitest Best Practices
 
-Vitest 5-compatible testing guide with 46 rules across 8 categories. Vitest 5 requires Node.js 22.12+ and Vite 6.4+. Current: Vitest 5.1 (5.1.0).
+Vitest 5-compatible testing guide with 47 rules across 8 categories. Vitest 5 requires Node.js 22.12+ and Vite 6.4+. Current: Vitest 5.1 (5.1.0).
 
 ## When to Apply
 
@@ -49,6 +49,7 @@ Reference these guidelines when:
 - `setup-beforeall-expensive` - Use beforeAll for expensive one-time setup
 - `setup-reset-modules` - Reset modules when testing module state
 - `setup-test-factories` - Use test factories for complex test data
+- `setup-vitest5-semantics` - Vitest 5 runtime semantics: concurrency, text matchers, worker ids, entry points, vite peer
 
 ### 3. Mocking Patterns (HIGH)
 

@@ -41,7 +41,7 @@ Reference these guidelines when:
 ### 1. Setup & Initialization (CRITICAL)
 
 - `setup-server-node-entrypoint` - Use the correct entrypoint for Node.js (msw/node)
-- `setup-v3-handler-entrypoints` - Import handlers and utilities from the msw/http, msw/graphql, msw/ws, msw/sse, msw/utils/* subpaths
+- `setup-v3-handler-entrypoints` - Import graphql from msw/graphql; http, HttpResponse, ws, sse and utilities come from msw
 - `setup-lifecycle-hooks` - Configure server lifecycle in test setup
 - `setup-worker-script-commit` - Commit worker script to version control
 - `setup-vite-plugin` - Serve the worker and enable mocking with the msw/vite plugin

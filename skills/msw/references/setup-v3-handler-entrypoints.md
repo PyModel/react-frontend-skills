@@ -1,42 +1,34 @@
 ---
-title: Import Handlers from the Subpath Entrypoints
-impact: CRITICAL
-impactDescription: graphql is not exported from the root; the subpaths are the documented imports
+title: Import graphql from msw/graphql
+impact: MEDIUM
+impactDescription: graphql is not exported from the root; a root import fails
 tags: setup, imports, entrypoints, esm
 ---
 
-## Import Handlers from the Subpath Entrypoints
+## Import graphql from msw/graphql
 
-MSW ships each handler namespace and utility from its own entrypoint. `graphql` is not exported from `'msw'`, so a root import of it fails. The root still re-exports `http`, `HttpResponse`, `ws`, `sse`, `delay`, `bypass` and `passthrough`, but the subpaths are the documented imports, so use them.
+`graphql` is not exported from `'msw'`, so a root import of it fails. Import it from `'msw/graphql'`. `http`, `HttpResponse`, `ws`, `sse`, `delay`, `bypass` and `passthrough` import from `'msw'` as normal.
 
-**Incorrect (root imports):**
+**Incorrect (graphql from the root):**
 
 ```typescript
-// graphql is not exported from 'msw'; the rest resolve but are not the documented imports
-import { http, HttpResponse, graphql, ws, sse, delay, bypass, passthrough } from 'msw'
+import { graphql } from 'msw'  // not exported from the root
 ```
 
-**Correct (designated entrypoints):**
+**Correct (graphql from its entrypoint):**
 
 ```typescript
-import { http, HttpResponse } from 'msw/http'
+import { http, HttpResponse, ws, sse, delay, bypass, passthrough } from 'msw'
 import { graphql } from 'msw/graphql'
-import { ws } from 'msw/ws'
-import { sse } from 'msw/sse'
-import { delay } from 'msw/utils/delay'
-import { bypass } from 'msw/utils/bypass'
-import { passthrough } from 'msw/utils/passthrough'
-import { isCommonAssetRequest } from 'msw/utils/is-common-asset-request'
 
-// Setup and low-level APIs
+// Setup APIs
 import { setupServer } from 'msw/node'
 import { setupWorker } from 'msw/browser'
-import { getResponse, type AnyHandler } from 'msw'
 ```
 
 **Notes:**
 
-- Types follow their namespace: `HttpResponseResolver` comes from `'msw/http'`, GraphQL types from `'msw/graphql'`.
+- GraphQL types come from `'msw/graphql'`.
 - MSW is ESM-only; the test runner must be able to load ESM packages.
 
 Reference: [MSW API](https://mswjs.io/docs/api)

@@ -5,7 +5,7 @@ description: Tailwind CSS v4 styling and configuration.
 
 # Tailwind Labs Tailwind CSS v4 Best Practices
 
-Comprehensive performance optimization guide for Tailwind CSS v4 applications, maintained by Tailwind Labs. Contains 41 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation. Current: Tailwind CSS 4.3.5.
+Comprehensive performance optimization guide for Tailwind CSS v4 applications, maintained by Tailwind Labs. Contains 42 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation. Current: Tailwind CSS 4.3.5.
 
 ## When to Apply
 
@@ -64,6 +64,7 @@ Reference these guidelines when:
 - [`util-explicit-colors`](references/util-explicit-colors.md) - Use Explicit Border and Ring Colors
 - [`util-opacity-modifier`](references/util-opacity-modifier.md) - Use Slash Opacity Modifier
 - [`util-gradient-via-none`](references/util-gradient-via-none.md) - Use via-none to Reset Gradient Stops
+- [`util-current-scale-names`](references/util-current-scale-names.md) - Use the Current Utility Scale Names
 
 ### 5. Component Architecture (MEDIUM-HIGH)
 

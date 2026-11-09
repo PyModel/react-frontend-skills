@@ -9,15 +9,18 @@ tags: handler, resolver, params, cookies, request, destructuring
 
 MSW passes a single object argument to resolvers containing `request`, `params`, `cookies`, and other properties. Destructure from this object instead of using multiple arguments.
 
-**Incorrect (positional arguments):**
+**Incorrect (query string is not on the info object):**
 
 ```typescript
-// The resolver receives one info object, not (req, res, ctx)
-http.get('/api/user/:id', (req) => {
-  const userId = req.params.id  // undefined: req is the info object, params is on it directly
-  return HttpResponse.json({ id: userId })
+import { http, HttpResponse } from 'msw/http'
+
+// The info object has request, params and cookies; there is no `query` property
+http.get('/api/search', ({ query }) => {
+  return HttpResponse.json({ q: query.q })  // query is undefined; type error and runtime TypeError
 })
 ```
+
+Search params live on the request URL: `new URL(request.url).searchParams`.
 
 **Correct (destructure the single info object):**
 

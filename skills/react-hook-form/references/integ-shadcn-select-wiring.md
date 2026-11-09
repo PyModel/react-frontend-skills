@@ -1,7 +1,7 @@
 ---
 title: Wire shadcn Select with onValueChange Instead of Spread
 impact: MEDIUM
-impactDescription: prevents 100% of silent select binding failures with Radix-based components
+impactDescription: keeps shadcn Select bound to form state
 tags: integ, shadcn, select, radix
 ---
 
@@ -16,7 +16,7 @@ shadcn's Select (built on Radix) uses `onValueChange` instead of `onChange`. Spr
   name="country"
   control={control}
   render={({ field }) => (
-    <Select {...field}>  {/* field.onChange expects an event; Radix passes the value */}
+    <Select {...field}>  {/* Select has no onChange prop; it uses onValueChange */}
       <SelectTrigger>
         <SelectValue placeholder="Select country" />
       </SelectTrigger>

@@ -130,7 +130,7 @@ const orderSchema = z.object({
 
     if (!available) {
       ctx.issues.push({
-      input: ctx.value,
+        input: ctx.value,
         code: 'custom',
         path: ['items', i, 'quantity'],  // Specific path
         message: `Only ${available} units available`,
@@ -143,7 +143,7 @@ const orderSchema = z.object({
     const valid = await validatePromoCode(order.promoCode)
     if (!valid) {
       ctx.issues.push({
-      input: ctx.value,
+        input: ctx.value,
         code: 'custom',
         path: ['promoCode'],
         message: 'Invalid or expired promo code',

@@ -7,7 +7,7 @@ tags: style, tailwind, theme, design-tokens, configuration
 
 ## Define Tailwind Theme Tokens in CSS
 
-Define reusable design tokens with `@theme`, or map existing shadcn CSS variables with `@theme inline`. Keep tokens in CSS; a JavaScript `theme.extend` config is not read unless explicitly loaded.
+Define reusable design tokens with `@theme`, or map existing shadcn CSS variables with `@theme inline`. Keep tokens in CSS. A JavaScript `theme.extend` config is read only when the stylesheet loads it with `@config "./tailwind.config.ts";`; prefer `@theme` for new tokens and reserve `@config` for a config file you intend to keep.
 
 **Incorrect (tokens in a JavaScript config that is never loaded):**
 

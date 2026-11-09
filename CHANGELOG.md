@@ -15,12 +15,13 @@ The pack now teaches only the current major of each library. MCP package: 3.0.0.
 
 - `scan` is removed, with its 35 deprecated-API checks, comment masking, `--skill` and `--all`. `detect` and `lint` remain. Running `scan` now exits 2 as an unknown command.
 - Deprecated and legacy content is removed from every skill: migration guides, "Incorrect (deprecated in vN)" examples, notes for older majors, deprecated aliases and version-history asides. Rules that taught a current API through its deprecated predecessor are rewritten to teach the current API only.
-- Deleted rules: `tailwind/build-node-version`, `tailwind/util-renamed-utilities`, `vitest/setup-vitest5-migration` (tailwind 41 rules, vitest 46). `zod/refine-vs-superrefine` is now `zod/refine-vs-check`.
+- Deleted rules: `tailwind/build-node-version`, `tailwind/util-renamed-utilities`, `vitest/setup-vitest5-migration`. `zod/refine-vs-superrefine` is now `zod/refine-vs-check`. New current-only rules replace the useful parts: `tailwind/util-current-scale-names` (shadow/rounded/blur scales, `ring-3`, `outline-hidden`) and `vitest/setup-vitest5-semantics` (tailwind 42 rules, vitest 47).
 - `detect` no longer reads npm 6 (`lockfileVersion: 1`) lockfiles. Its older-major hint says the skills cover only the target major; upgrade before applying them.
 - The CLI entry point no longer exports `detect`, `lint` or `rangeMajor`; import them from `bin/detect.mjs` and `bin/lint.mjs`. The MCP `startStdioServer` returns `{ server }` and `SkillsCatalog` is no longer exported.
 
 ### Changed
 
+- MSW: only `graphql` needs its own entry point (`msw/graphql`); `http`, `HttpResponse`, `ws` and `sse` import from `msw`. Async-validation forms re-check on submit, because the resolver result replaces a manual `setError`. TypeScript 7 setup keeps a TypeScript 6 alias for tools that load the compiler API.
 - Zod refinements use `.check()` instead of `superRefine`; shadcn and React Hook Form forms use `Controller` with `Field`/`FieldError` instead of the `Form`/`FormField` wrapper; MSW examples use `onUnhandledFrame`; nuqs and Next.js examples await `searchParams`; `useTransition` examples use `isPending`.
 - Next.js: new `server-async-params` rule (pages, layouts, route handlers, metadata routes, Client Components); Turbopack config lives under the top-level `turbopack` key.
 - TypeScript 7 rule is now "Configure tsconfig for TypeScript 7" and lists `downlevelIteration` and `module: "none"` among unsupported options.
