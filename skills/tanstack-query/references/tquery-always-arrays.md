@@ -46,4 +46,4 @@ const { data: settings } = useQuery({
 queryClient.invalidateQueries({ queryKey: ['currentUser'] }) // Matches both
 ```
 
-**Note:** TanStack Query v5 TypeScript types enforce arrays, but runtime still accepts strings for backwards compatibility.
+**Note:** TanStack Query TypeScript types enforce arrays; always pass an array.

@@ -5,7 +5,7 @@ description: shadcn/ui components on Radix or Base UI.
 
 # shadcn/ui Community Best Practices
 
-Current best-practices guide for shadcn/ui applications. Before applying primitive-specific guidance, inspect whether the checked-in components use Radix UI or Base UI; current shadcn supports both (Base UI is the default for new projects) and their composition APIs differ. Component installs and upgrades go through the current CLI (v4), which resolves namespaced registries.
+Current best-practices guide for shadcn/ui applications. Before applying primitive-specific guidance, inspect whether the checked-in components use Radix UI or Base UI; current shadcn supports both (Base UI is the default for new projects) and their composition APIs differ. Component installs go through the CLI (v4), which resolves namespaced registries.
 
 ## When to Apply
 

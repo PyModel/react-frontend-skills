@@ -100,7 +100,7 @@ const dateRangeSchema = z.object({
 )
 ```
 
-**With superRefine for multiple path errors:**
+**With check() for multiple path errors:**
 
 ```typescript
 const orderSchema = z.object({
@@ -113,18 +113,21 @@ const orderSchema = z.object({
     city: z.string(),
   }),
   sameAsBilling: z.boolean(),
-}).superRefine((data, ctx) => {
+}).check((ctx) => {
+  const data = ctx.value
   if (data.sameAsBilling) {
     // If sameAsBilling but addresses differ, show errors on shipping
     if (data.shippingAddress.street !== data.billingAddress.street) {
-      ctx.addIssue({
+      ctx.issues.push({
+        input: ctx.value,
         code: 'custom',
         message: 'Must match billing address',
         path: ['shippingAddress', 'street'],  // Nested path
       })
     }
     if (data.shippingAddress.city !== data.billingAddress.city) {
-      ctx.addIssue({
+      ctx.issues.push({
+        input: ctx.value,
         code: 'custom',
         message: 'Must match billing address',
         path: ['shippingAddress', 'city'],

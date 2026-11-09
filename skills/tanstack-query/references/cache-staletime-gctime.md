@@ -7,7 +7,7 @@ tags: cache, staleTime, gcTime, configuration, fundamentals
 
 ## Understand staleTime vs gcTime
 
-`staleTime` and `gcTime` are the most misunderstood TanStack Query options. Confusing them causes excessive refetching or stale data. `gcTime` was renamed from `cacheTime` in v5 because of this confusion.
+`staleTime` and `gcTime` are the most misunderstood TanStack Query options. Confusing them causes excessive refetching or stale data.
 
 **staleTime**: How long data stays "fresh." Fresh data won't trigger background refetches.
 

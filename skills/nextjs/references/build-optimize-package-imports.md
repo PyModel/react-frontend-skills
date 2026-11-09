@@ -38,6 +38,6 @@ const nextConfig = {
 import { Menu, X, Search } from '@icon-library/core'
 ```
 
-Check dev startup time or the bundle analyzer before adding an entry, and remove it if neither improves. The option remains under `experimental` in Next.js 16.
+Check dev startup time or the bundle analyzer before adding an entry, and remove it if neither improves. The option lives under `experimental`.
 
 Reference: [How we optimized package imports in Next.js](https://vercel.com/blog/how-we-optimized-package-imports-in-next-js)

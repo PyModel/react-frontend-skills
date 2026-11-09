@@ -72,33 +72,37 @@ formSchema.safeParse({
 // - "Must accept terms"
 ```
 
-**For multiple validation rules, use superRefine:**
+**For multiple validation rules, use check:**
 
 ```typescript
-const passwordSchema = z.string().superRefine((password, ctx) => {
+const passwordSchema = z.string().check((ctx) => {
+  const password = ctx.value
   // Check multiple rules, report all failures
   if (password.length < 8) {
-    ctx.addIssue({
+    ctx.issues.push({
+      input: ctx.value,
       code: 'custom',
       message: 'Password must be at least 8 characters',
     })
   }
 
   if (!/[A-Z]/.test(password)) {
-    ctx.addIssue({
+    ctx.issues.push({
+      input: ctx.value,
       code: 'custom',
       message: 'Password must contain an uppercase letter',
     })
   }
 
   if (!/[0-9]/.test(password)) {
-    ctx.addIssue({
+    ctx.issues.push({
+      input: ctx.value,
       code: 'custom',
       message: 'Password must contain a number',
     })
   }
 
-  // Don't return anything - issues are added via ctx
+  // Don't return anything - issues are pushed onto ctx.issues
 })
 
 passwordSchema.safeParse('weak')

@@ -34,6 +34,6 @@ export default defineConfig({
 
 **When NOT to use this pattern:**
 - Projects not using Vite as their build tool
-- Legacy projects requiring PostCSS pipeline compatibility
+- Projects whose PostCSS pipeline must run other required plugins
 
 Reference: [Tailwind CSS v4.0 Release](https://tailwindcss.com/blog/tailwindcss-v4)

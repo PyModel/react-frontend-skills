@@ -99,7 +99,7 @@ export const worker = setupWorker(...handlers)
 // Enable detailed logging in development
 if (process.env.NODE_ENV === 'development') {
   worker.start({
-    onUnhandledFrame: 'warn', // MSW 2.x: onUnhandledRequest: 'warn'
+    onUnhandledFrame: 'warn',
   })
 }
 ```

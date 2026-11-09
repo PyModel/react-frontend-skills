@@ -7,7 +7,7 @@ tags: arch, ref, refs, composition, forms
 
 ## Pass Refs Through Composable Components
 
-Custom components wrapping shadcn/ui primitives must let a ref reach the underlying element to enable form library integration, focus management, and imperative handles. In React 19, `ref` is a regular prop — accept it and pass it through. The legacy `forwardRef` wrapper is no longer needed (and shadcn/ui's own components have dropped it).
+Custom components wrapping shadcn/ui primitives must let a ref reach the underlying element to enable form library integration, focus management, and imperative handles. `ref` is a regular prop in React 19 — accept it and pass it through; no wrapper function is needed.
 
 **Incorrect (ref not passed through):**
 
@@ -40,7 +40,7 @@ function SearchForm() {
 }
 ```
 
-**Correct (React 19 — accept `ref` as a prop):**
+**Correct (accept `ref` as a prop):**
 
 ```tsx
 interface SearchInputProps {
@@ -77,7 +77,5 @@ function SearchForm() {
 - Wrapping form inputs (Input, Select, Textarea)
 - Creating trigger components for modals/popovers
 - Building components used with React Hook Form
-
-> On React 18 or earlier, use `forwardRef` instead — `ref` as a plain prop requires React 19.
 
 Reference: [React 19 — ref as a prop](https://react.dev/blog/2024/12/05/react-19#ref-as-a-prop)

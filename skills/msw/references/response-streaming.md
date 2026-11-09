@@ -111,4 +111,4 @@ http.get('/api/stream-json', () => {
 **When NOT to use this pattern:**
 - APIs that return complete responses don't need streaming mocks
 
-Reference: [MSW ReadableStream Support](https://mswjs.io/blog/introducing-msw-2.0)
+Reference: [MSW HttpResponse](https://mswjs.io/docs/api/http-response)

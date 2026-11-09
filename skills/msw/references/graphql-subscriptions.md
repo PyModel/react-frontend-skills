@@ -2,12 +2,12 @@
 title: Mock GraphQL Subscriptions with link.subscription()
 impact: MEDIUM
 impactDescription: tests realtime GraphQL UI through the client's real subscription transport
-tags: graphql, subscription, websocket, realtime, v3
+tags: graphql, subscription, websocket, realtime
 ---
 
 ## Mock GraphQL Subscriptions with link.subscription()
 
-MSW 3 intercepts GraphQL subscriptions sent over WebSocket. Define them with `.subscription()` on a `graphql.link()`. The resolver returns nothing; drive the subscription through the `subscription` object instead (`publish`, `from`, `error`, `complete`, `passthrough`).
+MSW intercepts GraphQL subscriptions sent over WebSocket. Define them with `.subscription()` on a `graphql.link()`. The resolver returns nothing; drive the subscription through the `subscription` object instead (`publish`, `from`, `error`, `complete`, `passthrough`).
 
 **Incorrect (stubbing the subscription client):**
 
@@ -62,6 +62,5 @@ api.subscription('OnCommentAdded', ({ subscription }) => {
 - Only subscriptions over the WebSocket protocol are supported.
 - The resolver argument also has `operationName`, `request` (the WebSocket handshake request), `params` and `finalize` (schedule cleanup when the subscription ends).
 - `subscription.passthrough()` runs the subscription against the real server and lets you observe or rewrite its `next` events.
-- On MSW 2.x: no `.subscription()` exists; GraphQL subscriptions cannot be mocked with `graphql` handlers.
 
 Reference: [MSW graphql API - subscription](https://mswjs.io/api/graphql#subscription-subscriptionname-resolver)

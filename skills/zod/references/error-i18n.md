@@ -7,12 +7,12 @@ tags: error, i18n, localization, internationalization
 
 ## Implement Internationalized Error Messages
 
-Hardcoded error messages in English exclude users who speak other languages. Zod 4 ships built-in locales, and lets you provide app-specific localized messages through a custom error map, making your application accessible globally.
+Hardcoded error messages in English exclude users who speak other languages. Zod ships built-in locales, and lets you provide app-specific localized messages through a custom error map, making your application accessible globally.
 
 **Incorrect (hardcoded English messages):**
 
 ```typescript
-import { z } from 'zod'
+import * as z from 'zod'
 
 const userSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -63,7 +63,7 @@ const translations = {
 
 type Locale = keyof typeof translations
 
-// Zod 4: an error map returns a string, or undefined to defer.
+// An error map returns a string, or undefined to defer.
 // Switch on the string `issue.code` (e.g. 'invalid_type', 'too_small').
 function createErrorMap(locale: Locale) {
   const t = translations[locale]
@@ -104,7 +104,7 @@ const result = userSchema.safeParse(
 **Setting the error map globally:**
 
 ```typescript
-// At application startup (v3's z.setErrorMap was removed)
+// At application startup
 const userLocale = getUserLocale()  // From cookie, header, etc.
 z.config({ customError: createErrorMap(userLocale) })
 

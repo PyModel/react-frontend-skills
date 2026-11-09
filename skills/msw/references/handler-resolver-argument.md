@@ -7,25 +7,27 @@ tags: handler, resolver, params, cookies, request, destructuring
 
 ## Destructure Resolver Arguments Correctly
 
-MSW v2 and v3 pass a single object argument to resolvers containing `request`, `params`, `cookies`, and other properties. Destructure from this object instead of using multiple arguments.
+MSW passes a single object argument to resolvers containing `request`, `params`, `cookies`, and other properties. Destructure from this object instead of using multiple arguments.
 
-**Incorrect (v1 multiple arguments pattern):**
+**Incorrect (query string is not on the info object):**
 
 ```typescript
-// MSW v1 pattern - does not work in v2 or v3
-http.get('/api/user/:id', (req, res, ctx) => {
-  const userId = req.params.id  // undefined!
-  return res(ctx.json({ id: userId }))
+import { http, HttpResponse } from 'msw/http'
+
+// The info object has request, params and cookies; there is no `query` property
+http.get('/api/search', ({ query }) => {
+  return HttpResponse.json({ q: query.q })  // query is undefined; type error and runtime TypeError
 })
 ```
 
-**Correct (v2/v3 single object argument):**
+Search params live on the request URL: `new URL(request.url).searchParams`.
+
+**Correct (destructure the single info object):**
 
 ```typescript
 import { http, HttpResponse } from 'msw/http'
 
 export const handlers = [
-  // Destructure from single argument object
   http.get('/api/user/:id', ({ request, params, cookies }) => {
     return HttpResponse.json({
       id: params.id,
@@ -81,6 +83,6 @@ http.get<UserParams>('/api/org/:orgId/user/:id', ({ params }) => {
 ```
 
 **When NOT to use this pattern:**
-- This is the only pattern in MSW v2 and v3; no alternatives
+- This is the only resolver signature; no alternatives
 
-Reference: [MSW v2 Migration - Resolver Changes](https://mswjs.io/docs/migrations/1.x-to-2.x/)
+Reference: [MSW Request Handler - resolver](https://mswjs.io/docs/api/http)

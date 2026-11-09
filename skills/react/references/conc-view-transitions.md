@@ -7,7 +7,7 @@ tags: react, animation, view-transition, transitions
 
 ## Animate UI Changes with ViewTransition
 
-Stable since React 19.3. `<ViewTransition>` animates children as they enter, exit, move, or resize using the browser's View Transition API. Wrap any element whose mount/unmount or style change should animate; React picks the animation from how the tree changed.
+Stable in React 19.3. `<ViewTransition>` animates children as they enter, exit, move, or resize using the browser's View Transition API. Wrap any element whose mount/unmount or style change should animate; React picks the animation from how the tree changed.
 
 **Incorrect (hand-rolled animation state):**
 

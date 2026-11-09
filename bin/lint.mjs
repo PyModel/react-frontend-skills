@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { CHECKS, PACKAGES } from './checks.mjs'
+import { PACKAGES } from './packages.mjs'
 
 export const SKILLS_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'skills')
 
@@ -57,47 +57,6 @@ function decodeFragment(fragment) {
   } catch {
     return fragment.toLowerCase()
   }
-}
-
-// The scan table and package map must agree: a package no PACKAGES row covers silently disables
-// the check, and a `since` newer than every target means the check can never fire.
-export function validateChecks(checks, packages) {
-  const errors = []
-  const targets = new Map()
-  for (const { packages: names, target } of packages) {
-    for (const name of names) targets.set(name, target)
-  }
-  const ids = new Set()
-  for (const check of checks) {
-    if (ids.has(check.id)) errors.push(`scan check ${check.id}: duplicate id`)
-    ids.add(check.id)
-    if (!Array.isArray(check.packages) || check.packages.length === 0) {
-      errors.push(`scan check ${check.id}: has no gating package`)
-      continue
-    }
-    for (const name of check.packages) {
-      if (!targets.has(name)) errors.push(`scan check ${check.id}: package ${name} is not covered by PACKAGES`)
-    }
-    if (
-      check.since !== undefined &&
-      !check.packages.some((name) => (targets.get(name) ?? -Infinity) >= check.since)
-    ) {
-      errors.push(`scan check ${check.id}: since ${check.since} is newer than every gating package target`)
-    }
-    const regexes = [
-      ['pattern', check.pattern],
-      ['files', check.files],
-      ['requires', check.requires],
-      ['onlyIf.files', check.onlyIf?.files],
-      ['onlyIf.pattern', check.onlyIf?.pattern],
-    ]
-    for (const [field, regex] of regexes) {
-      if (regex && /[gy]/.test(regex.flags)) {
-        errors.push(`scan check ${check.id}: ${field} must not be global or sticky`)
-      }
-    }
-  }
-  return errors
 }
 
 export function lint(skillsDir = SKILLS_DIR) {
@@ -182,15 +141,8 @@ export function lint(skillsDir = SKILLS_DIR) {
     }
   }
 
-  // The scan table and package map describe this pack; skip them when linting another skills tree.
+  // The package map describes this pack; skip it when linting another skills tree.
   const ownSkills = resolve(skillsDir) === SKILLS_DIR
-  if (ownSkills) errors.push(...validateChecks(CHECKS, PACKAGES))
-  for (const check of ownSkills ? CHECKS : []) {
-    const file = ['references', 'rules']
-      .map((ruleDir) => join(skillsDir, check.skill, ruleDir, `${check.rule}.md`))
-      .find((path) => existsSync(path))
-    if (!file) errors.push(`scan check ${check.id}: ${check.skill}/${check.rule}.md does not exist`)
-  }
   for (const { skill } of ownSkills ? PACKAGES : []) {
     if (!skillNames.includes(skill)) errors.push(`package map names unknown skill ${skill}`)
   }

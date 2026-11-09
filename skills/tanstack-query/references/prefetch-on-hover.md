@@ -31,7 +31,6 @@ function ProjectLink({ projectId }: { projectId: string }) {
   const queryClient = useQueryClient()
 
   const prefetch = () => {
-    // queryClient.query replaces the deprecated prefetchQuery (v5.102+);
     // .catch(noop) keeps prefetch best-effort
     void queryClient
       .query({

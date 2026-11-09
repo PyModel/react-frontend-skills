@@ -7,7 +7,7 @@ tags: conc, batching, automatic, performance
 
 ## Leverage Automatic Batching for Fewer Renders
 
-React roots created with `createRoot` automatically batch related state updates, including updates from promises, timers, and native event handlers. This behavior arrived in React 18 and remains in React 19. Understand it to avoid unnecessary wrappers.
+React roots created with `createRoot` automatically batch related state updates, including updates from promises, timers, and native event handlers. Understand it to avoid unnecessary wrappers.
 
 **Incorrect (forcing synchronous updates):**
 

@@ -39,7 +39,7 @@ import { useTransition } from 'react'
 import { useQueryState, parseAsString } from 'nuqs'
 
 export default function SearchBox() {
-  const [isLoading, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition()
   const [query, setQuery] = useQueryState('q', parseAsString.withDefault('').withOptions({
     shallow: false,
     startTransition
@@ -52,7 +52,7 @@ export default function SearchBox() {
         onChange={e => setQuery(e.target.value)}
         placeholder="Search..."
       />
-      {isLoading && <span className="spinner" />}
+      {isPending && <span className="spinner" />}
     </div>
   )
 }
@@ -66,7 +66,7 @@ import { useTransition } from 'react'
 import { useQueryStates, parseAsString, parseAsInteger } from 'nuqs'
 
 export default function FilterPanel() {
-  const [isLoading, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition()
   const [filters, setFilters] = useQueryStates(
     {
       category: parseAsString.withDefault(''),
@@ -79,7 +79,7 @@ export default function FilterPanel() {
   )
 
   return (
-    <fieldset disabled={isLoading}>
+    <fieldset disabled={isPending}>
       <select
         value={filters.category}
         onChange={e => setFilters({ category: e.target.value, page: 1 })}
@@ -87,7 +87,7 @@ export default function FilterPanel() {
         <option value="">All</option>
         <option value="electronics">Electronics</option>
       </select>
-      {isLoading && <p>Updating results...</p>}
+      {isPending && <p>Updating results...</p>}
     </fieldset>
   )
 }

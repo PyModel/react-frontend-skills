@@ -1,24 +1,23 @@
 ---
-title: Remove Redundant PostCSS Plugins
+title: Use Only the Tailwind PostCSS Plugin
 impact: HIGH
 impactDescription: reduces plugin overhead, simplifies configuration
 tags: build, postcss, plugins, configuration, optimization
 ---
 
-## Remove Redundant PostCSS Plugins
+## Use Only the Tailwind PostCSS Plugin
 
-Tailwind CSS v4's `@tailwindcss/postcss` plugin includes functionality that previously required separate plugins. Remove redundant plugins to simplify configuration and reduce build overhead.
+The `@tailwindcss/postcss` plugin already handles `@import` inlining, CSS nesting and vendor prefixing. Register it alone; extra plugins for the same jobs add build overhead and can conflict.
 
 **Incorrect (redundant plugins):**
 
 ```javascript
-// postcss.config.js
+// postcss.config.mjs
 export default {
   plugins: [
-    "postcss-import",           // Now built-in
-    "tailwindcss/nesting",      // Now built-in
+    "postcss-import",
     "@tailwindcss/postcss",
-    "autoprefixer",             // Now built-in
+    "autoprefixer",
   ],
 };
 ```
@@ -26,15 +25,15 @@ export default {
 **Correct (simplified configuration):**
 
 ```javascript
-// postcss.config.js
+// postcss.config.mjs
 export default {
   plugins: ["@tailwindcss/postcss"],
 };
 ```
 
-**Built-in functionality in v4:**
+**Built into the plugin:**
 - `@import` processing (no postcss-import needed)
-- CSS nesting (no tailwindcss/nesting needed)
+- CSS nesting (no separate nesting plugin needed)
 - Vendor prefixing (no autoprefixer needed)
 
-Reference: [Tailwind CSS Upgrade Guide](https://tailwindcss.com/docs/upgrade-guide)
+Reference: [Tailwind CSS with PostCSS](https://tailwindcss.com/docs/installation/using-postcss)

@@ -9,8 +9,6 @@ tags: advanced, vitest, browser, worker, testing
 
 Extend Vitest's test context to include the MSW worker when testing in browser mode. This ensures proper worker lifecycle management per test.
 
-On MSW 2.x: `worker.start({ onUnhandledRequest: 'error' })`, `worker.stop()` is synchronous, and `import { http, HttpResponse } from 'msw'`.
-
 **Incorrect (global worker without test context):**
 
 ```typescript

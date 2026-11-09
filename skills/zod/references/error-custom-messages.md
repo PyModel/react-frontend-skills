@@ -33,7 +33,7 @@ signupSchema.parse({ email: 'bad', password: '123', age: 15 })
 ```typescript
 import { z } from 'zod'
 
-// Zod 4 unifies error customization under a single `error` param.
+// Customize messages with the `error` param.
 // It accepts a string, or a function that inspects the issue.
 const signupSchema = z.object({
   email: z.email({
@@ -57,7 +57,7 @@ signupSchema.parse({ email: 'bad', password: '123', age: 15 })
 // - "You must be at least 18 years old"
 ```
 
-**The unified `error` param (replaces v3 `required_error`/`invalid_type_error`/`message`):**
+**The `error` param (a string, or a function that inspects the issue):**
 
 ```typescript
 const schema = z.string({
@@ -76,9 +76,8 @@ const schema = z.string({
 **Using an error map for consistent messaging:**
 
 ```typescript
-// Zod 4: an error map is a function returning a string, or undefined to
-// defer. There is no `ctx.defaultError` —
-// switch on the string `issue.code`.
+// An error map is a function returning a string, or undefined to
+// defer. Switch on the string `issue.code`.
 const customError = (issue: z.core.$ZodRawIssue): string | undefined => {
   if (issue.code === 'too_small') {
     return issue.origin === 'number'
@@ -96,7 +95,7 @@ const customError = (issue: z.core.$ZodRawIssue): string | undefined => {
 // Apply globally
 z.config({ customError })
 
-// Or per-parse (the v3 `errorMap` option was renamed to `error`)
+// Or per-parse
 schema.parse(data, { error: customError })
 ```
 

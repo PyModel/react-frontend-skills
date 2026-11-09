@@ -1,64 +1,74 @@
 ---
-title: Verify shadcn Form Component Import Source
+title: Build shadcn Fields with Controller and Field
 impact: MEDIUM
-impactDescription: prevents silent component mismatch bugs
-tags: integ, shadcn, imports, Form-component
+impactDescription: prevents broken error display and missing accessibility attributes when wiring shadcn inputs to React Hook Form
+tags: integ, shadcn, controller, field, accessibility
 ---
 
-## Verify shadcn Form Component Import Source
+## Build shadcn Fields with Controller and Field
 
-React Hook Form exports its own `<Form>` component. When using shadcn/ui, ensure you import the shadcn Form wrapper, not RHF's Form. Auto-imports often get this wrong.
+shadcn/ui forms use React Hook Form's own `Controller` with shadcn's `Field`, `FieldLabel` and `FieldError` from `@/components/ui/field`. Take `useForm`, `Controller` and the resolver from their own packages, and the layout components from shadcn. Put `data-invalid` on `Field` and `aria-invalid` on the control so styling and assistive tech see the error.
 
-**Incorrect (imports RHF Form instead of shadcn):**
+**Incorrect (no error state wiring):**
 
 ```typescript
-import { useForm, Form } from 'react-hook-form'  // Wrong Form!
-import { FormField, FormItem, FormLabel } from '@/components/ui/form'
+import { Controller, useForm } from 'react-hook-form'
+import { Field, FieldLabel } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
 
 function LoginForm() {
-  const form = useForm()
+  const form = useForm({ defaultValues: { email: '' } })
 
   return (
-    <Form {...form}>  {/* RHF Form doesn't work with shadcn FormField */}
-      <FormField
-        control={form.control}
+    <form onSubmit={form.handleSubmit(onSubmit)}>
+      <Controller
         name="email"
+        control={form.control}
         render={({ field }) => (
-          <FormItem>
-            <FormLabel>Email</FormLabel>
-            <Input {...field} />
-          </FormItem>
+          <Field>
+            <FieldLabel>Email</FieldLabel>  {/* not linked to the input */}
+            <Input {...field} />            {/* error never shown or announced */}
+          </Field>
         )}
       />
-    </Form>
+    </form>
   )
 }
 ```
 
-**Correct (separate imports for each library):**
+**Correct (Controller + Field with invalid state):**
 
 ```typescript
-import { useForm } from 'react-hook-form'
-import { Form, FormField, FormItem, FormLabel } from '@/components/ui/form'
+import { Controller, useForm } from 'react-hook-form'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
 
 function LoginForm() {
-  const form = useForm()
+  const form = useForm({ defaultValues: { email: '' } })
 
   return (
-    <Form {...form}>  {/* shadcn Form wraps FormProvider correctly */}
-      <FormField
-        control={form.control}
-        name="email"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Email</FormLabel>
-            <Input {...field} />
-          </FormItem>
-        )}
-      />
-    </Form>
+    <form onSubmit={form.handleSubmit(onSubmit)}>
+      <FieldGroup>
+        <Controller
+          name="email"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                type="email"
+                aria-invalid={fieldState.invalid}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+      </FieldGroup>
+    </form>
   )
 }
 ```
 
-Reference: [shadcn Form](https://ui.shadcn.com/docs/components/form)
+Reference: [shadcn - React Hook Form](https://ui.shadcn.com/docs/forms/react-hook-form)

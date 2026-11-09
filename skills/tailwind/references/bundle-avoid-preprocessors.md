@@ -7,7 +7,7 @@ tags: bundle, preprocessors, sass, less, css, compatibility
 
 ## Avoid Sass/Less Preprocessors
 
-Tailwind CSS v4 is incompatible with Sass, Less, and Stylus preprocessors. Modern CSS and Tailwind's built-in features replace the need for these tools.
+Tailwind CSS is incompatible with Sass, Less, and Stylus preprocessors. Modern CSS and Tailwind's built-in features replace the need for these tools.
 
 **Incorrect (preprocessor syntax):**
 
@@ -45,9 +45,9 @@ Tailwind CSS v4 is incompatible with Sass, Less, and Stylus preprocessors. Moder
 ```
 
 **Native CSS alternatives:**
-- CSS nesting (built into v4)
+- CSS nesting (built in)
 - CSS custom properties (replace Sass variables)
 - `@theme` directive (replace Sass maps)
 - `calc()` and modern CSS functions
 
-Reference: [Tailwind CSS Upgrade Guide](https://tailwindcss.com/docs/upgrade-guide)
+Reference: [Tailwind CSS Compatibility](https://tailwindcss.com/docs/compatibility)

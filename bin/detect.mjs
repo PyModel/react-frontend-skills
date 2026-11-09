@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { dirname, join, relative, resolve, sep } from 'node:path'
-import { PACKAGES } from './checks.mjs'
+import { PACKAGES } from './packages.mjs'
 import { UsageError } from './errors.mjs'
 
 function readJson(path) {
@@ -57,9 +57,7 @@ function lockedVersion(projectDir, name) {
     const covers = nested === '' || lock?.packages?.[nested] !== undefined
     const version = covers
       ? (lock?.packages?.[`${nested ? `${nested}/` : ''}node_modules/${name}`]?.version ??
-        lock?.packages?.[`node_modules/${name}`]?.version ??
-        // lockfileVersion 1 (npm 6) has no `packages`, only a root `dependencies` tree.
-        (nested === '' ? lock?.dependencies?.[name]?.version : undefined))
+        lock?.packages?.[`node_modules/${name}`]?.version)
       : undefined
     if (version) return version
     if (dirname(dir) === dir) return undefined
@@ -87,7 +85,7 @@ export function rangeMajor(range) {
 }
 
 // The first declared package wins. An ancestor node_modules can hoist a different major than
-// package.json declares, so gate on the lower of the two: a check never fires on a guess.
+// package.json declares, so report the lower of the two and flag the mismatch.
 export function resolvePackage(projectDir, manifest, packages) {
   const name = packages.find((candidate) => declaredRange(manifest, candidate))
   if (!name) return undefined

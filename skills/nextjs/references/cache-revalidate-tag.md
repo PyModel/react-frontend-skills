@@ -7,23 +7,7 @@ tags: cache, revalidate-tag, cache-life, invalidation
 
 ## Use revalidateTag with cacheLife Profiles
 
-Next.js 16 deprecates the single-argument `revalidateTag(tag)` form and reports it as a TypeScript error. Pass a cache-life profile such as `'max'` for stale-while-revalidate behavior, or choose `updateTag()` in a Server Action when the current user must immediately read their own write.
-
-**Incorrect (old revalidateTag API):**
-
-```typescript
-// app/actions.ts
-'use server'
-
-import { revalidateTag } from 'next/cache'
-
-export async function updateProduct(id: string, data: FormData) {
-  await db.products.update({ where: { id }, data })
-
-  // Deprecated single-argument API; fails current Next.js type checking.
-  revalidateTag('products')
-}
-```
+`revalidateTag(tag, profile)` takes a cache-life profile as its second argument. Pass `'max'` for stale-while-revalidate behavior, or choose `updateTag()` in a Server Action when the current user must immediately read their own write.
 
 **Correct (revalidateTag with cacheLife):**
 

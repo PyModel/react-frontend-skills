@@ -1,11 +1,11 @@
 ---
 name: typescript
-description: TypeScript types, tsconfig and TypeScript 7 migration.
+description: TypeScript 7 types and tsconfig.
 ---
 
 # TypeScript Best Practices
 
-Comprehensive TypeScript 7-compatible guide with 44 rules across 8 categories, covering compiler configuration, type-system performance, async code, modules, safety, and measured runtime optimization.
+Comprehensive TypeScript 7 guide with 44 rules across 8 categories, covering compiler configuration, type-system performance, async code, modules, safety, and measured runtime optimization.
 
 ## When to Apply
 
@@ -46,7 +46,7 @@ Reference these guidelines when:
    - 2.4 [Enable strictFunctionTypes for Sound Function Assignments](references/tscfg-strict-function-types.md) — CRITICAL (enables optimized variance checking)
    - 2.5 [Use isolatedModules for Single-File Transpilers](references/tscfg-isolate-modules.md) — CRITICAL (faster transpilation with bundlers)
    - 2.6 [Use Project References for Large Codebases](references/tscfg-project-references.md) — CRITICAL (faster incremental builds)
-   - 2.7 [Migrate TypeScript 7 Configuration Deliberately](references/tscfg-typescript-7.md) — CRITICAL
+   - 2.7 [Configure tsconfig for TypeScript 7](references/tscfg-typescript-7.md) — CRITICAL
 3. Async Patterns — **HIGH**
    - 3.1 [Annotate Async Function Return Types](references/async-explicit-return-types.md) — HIGH (prevents runtime errors, improves inference)
    - 3.2 [Avoid await Inside Loops](references/async-avoid-loop-await.md) — HIGH (scales linearly with the number of iterations)
@@ -89,11 +89,10 @@ Reference these guidelines when:
 Run in the project root first:
 
 ```bash
-npx -y @pymodel/react-frontend-skills detect                   # installed vs. targeted versions
-npx -y @pymodel/react-frontend-skills scan --skill typescript  # deprecated APIs → rule IDs
+npx -y @pymodel/react-frontend-skills detect   # installed vs. targeted versions
 ```
 
-Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
+Read `references/<rule-id>.md` for each rule above that matches the task: why it matters, then incorrect vs. correct code.
 
 ## References
 

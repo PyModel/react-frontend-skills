@@ -87,7 +87,7 @@ validateForm({})
 // User sees ALL errors, fixes everything, submits once!
 ```
 
-**Using Zod 4's flat error helper:**
+**Using the flat error helper:**
 
 ```typescript
 const result = formSchema.safeParse(data)

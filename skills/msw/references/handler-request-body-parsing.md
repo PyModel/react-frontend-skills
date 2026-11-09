@@ -1,20 +1,20 @@
 ---
 title: Explicitly Parse Request Bodies
 impact: CRITICAL
-impactDescription: v2+ no longer auto-parses bodies; missing parsing returns undefined
+impactDescription: Bodies are not auto-parsed; reading request.body yields a stream, not data
 tags: handler, request, body, parsing, json
 ---
 
 ## Explicitly Parse Request Bodies
 
-MSW v2 and v3 do not automatically parse request bodies based on Content-Type. You must explicitly call `.json()`, `.text()`, `.formData()`, or `.arrayBuffer()` on the request object.
+MSW does not automatically parse request bodies based on Content-Type. You must explicitly call `.json()`, `.text()`, `.formData()`, or `.arrayBuffer()` on the request object.
 
 **Incorrect (assuming auto-parsed body):**
 
 ```typescript
-// MSW v1 pattern - body was auto-parsed
+// request.body is a ReadableStream, not parsed data
 http.post('/api/user', ({ request }) => {
-  const body = request.body  // a ReadableStream in v2/v3, not parsed data
+  const body = request.body
   return HttpResponse.json({ id: '1', ...body })
 })
 ```
@@ -41,7 +41,8 @@ export const handlers = [
   http.post('/api/upload', async ({ request }) => {
     const formData = await request.formData()
     const file = formData.get('file')
-    return HttpResponse.json({ filename: file?.name })
+    const name = file instanceof File ? file.name : null
+    return HttpResponse.json({ filename: name })
   }),
 
   // ArrayBuffer for binary
@@ -73,4 +74,4 @@ http.post('/api/user', async ({ request }) => {
 **When NOT to use this pattern:**
 - GET requests typically don't have bodies and don't need parsing
 
-Reference: [MSW v2 Migration - Request Changes](https://mswjs.io/docs/migrations/1.x-to-2.x/)
+Reference: [MSW Request Handler - resolver](https://mswjs.io/docs/api/http)

@@ -48,8 +48,7 @@ export default defineConfig({
 export default defineConfig({
   test: {
     pool: 'threads',
-    // Vitest 4 removed `poolOptions`; worker count is now a top-level option.
-    // `maxThreads`/`maxForks` are unified into `maxWorkers` (minWorkers was removed).
+    // Worker count is a top-level option for every pool.
     maxWorkers: 4,
   },
 })

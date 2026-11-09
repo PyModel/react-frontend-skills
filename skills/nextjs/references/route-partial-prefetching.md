@@ -9,7 +9,7 @@ tags: route, prefetching, partial-prefetching, shell, link, navigation
 
 > **Next.js 16.3+ (stable in 16.4).** Requires `cacheComponents: true` and `partialPrefetching: true` in `next.config.ts`. As of 16.4 Partial Prefetching is part of the Cache Components model, and both flags become defaults in Next.js 17. Leaving `partialPrefetching` unset while `cacheComponents` is on logs a warning.
 
-Before 16.3, Next.js sent a prefetch request for **every link** in the viewport — even many links to the same route, producing a flurry of requests on scroll. Partial Prefetching replaces this with a single-page-app trick: **prefetch one reusable loading shell per route**, fetched once and cached on the client for the session.
+Prefetching every link in the viewport produces a flurry of requests on scroll, even when many links point at the same route. Partial Prefetching avoids this: **prefetch one reusable loading shell per route**, fetched once and cached on the client for the session.
 
 ```typescript
 // next.config.ts

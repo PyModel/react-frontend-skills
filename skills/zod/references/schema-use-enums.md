@@ -75,18 +75,18 @@ enum Role {
   Guest = 'guest',
 }
 
-// Zod 4: z.enum() accepts enum-like objects; z.nativeEnum() is deprecated.
+// z.enum() accepts native enums and enum-like objects.
 const userSchema = z.object({
   role: z.enum(Role),
 })
 ```
 
-For numeric enums, Zod 4.6+ `.options` lists only the values. Earlier versions also included the reverse-mapping keys:
+For numeric enums, Zod 4.6+ `.options` lists only the values. Reverse-mapping keys are not included:
 
 ```typescript
 enum Priority { Low, Medium, High }
 
-z.enum(Priority).options  // 4.6+: [0, 1, 2]   (4.4: ['Low', 'Medium', 'High', 0, 1, 2])
+z.enum(Priority).options  // [0, 1, 2]
 ```
 
 **For single literal values (discriminated unions):**

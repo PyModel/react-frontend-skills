@@ -9,8 +9,6 @@ tags: setup, unhandled, error, configuration, onUnhandledFrame
 
 Configure `onUnhandledFrame: 'error'` to fail tests when requests or WebSocket connections lack handlers. This catches missing mocks immediately instead of allowing silent network calls or undefined behavior.
 
-On MSW 2.x: `server.listen({ onUnhandledRequest: 'error' })`; custom callback `onUnhandledRequest(request, print) { print.error() }` (`print.warning()` to warn).
-
 **Incorrect (default silent behavior):**
 
 ```typescript

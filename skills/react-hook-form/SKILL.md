@@ -88,7 +88,7 @@ Reference these guidelines when:
 
 ### 7. Integration Patterns (MEDIUM)
 
-- `integ-shadcn-form-import` - Verify shadcn Form component import source
+- `integ-shadcn-form-import` - Build shadcn fields with Controller and Field
 - `integ-shadcn-select-wiring` - Wire shadcn Select with onValueChange instead of spread
 - `integ-mui-controller-pattern` - Use Controller for Material-UI components
 - `integ-value-transform` - Transform values at Controller level for type coercion
@@ -107,10 +107,9 @@ Run in the project root first:
 
 ```bash
 npx -y @pymodel/react-frontend-skills detect                        # installed vs. targeted versions
-npx -y @pymodel/react-frontend-skills scan --skill react-hook-form  # deprecated APIs → rule IDs
 ```
 
-Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
+Read `references/<rule-id>.md` for each rule above that matches the task: why it matters, then incorrect vs. correct code.
 
 ## Related Skills
 

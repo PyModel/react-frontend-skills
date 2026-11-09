@@ -1,18 +1,18 @@
 ---
 title: Customize Container with @utility
 impact: MEDIUM
-impactDescription: prevents v4 migration breakage
+impactDescription: full CSS control over container centering and padding
 tags: comp, container, utility, customization, layout
 ---
 
 ## Customize Container with @utility
 
-Tailwind CSS v4 removes the `container` configuration options (`center`, `padding`). Customize the container utility using `@utility` instead.
+The `container` utility has no `center` or `padding` options. Override it with `@utility` to center it and add padding.
 
-**Incorrect (v3 configuration):**
+**Incorrect (JavaScript config options that Tailwind ignores):**
 
 ```javascript
-// tailwind.config.js - No longer works in v4
+// tailwind.config.js
 module.exports = {
   theme: {
     container: {
@@ -23,7 +23,7 @@ module.exports = {
 };
 ```
 
-**Correct (v4 @utility customization):**
+**Correct (@utility customization):**
 
 ```css
 @import "tailwindcss";
@@ -54,6 +54,6 @@ module.exports = {
 **Benefits:**
 - Full CSS control over container behavior
 - Responsive customization without config
-- Consistent with CSS-first approach
+- Consistent with the CSS-first approach
 
-Reference: [Tailwind CSS Upgrade Guide](https://tailwindcss.com/docs/upgrade-guide)
+Reference: [Tailwind CSS Container](https://tailwindcss.com/docs/max-width#container)

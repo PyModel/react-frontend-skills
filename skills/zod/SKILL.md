@@ -64,7 +64,7 @@ Reference these guidelines when:
 ### 4. Error Handling (HIGH)
 
 - `error-custom-messages` - Provide custom error messages
-- `error-use-flatten` - Use Zod 4 error formatting helpers
+- `error-use-flatten` - Use error formatting helpers
 - `error-path-for-nested` - Use issue.path for nested error location
 - `error-i18n` - Implement internationalized error messages
 - `error-avoid-throwing-in-refine` - Return false instead of throwing in refine
@@ -88,7 +88,7 @@ Reference these guidelines when:
 
 ### 7. Refinements & Transforms (MEDIUM)
 
-- `refine-vs-superrefine` - Choose refine() vs superRefine() correctly
+- `refine-vs-check` - Choose refine() vs check() correctly
 - `refine-transform-coerce` - Distinguish transform() from refine() and coerce()
 - `refine-use-codec` - Use z.codec() for bidirectional transformations (4.1+)
 - `refine-add-path` - Add path to refinement errors
@@ -110,10 +110,9 @@ Run in the project root first:
 
 ```bash
 npx -y @pymodel/react-frontend-skills detect            # installed vs. targeted versions
-npx -y @pymodel/react-frontend-skills scan --skill zod  # deprecated APIs → rule IDs
 ```
 
-Read `references/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
+Read `references/<rule-id>.md` for each rule above that matches the task: why it matters, then incorrect vs. correct code.
 
 ## Related Skills
 

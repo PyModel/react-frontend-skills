@@ -47,7 +47,7 @@ export default defineConfig({
 /// <reference types="vitest/globals" />
 ```
 
-If `describe is not defined` appears only when running Vitest from a subfolder, the config was not loaded: since Vitest 5, config files are not looked up in parent directories. Run from the config's directory, or pass `--config`.
+If `describe is not defined` appears only when running Vitest from a subfolder, the config was not loaded: config files are not looked up in parent directories. Run from the config's directory, or pass `--config`.
 
 ```typescript
 // Tests use globals - no imports needed

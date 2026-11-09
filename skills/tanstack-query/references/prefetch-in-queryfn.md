@@ -56,7 +56,7 @@ function Feed() {
       feed
         .filter(item => item.type === 'GRAPH')
         .forEach(item => {
-          // queryClient.query replaces the deprecated prefetchQuery (v5.102+)
+          // best-effort prefetch via queryClient.query
           void queryClient
             .query({
               queryKey: ['graph', item.id],

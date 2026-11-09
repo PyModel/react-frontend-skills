@@ -48,7 +48,7 @@ import { useTransition } from 'react'
 import { useQueryState, parseAsInteger } from 'nuqs'
 
 export default function Pagination() {
-  const [isLoading, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition()
   const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1).withOptions({
     shallow: false,
     startTransition // Shows loading during server fetch
@@ -56,8 +56,8 @@ export default function Pagination() {
 
   return (
     <div>
-      {isLoading && <span>Loading...</span>}
-      <button onClick={() => setPage(p => p + 1)} disabled={isLoading}>
+      {isPending && <span>Loading...</span>}
+      <button onClick={() => setPage(p => p + 1)} disabled={isPending}>
         Next
       </button>
     </div>

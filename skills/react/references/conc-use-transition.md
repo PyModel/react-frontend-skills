@@ -66,7 +66,7 @@ function SearchResults() {
 
 If filtering itself is the expensive part, filter during render from a deferred value (`useDeferredValue(query)`), so React can interrupt that work too.
 
-Since React 19.3, separate `startTransition` calls render independently: a slow, suspended transition no longer holds up an unrelated one. Updates inside the same `startTransition` callback still commit together, so put updates that must appear together in one callback.
+Separate `startTransition` calls render independently: a slow, suspended transition does not hold up an unrelated one. Updates inside the same `startTransition` callback still commit together, so put updates that must appear together in one callback.
 
 **When to use:**
 - Filtering large lists

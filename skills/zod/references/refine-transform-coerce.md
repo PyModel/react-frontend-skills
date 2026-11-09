@@ -100,6 +100,6 @@ const schema = z
 
 **When NOT to use this pattern:**
 - Simple type coercion: use `z.coerce.*`
-- Simple validation: use built-in methods like `.min()`, `.email()`
+- Simple validation: use built-in methods like `.min()`, `.max()`
 
 Reference: [Zod API - transform](https://zod.dev/api#transform)

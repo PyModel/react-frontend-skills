@@ -2,14 +2,14 @@
 title: Use CSS-First Configuration Over JavaScript
 impact: CRITICAL
 impactDescription: single source of truth, eliminates config file overhead
-tags: gen, configuration, css-first, theme, migration
+tags: gen, configuration, css-first, theme
 ---
 
 ## Use CSS-First Configuration Over JavaScript
 
-Tailwind CSS v4 uses the `@theme` directive for configuration instead of JavaScript files. This provides a single source of truth and eliminates the need for context switching.
+Configure design tokens with the `@theme` directive in CSS rather than a JavaScript config file. This provides a single source of truth and eliminates the need for context switching.
 
-**Incorrect (JavaScript configuration):**
+**Incorrect (design tokens in a JavaScript config file):**
 
 ```javascript
 // tailwind.config.js

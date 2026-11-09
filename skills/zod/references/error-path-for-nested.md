@@ -113,7 +113,7 @@ result.error.issues.forEach(issue => {
 // Highlight items at indices: Set { 0 }
 ```
 
-**Using Zod 4's nested error helper:**
+**Using the nested error helper:**
 
 ```typescript
 if (!result.success) {

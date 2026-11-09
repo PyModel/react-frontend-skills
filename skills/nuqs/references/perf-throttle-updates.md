@@ -7,24 +7,23 @@ tags: perf, limitUrlUpdates, throttle, rate-limiting, slider
 
 ## Throttle Rapid URL Updates
 
-nuqs already applies a browser-adapted default throttle to URL writes. Increase it only when high-frequency state changes should update the URL or a `shallow: false` server route less often. Since nuqs 2.5, use `limitUrlUpdates: throttle(ms)`; `throttleMs` is deprecated.
+nuqs already applies a browser-adapted default throttle to URL writes. Increase it only when high-frequency state changes should update the URL or a `shallow: false` server route less often. Use `limitUrlUpdates: throttle(ms)`.
 
-**Incorrect (deprecated option):**
+**Incorrect (every keystroke sends a server request):**
 
 ```tsx
-useQueryState(
-  'volume',
-  parseAsInteger.withDefault(50).withOptions({ throttleMs: 100 })
+import { parseAsString, useQueryState } from 'nuqs'
+
+const [search, setSearch] = useQueryState(
+  'q',
+  parseAsString.withDefault('').withOptions({ shallow: false })
 )
+// onChange={(e) => setSearch(e.target.value)} re-runs the server route on each keystroke
 ```
 
-When the default browser-adapted limit is sufficient, no custom option is needed:
+Without `limitUrlUpdates`, a `shallow: false` search input hits the server for every character.
 
-```tsx
-const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
-```
-
-**Correct (current rate-limit API):**
+**Correct (throttle only high-frequency state):**
 
 ```tsx
 'use client'
@@ -61,6 +60,6 @@ import { defaultRateLimit } from 'nuqs'
 await setVolume(50, { limitUrlUpdates: defaultRateLimit })
 ```
 
-Use `debounce()` rather than `throttle()` when only the final high-frequency value matters. Values below nuqs/browser minimums may be ignored, so do not use a zero-duration throttle as an "immediate" escape hatch.
+Use `debounce()` (also imported from `nuqs`) rather than `throttle()` when only the final high-frequency value matters, such as a `shallow: false` search input. Values below nuqs/browser minimums may be ignored, so do not use a zero-duration throttle as an "immediate" escape hatch.
 
 Reference: [nuqs rate-limiting options](https://nuqs.dev/docs/options#rate-limiting-url-updates)

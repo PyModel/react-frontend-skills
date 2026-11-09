@@ -9,8 +9,6 @@ tags: graphql, variables, dynamic, input, resolver
 
 Access GraphQL variables through the `variables` property in the resolver argument. Use them to return dynamic responses based on query input.
 
-On MSW 2.x: `import { graphql, HttpResponse } from 'msw'` and `graphql.query('GetUser', resolver)` instead of `api.query`.
-
 **Incorrect (ignoring variables):**
 
 ```typescript

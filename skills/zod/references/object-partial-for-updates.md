@@ -94,8 +94,7 @@ const shallowPartial = userSchema.partial()
 // { name?: string; address?: { street: string; city: string; country: string } }
 // If address is provided, all its fields are still required!
 
-// Zod 4 removed the .deepPartial() method; Zod 4.5+ restores it as
-// z.deepPartial(userSchema), which recurses into every nested object.
+// z.deepPartial(userSchema) (Zod 4.5+) recurses into every nested object.
 // When only some levels should be optional, make nested policy explicit:
 const deepPartialSchema = userSchema
   .extend({ address: addressSchema.partial() })

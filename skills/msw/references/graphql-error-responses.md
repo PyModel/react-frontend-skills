@@ -9,8 +9,6 @@ tags: graphql, errors, format, validation, response
 
 Return GraphQL errors in the standard `errors` array format. GraphQL errors are different from HTTP errors - they use status 200 with an `errors` field in the response body.
 
-On MSW 2.x: `import { graphql, HttpResponse } from 'msw'` and `graphql.query('GetUser', resolver)` instead of `api.query`.
-
 **Incorrect (HTTP-style error response):**
 
 ```typescript

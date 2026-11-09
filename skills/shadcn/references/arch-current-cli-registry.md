@@ -7,7 +7,7 @@ tags: shadcn, cli, registry, mcp, tooling
 
 ## Use the Current CLI for Component Lifecycle
 
-The shadcn CLI (v3 Aug 2025, v4 Mar 2026) is the supported path for every component lifecycle action. It resolves namespaced registries, previews changes before they land, and exposes an MCP server so agents can search and install from any registry.
+The shadcn CLI (v4) is the supported path for every component lifecycle action. It resolves namespaced registries, previews changes before they land, and exposes an MCP server so agents can search and install from any registry.
 
 **Incorrect (hand-copying component code):**
 

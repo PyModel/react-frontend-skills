@@ -1,29 +1,37 @@
 ---
 title: Prefetch Infinite Lists with queryClient.infiniteQuery
 impact: MEDIUM
-impactDescription: 5.102 deprecated prefetchInfiniteQuery, fetchInfiniteQuery and ensureInfiniteQueryData in favor of one infiniteQuery() method
-tags: prefetch, infinite, infiniteQuery, deprecation, pagination
+impactDescription: one infiniteQuery() method covers fetching, best-effort prefetching and cache-first reads, sharing options with useInfiniteQuery
+tags: prefetch, infinite, infiniteQuery, pagination
 ---
 
 ## Prefetch Infinite Lists with queryClient.infiniteQuery
 
-TanStack Query 5.102 replaced the imperative infinite-query methods with a single `queryClient.infiniteQuery(options)`. The old methods still work, but they are deprecated and will be removed in the next major:
+`queryClient.infiniteQuery(options)` fetches an infinite query imperatively and resolves with `InfiniteData`. One method covers three cases:
 
-| Deprecated | Replacement |
+| Goal | Call |
 |---|---|
-| `prefetchInfiniteQuery(o)` | `infiniteQuery(o).catch(noop)` |
-| `fetchInfiniteQuery(o)` | `infiniteQuery(o)` |
-| `ensureInfiniteQueryData(o)` | `infiniteQuery({ ...o, staleTime: 'static' })` |
+| Fetch and await | `infiniteQuery(o)` |
+| Best-effort prefetch (never throws) | `infiniteQuery(o).catch(noop)` |
+| Use cached data if present, otherwise fetch | `infiniteQuery({ ...o, staleTime: 'static' })` |
 
-The same applies to single queries: `prefetchQuery`, `fetchQuery` and `ensureQueryData` became `queryClient.query()` (see `prefetch-on-hover`).
+Single queries work the same way with `queryClient.query()` (see `prefetch-on-hover`).
 
-**Incorrect (deprecated methods, duplicated options):**
+**Incorrect (options duplicated between loader and component):**
 
 ```typescript
-await queryClient.prefetchInfiniteQuery({
+await queryClient.infiniteQuery({
   queryKey: ['feed'],
   queryFn: ({ pageParam }) => fetchFeed(pageParam),
   initialPageParam: null,
+})
+
+// elsewhere: a second copy that can drift from the first
+useInfiniteQuery({
+  queryKey: ['feed'],
+  queryFn: ({ pageParam }) => fetchFeed(pageParam),
+  initialPageParam: null,
+  getNextPageParam: (lastPage) => lastPage.nextCursor,
 })
 ```
 
@@ -45,7 +53,7 @@ void queryClient.infiniteQuery(feedQueryOptions).catch(noop)
 // Preload the first three pages (pages requires getNextPageParam)
 await queryClient.infiniteQuery({ ...feedQueryOptions, pages: 3 }).catch(noop)
 
-// Use cached data if present, otherwise fetch (was ensureInfiniteQueryData)
+// Use cached data if present, otherwise fetch
 const feed = await queryClient.infiniteQuery({ ...feedQueryOptions, staleTime: 'static' })
 ```
 
@@ -55,6 +63,6 @@ The component then reads the same cache entry with `useInfiniteQuery(feedQueryOp
 - `retry` defaults to `false` for imperative calls. Without `.catch(noop)`, a failed fetch rejects.
 - `select` changes only the returned value; the cache keeps the raw pages.
 - Observer options such as `enabled`, `refetchOnWindowFocus`, `placeholderData`, `throwOnError` and `suspense` are not accepted here.
-- 5.102 also removed `experimental_prefetchInRender` and the `promise` property on query results. Code that does `use(query.promise)` must switch to `useSuspenseQuery` (see `suspense-use-suspense-hooks`).
+- To suspend a component on a query, use `useSuspenseQuery` (see `suspense-use-suspense-hooks`), not `use(query.promise)`.
 
-Reference: [QueryClient reference](https://tanstack.com/query/latest/docs/reference/QueryClient) · [query-core 5.102.0 release](https://github.com/TanStack/query/releases/tag/%40tanstack%2Fquery-core%405.102.0)
+Reference: [QueryClient reference](https://tanstack.com/query/latest/docs/reference/QueryClient)

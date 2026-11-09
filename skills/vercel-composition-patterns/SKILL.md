@@ -59,16 +59,14 @@ Reference these guidelines when:
 
 ### 4. React 19 APIs (MEDIUM)
 
-> **⚠️ React 19+ only.** Skip this section if using React 18 or earlier.
-
-- `react19-no-forwardref` - Don't use `forwardRef`; `ref` is a regular prop in React 19
+- `react19-no-forwardref` - Pass `ref` as a regular prop
 
 ## How to Use
 
 Run in the project root first:
 
 ```bash
-npx -y @pymodel/react-frontend-skills scan --skill vercel-composition-patterns  # deprecated APIs → rule IDs
+npx -y @pymodel/react-frontend-skills detect  # installed vs. targeted versions
 ```
 
-Read `rules/<rule-id>.md` for each rule above that matches the task and for each `scan` hit: why it matters, then incorrect vs. correct code.
+Read `rules/<rule-id>.md` for each rule above that matches the task: why it matters, then incorrect vs. correct code.

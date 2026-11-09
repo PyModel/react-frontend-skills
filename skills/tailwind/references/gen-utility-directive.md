@@ -7,9 +7,9 @@ tags: gen, utility, custom, directive, variants
 
 ## Use @utility for Custom Utilities
 
-Define custom utilities with `@utility` instead of `@layer utilities`. This enables automatic variant support and proper cascade layer sorting.
+Define custom utilities with `@utility`, not `@layer utilities`. This enables automatic variant support and proper cascade layer sorting.
 
-**Incorrect (legacy @layer approach):**
+**Incorrect (@layer utilities):**
 
 ```css
 @layer utilities {
@@ -24,7 +24,7 @@ Define custom utilities with `@utility` instead of `@layer utilities`. This enab
 /* No automatic variant support */
 ```
 
-**Correct (v4 @utility directive):**
+**Correct (@utility directive):**
 
 ```css
 @utility scrollbar-hide {

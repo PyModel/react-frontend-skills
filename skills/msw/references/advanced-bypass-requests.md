@@ -9,8 +9,6 @@ tags: advanced, bypass, passthrough, real-api, proxy
 
 Use `bypass()` to mark requests that should skip MSW interception and hit the real server. This enables hybrid scenarios where some APIs are mocked and others are real.
 
-On MSW 2.x: `import { http, HttpResponse, bypass, passthrough } from 'msw'`.
-
 **Incorrect (request creates infinite loop):**
 
 ```typescript

@@ -1,13 +1,13 @@
 ---
-title: Choose refine() vs superRefine() Correctly
+title: Choose refine() vs check() Correctly
 impact: MEDIUM
-impactDescription: refine() only reports one error; superRefine() enables multiple issues and custom error codes
-tags: refine, superRefine, validation, custom
+impactDescription: refine() only reports one error; check() enables multiple issues and custom error codes
+tags: refine, check, validation, custom
 ---
 
-## Choose refine() vs superRefine() Correctly
+## Choose refine() vs check() Correctly
 
-`.refine()` is for simple single-condition validation returning boolean. `.superRefine()` gives you a context object to add multiple issues with custom error codes and paths. Choose based on your error reporting needs.
+`.refine()` is for simple single-condition validation returning boolean. `.check()` gives you a context object (`ctx.value`, `ctx.issues`) to push multiple issues with custom error codes and paths. Choose based on your error reporting needs.
 
 **Incorrect (using refine for multiple checks):**
 
@@ -31,35 +31,40 @@ passwordSchema.parse('weak')
 // User doesn't know WHICH requirements failed
 ```
 
-**Correct (using superRefine for multiple issues):**
+**Correct (using check for multiple issues):**
 
 ```typescript
 import { z } from 'zod'
 
-const passwordSchema = z.string().superRefine((password, ctx) => {
+const passwordSchema = z.string().check((ctx) => {
+  const password = ctx.value
   if (password.length < 8) {
-    ctx.addIssue({
+    ctx.issues.push({
+      input: ctx.value,
       code: 'custom',
       message: 'Password must be at least 8 characters',
     })
   }
 
   if (!/[A-Z]/.test(password)) {
-    ctx.addIssue({
+    ctx.issues.push({
+      input: ctx.value,
       code: 'custom',
       message: 'Password must contain an uppercase letter',
     })
   }
 
   if (!/[0-9]/.test(password)) {
-    ctx.addIssue({
+    ctx.issues.push({
+      input: ctx.value,
       code: 'custom',
       message: 'Password must contain a number',
     })
   }
 
   if (!/[!@#$%^&*]/.test(password)) {
-    ctx.addIssue({
+    ctx.issues.push({
+      input: ctx.value,
       code: 'custom',
       message: 'Password must contain a special character',
     })
@@ -102,7 +107,7 @@ const emailSchema = z.email().refine(
 )
 ```
 
-**When to use superRefine():**
+**When to use check():**
 
 ```typescript
 // Multiple independent checks on same value
@@ -116,14 +121,16 @@ const orderSchema = z.object({
     quantity: z.number(),
   })),
   promoCode: z.string().optional(),
-}).superRefine(async (order, ctx) => {
+}).check(async (ctx) => {
+  const order = ctx.value
   // Check each item's availability
   for (let i = 0; i < order.items.length; i++) {
     const item = order.items[i]
     const available = await checkInventory(item.productId, item.quantity)
 
     if (!available) {
-      ctx.addIssue({
+      ctx.issues.push({
+        input: ctx.value,
         code: 'custom',
         path: ['items', i, 'quantity'],  // Specific path
         message: `Only ${available} units available`,
@@ -135,7 +142,8 @@ const orderSchema = z.object({
   if (order.promoCode) {
     const valid = await validatePromoCode(order.promoCode)
     if (!valid) {
-      ctx.addIssue({
+      ctx.issues.push({
+        input: ctx.value,
         code: 'custom',
         path: ['promoCode'],
         message: 'Invalid or expired promo code',
@@ -149,4 +157,4 @@ const orderSchema = z.object({
 - Simple single-condition checks (use refine for simplicity)
 - Transform needed instead of validation (use transform)
 
-Reference: [Zod API - refine/superRefine](https://zod.dev/api#refine)
+Reference: [Zod API - refine/check](https://zod.dev/api#refine)

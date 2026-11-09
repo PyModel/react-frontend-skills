@@ -126,9 +126,9 @@ const jsonValueSchema: z.ZodType<JSONValue> = z.lazy(() =>
 )
 ```
 
-**Zod 4 getter alternative:**
+**Getter alternative:**
 
-For object recursion, Zod 4 can infer a recursive schema through an accessor without a manual `ZodType` annotation:
+For object recursion, Zod can infer a recursive schema through an accessor without a manual `ZodType` annotation:
 
 ```typescript
 const Category = z.object({

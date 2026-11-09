@@ -9,19 +9,7 @@ tags: build, turbopack, caching, development
 
 Next.js 16 uses Turbopack by default for both `next dev` and `next build`. Turbopack filesystem caching is also enabled by default for development and production builds. Do not add an opt-in flag merely to obtain the default behavior.
 
-**Incorrect (deprecated alias and a non-existent option):**
-
-```typescript
-const nextConfig = {
-  experimental: {
-    turbo: {
-      persistentCaching: true,
-    },
-  },
-}
-```
-
-`experimental.turbo` still works in Next.js 16 as an alias for the top-level `turbopack` key, but new configuration belongs under `turbopack`. `persistentCaching` is not a Next.js option: the filesystem cache is on by default, and the supported overrides are `experimental.turbopackFileSystemCacheForDev` and `experimental.turbopackFileSystemCacheForBuild`.
+Configure Turbopack through the top-level `turbopack` key. `persistentCaching` is not a Next.js option: the filesystem cache is on by default, and the supported overrides are `experimental.turbopackFileSystemCacheForDev` and `experimental.turbopackFileSystemCacheForBuild`.
 
 **Correct (only configure supported custom behavior):**
 
@@ -51,7 +39,7 @@ next build
 next build --webpack
 ```
 
-A custom `webpack` configuration makes the default `next build` fail rather than silently ignoring that configuration. Migrate the configuration, explicitly choose `--webpack`, or deliberately use `--turbopack` after confirming the Webpack customization is unnecessary.
+A custom `webpack` configuration makes the default `next build` fail rather than silently ignoring that configuration. Move the customization into `turbopack` options, explicitly choose `--webpack`, or deliberately use `--turbopack` after confirming the Webpack customization is unnecessary.
 
 The filesystem cache is local build output and must remain uncommitted. In Next.js 16.3+, both caches default to `true`. Set the documented experimental keys only to override those defaults for a demonstrated environment-specific reason:
 
@@ -69,5 +57,5 @@ export default nextConfig
 ```
 
 References:
-- [Next.js 16 upgrade guide](https://nextjs.org/docs/app/guides/upgrading/version-16#turbopack-by-default)
+- [Turbopack in Next.js](https://nextjs.org/docs/app/api-reference/turbopack)
 - [Turbopack filesystem cache](https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopackFileSystemCache)

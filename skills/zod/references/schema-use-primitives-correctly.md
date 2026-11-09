@@ -56,6 +56,5 @@ userSchema.parse({ id: null, age: "twenty", active: "yes" })
 
 **When NOT to use this pattern:**
 - When you genuinely need to accept any value (rare - consider `z.unknown()` instead)
-- When migrating legacy code incrementally (use `z.any()` temporarily, then fix)
 
 Reference: [Zod Primitives](https://zod.dev/api#primitives)

@@ -2,12 +2,12 @@
 title: Serve the Worker with the msw/vite Plugin
 impact: HIGH
 impactDescription: removes the copied worker script and keeps mocking out of production builds
-tags: setup, vite, worker, plugin, virtual-msw, v3
+tags: setup, vite, worker, plugin, virtual-msw
 ---
 
 ## Serve the Worker with the msw/vite Plugin
 
-In a Vite app, MSW 3's `msw/vite` plugin serves `mockServiceWorker.js` from the installed package during development, so there is no copy in `public/` to commit or keep in sync. It also exposes a preconfigured `network` through the `virtual:msw` module that works in the browser and in SSR code, and does nothing in production builds.
+In a Vite app, the `msw/vite` plugin serves `mockServiceWorker.js` from the installed package during development, so there is no copy in `public/` to commit or keep in sync. It also exposes a preconfigured `network` through the `virtual:msw` module that works in the browser and in SSR code, and does nothing in production builds.
 
 **Incorrect (copied worker plus hand-wired setupWorker in a Vite app):**
 
@@ -66,6 +66,5 @@ export default defineConfig({
 - On the server, `virtual:msw` resolves to the Node.js defaults (same as `setupServer()`).
 - Mocking in a production deploy (e.g. a demo) still needs `msw init` and an explicit setup.
 - In `worker-only` mode with a custom Vite `base`, pass `serviceWorker.url` to `worker.start()`.
-- On MSW 2.x: no `msw/vite`; run `npx msw init public/ --save` and `await setupWorker(...handlers).start()` from `'msw/browser'` (see [setup-worker-script-commit](setup-worker-script-commit.md)).
 
 Reference: [MSW Vite integration](https://mswjs.io/guides/integrations/vite)

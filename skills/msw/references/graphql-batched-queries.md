@@ -9,8 +9,6 @@ tags: graphql, batching, apollo, performance, advanced
 
 Create a custom handler for batched GraphQL queries when using Apollo Client's batch link or similar. Batched requests send multiple operations in a single HTTP request.
 
-On MSW 2.x: `import { graphql, http, HttpResponse, getResponse, bypass } from 'msw'` and `graphql.query('GetUser', resolver)` instead of `api.query`.
-
 **Incorrect (individual handlers don't match batches):**
 
 ```typescript

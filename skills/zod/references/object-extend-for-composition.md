@@ -131,7 +131,7 @@ const contactSchema = z.object({
   phone: z.string(),
 })
 
-// Object spread is the Zod 4 replacement for deprecated .merge().
+// Object spread combines independent shapes.
 const customerSchema = z.object({
   ...addressSchema.shape,
   ...contactSchema.shape,

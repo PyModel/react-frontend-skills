@@ -77,6 +77,6 @@ Notes on the built-in component:
 - It has no `errors` prop and does not forward extra props through `as`. Set `id`, `role` or `className` inside `render`.
 - `render` also receives `messages` (all errors for the field) when the form uses `criteriaMode: 'all'`.
 - `name` also accepts `'root'` and `'root.serverError'` for form-level errors.
-- The older `@hookform/error-message` package still works, but the built-in component needs no extra dependency. For a lookup by path in plain code, `react-hook-form` exports `get`, so lodash is not needed.
+- For a lookup by path in plain code, `react-hook-form` exports `get`, so lodash is not needed.
 
 Reference: [React Hook Form - ErrorMessage](https://react-hook-form.com/docs/useformstate/errormessage) · [Advanced Usage](https://react-hook-form.com/advanced-usage)

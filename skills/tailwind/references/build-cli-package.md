@@ -1,43 +1,39 @@
 ---
-title: Use Correct CLI Package
+title: Use the @tailwindcss/cli Package
 impact: HIGH
-impactDescription: prevents build failures, ensures v4 compatibility
-tags: build, cli, package, migration, tooling
+impactDescription: prevents build failures from running the wrong package
+tags: build, cli, package, tooling
 ---
 
-## Use Correct CLI Package
+## Use the @tailwindcss/cli Package
 
-Tailwind CSS v4 uses a separate CLI package. Using the old CLI command with v4 will cause build failures.
+The Tailwind CLI ships as `@tailwindcss/cli`. The `tailwindcss` package is the core library and has no CLI entry for `npx`.
 
-**Incorrect (v3 CLI command):**
+**Incorrect (npx resolves the core package):**
 
 ```bash
-# Old CLI - incompatible with v4
 npx tailwindcss -i input.css -o output.css
-
-# Results in missing utilities or errors
 ```
 
-**Correct (v4 CLI package):**
+**Correct (CLI package):**
 
 ```bash
-# New CLI package for v4
 npx @tailwindcss/cli -i input.css -o output.css
 ```
 
 ```json
 {
   "scripts": {
-    "build:css": "tailwindcss -i ./src/input.css -o ./dist/output.css"
+    "build:css": "tailwindcss -i ./src/input.css -o ./dist/output.css --minify"
   },
   "devDependencies": {
-    "@tailwindcss/cli": "^4.0.0"
+    "@tailwindcss/cli": "^4.3.0"
   }
 }
 ```
 
-`@tailwindcss/cli` installs a binary named `tailwindcss`, so npm scripts keep the same command; only `npx tailwindcss` (which resolves the `tailwindcss` package, not the CLI) breaks.
+`@tailwindcss/cli` installs a binary named `tailwindcss`, so npm scripts can call `tailwindcss` directly; only `npx tailwindcss` (which resolves the core package) fails.
 
-**Note:** If using Vite or PostCSS integration, you typically don't need the CLI at all.
+**Note:** With the Vite or PostCSS integration you don't need the CLI at all.
 
-Reference: [Tailwind CSS Installation](https://tailwindcss.com/docs/installation)
+Reference: [Tailwind CSS Installation](https://tailwindcss.com/docs/installation/tailwind-cli)
